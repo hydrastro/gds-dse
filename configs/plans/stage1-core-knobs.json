@@ -1,0 +1,72 @@
+{
+  "//": [
+    "Stage 1: the five parameters named in the project discussion, one at a time (OFAT), few levels each.",
+    "clock target, core utilisation, placement density, synthesis strategy (area vs delay), flattening.",
+    "10 variants + C0 = 11 configurations x 4 designs x 3 PDKs x 5 seeds = 660 runs."
+  ],
+  "name": "s1",
+  "strategy": "ofat",
+  "knobs": [
+    "CLOCK_PERIOD",
+    "FP_CORE_UTIL",
+    "PL_TARGET_DENSITY_PCT",
+    "SYNTH_STRATEGY",
+    "SYNTH_HIERARCHY_MODE"
+  ],
+  "levels": {
+    "CLOCK_PERIOD": [
+      {
+        "$scale": 0.8
+      },
+      {
+        "$scale": 0.9
+      },
+      {
+        "$scale": 1.2
+      }
+    ],
+    "FP_CORE_UTIL": [
+      40,
+      {
+        "$value": 60,
+        "$with": {
+          "PL_TARGET_DENSITY_PCT": 70
+        }
+      }
+    ],
+    "PL_TARGET_DENSITY_PCT": [
+      70,
+      80
+    ],
+    "SYNTH_STRATEGY": [
+      "AREA 2",
+      "DELAY 1"
+    ],
+    "SYNTH_HIERARCHY_MODE": [
+      "keep"
+    ]
+  },
+  "include_baseline": true,
+  "experiment_path": "experiments/suite/stage1.json",
+  "experiment": {
+    "phase": "study",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

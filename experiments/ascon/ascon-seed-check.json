@@ -1,0 +1,19 @@
+{
+  "phase": "pilot",
+  "designs": [
+    "ascon"
+  ],
+  "pdks": [
+    "sky130A"
+  ],
+  "configs": [
+    "C0"
+  ],
+  "seeds": [
+    1,
+    2
+  ],
+  "repeat": 2,
+  "stop_after": null,
+  "order_seed": 20261015
+}

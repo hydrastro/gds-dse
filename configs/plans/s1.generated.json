@@ -1,0 +1,57 @@
+{
+  "notes": [],
+  "plan": "configs/plans/stage1-core-knobs.json",
+  "strategy": "ofat",
+  "knobs": [
+    "CLOCK_PERIOD",
+    "FP_CORE_UTIL",
+    "PL_TARGET_DENSITY_PCT",
+    "SYNTH_STRATEGY",
+    "SYNTH_HIERARCHY_MODE"
+  ],
+  "baseline": "C0",
+  "variants": {
+    "s1__CLOCK_PERIOD__x0p8": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.8
+      }
+    },
+    "s1__CLOCK_PERIOD__x0p9": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.9
+      }
+    },
+    "s1__CLOCK_PERIOD__x1p2": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.2
+      }
+    },
+    "s1__FP_CORE_UTIL__40": {
+      "FP_CORE_UTIL": 40
+    },
+    "s1__FP_CORE_UTIL__60": {
+      "FP_CORE_UTIL": {
+        "$value": 60,
+        "$with": {
+          "PL_TARGET_DENSITY_PCT": 70
+        }
+      }
+    },
+    "s1__PL_TARGET_DENSITY_PCT__70": {
+      "PL_TARGET_DENSITY_PCT": 70
+    },
+    "s1__PL_TARGET_DENSITY_PCT__80": {
+      "PL_TARGET_DENSITY_PCT": 80
+    },
+    "s1__SYNTH_STRATEGY__AREA2": {
+      "SYNTH_STRATEGY": "AREA 2"
+    },
+    "s1__SYNTH_STRATEGY__DELAY1": {
+      "SYNTH_STRATEGY": "DELAY 1"
+    },
+    "s1__SYNTH_HIERARCHY_MODE__keep": {
+      "SYNTH_HIERARCHY_MODE": "keep"
+    }
+  },
+  "skipped": []
+}

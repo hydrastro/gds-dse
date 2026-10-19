@@ -1,0 +1,29 @@
+{
+  "//": [
+    "AES-128/256 encrypt+decrypt, iterative word-level datapath with four S-boxes, S-box logic heavy (secworks/aes 80dc471).",
+    "Top = the 32-bit register-interface wrapper (about 76 I/O), not the wide raw core.",
+    "clock_period_ns is only a fallback: the per-PDK reference is written to pdks/<pdk>.json by scripts/calibrate_clock.py."
+  ],
+  "rtl_root": "designs/aes",
+  "top": "aes",
+  "clock_port": "clk",
+  "clock_period_ns": 25.0,
+  "sources": [
+    "src/rtl/aes.v",
+    "src/rtl/aes_core.v",
+    "src/rtl/aes_encipher_block.v",
+    "src/rtl/aes_decipher_block.v",
+    "src/rtl/aes_key_mem.v",
+    "src/rtl/aes_sbox.v",
+    "src/rtl/aes_inv_sbox.v"
+  ],
+  "include_dirs": [],
+  "defines": [],
+  "parameters": [],
+  "use_slang": false,
+  "sdc": "configs/constraints/single_clock.sdc",
+  "flow_overrides": {},
+  "project_sources": [],
+  "project_include_dirs": [],
+  "additional_input_files": []
+}

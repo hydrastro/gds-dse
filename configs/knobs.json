@@ -1,0 +1,810 @@
+{
+  "schema": 1,
+  "about": [
+    "Catalogue of LibreLane (Classic flow, pinned commit) settings that make sense to vary in a DSE study.",
+    "Every name, type and choice is validated against configs/librelane_variables.json (scripts/variants.py check, tests).",
+    "Baseline values (C0) are the PDK's own LibreLane defaults, written out in configs/platforms.json, plus configs/defaults.json.",
+    "status=default: used when a plan selects knobs by group. status=opt_in: only used when named explicitly (and allow_opt_in for flagged ones).",
+    "levels: discrete values for ofat/factorial plans. range: bounds for latin-hypercube (lhs) plans.",
+    "Level forms: a plain value; {\"$scale\": x} relative to the lower layers (e.g. the calibrated clock of each design x PDK);",
+    "{\"$of\": [KEY, r]} = r x final KEY (e.g. a slack margin as a fraction of the clock period);",
+    "{\"$rows\": n} = n standard-cell row heights, converted per PDK from platforms.json reference.row_height_um",
+    "(sky130A 2.72, gf180mcuD 3.92, ihp-sg13g2 3.78 um) so geometric knobs mean the same thing on every PDK;",
+    "{\"$value\": v, \"$with\": {...}} = a level that also sets companion keys (e.g. padding raises density as LibreLane's own formula does).",
+    "Range options: relative (=$scale), of (=$of), unit: row_height_um (=$rows), scale: log, integer.",
+    "requires: prerequisites added automatically. effective_pdks: the knob only acts on these PDKs (generator prints a note).",
+    "Noise policy: the ONLY intentional random intervention is the initial global-routing seed. Knobs flagged uncontrolled_randomness",
+    "add another unseeded random source and are blocked unless a plan sets allow_opt_in."
+  ],
+  "groups": {
+    "constraints": "Timing target and interface assumptions (change the problem, not only the flow)",
+    "synthesis": "Yosys/ABC logic synthesis and technology mapping",
+    "floorplan": "Core sizing and shape",
+    "placement": "Global/detailed placement (RePlAce/OpenDP)",
+    "resizer": "OpenROAD resizer: design repair and timing optimisation",
+    "cts": "Clock-tree synthesis (TritonCTS)",
+    "global_routing": "FastRoute global routing and antenna repair",
+    "detailed_routing": "TritonRoute detailed routing",
+    "antenna": "Diode insertion"
+  },
+  "knobs": {
+    "CLOCK_PERIOD": {
+      "group": "constraints",
+      "status": "default",
+      "levels": [
+        {
+          "$scale": 0.8
+        },
+        {
+          "$scale": 0.9
+        },
+        {
+          "$scale": 1.1
+        },
+        {
+          "$scale": 1.25
+        }
+      ],
+      "range": {
+        "min": 0.7,
+        "max": 1.3,
+        "relative": true
+      },
+      "why": "Timing pressure, relative to the calibrated reference of each design x PDK (scripts/calibrate_clock.py), so x0.8 means '20% tighter than that design's comfortable target' on every PDK. Most timing knobs only matter when timing is tight."
+    },
+    "IO_DELAY_CONSTRAINT": {
+      "group": "constraints",
+      "status": "opt_in",
+      "levels": [
+        5,
+        10,
+        35
+      ],
+      "range": {
+        "min": 0,
+        "max": 40
+      },
+      "why": "Percent of the period reserved for external I/O paths (PDK default 20 on all three). Changes the specification, so opt-in."
+    },
+    "CLOCK_UNCERTAINTY_CONSTRAINT": {
+      "group": "constraints",
+      "status": "opt_in",
+      "levels": [
+        {
+          "$scale": 0.5
+        },
+        {
+          "$scale": 2.0
+        }
+      ],
+      "range": {
+        "min": 0.25,
+        "max": 3.0,
+        "relative": true
+      },
+      "why": "Setup/hold guard band (PDK default 0.25 ns on all three). A specification choice, so opt-in."
+    },
+    "MAX_FANOUT_CONSTRAINT": {
+      "group": "constraints",
+      "status": "default",
+      "levels": [
+        6,
+        16,
+        24
+      ],
+      "range": {
+        "min": 4,
+        "max": 32,
+        "integer": true
+      },
+      "why": "Fanout limit for synthesis buffering and design repair (PDK default 10 on all three); trades buffers/area for slew and delay."
+    },
+    "SYNTH_STRATEGY": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        "AREA 0",
+        "AREA 1",
+        "AREA 2",
+        "AREA 3",
+        "DELAY 0",
+        "DELAY 1",
+        "DELAY 2",
+        "DELAY 3",
+        "DELAY 4"
+      ],
+      "why": "ABC mapping script: the main area/delay trade-off in synthesis."
+    },
+    "SYNTH_HIERARCHY_MODE": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        "flatten",
+        "deferred_flatten",
+        "keep"
+      ],
+      "why": "Flattening: cross-boundary optimisation vs preserved hierarchy."
+    },
+    "SYNTH_ABC_BUFFERING": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Buffering during ABC mapping."
+    },
+    "SYNTH_SIZING": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Gate sizing in ABC (otherwise left to the resizer)."
+    },
+    "SYNTH_ABC_DFF": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Let ABC optimise across flip-flops (sequential optimisation)."
+    },
+    "SYNTH_ABC_USE_MFS3": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Experimental SAT-based remapping in area scripts."
+    },
+    "SYNTH_ABC_AREA_USE_NF": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Use the &nf delay-oriented mapper inside AREA scripts."
+    },
+    "SYNTH_ABC_LEGACY_REFACTOR": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Legacy refactor command in ABC scripts."
+    },
+    "SYNTH_ABC_LEGACY_REWRITE": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Legacy rewrite command in ABC scripts."
+    },
+    "SYNTH_SHARE_RESOURCES": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Yosys resource sharing (merging mutually exclusive operators)."
+    },
+    "SYNTH_DIRECT_WIRE_BUFFERING": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Insert buffers on direct input-to-output wires."
+    },
+    "SYNTH_ADDER_TYPE": {
+      "group": "synthesis",
+      "status": "default",
+      "levels": [
+        "FA",
+        "RCA",
+        "CSA"
+      ],
+      "why": "Adder mapping. Only sky130A ships FA/RCA/CSA maps at the pinned PDK versions (LibreLane deletes them for gf180mcu; IHP provides none), so elsewhere the variant equals the baseline. Relevant for SHA-256 (modular adders), ~irrelevant for AES/PRINCE.",
+      "design_dependent": true,
+      "effective_pdks": [
+        "sky130A"
+      ]
+    },
+    "SYNTH_MUL_BOOTH": {
+      "group": "synthesis",
+      "status": "opt_in",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Booth multiplier mapping. Only meaningful for designs with multipliers.",
+      "design_dependent": true
+    },
+    "FP_CORE_UTIL": {
+      "group": "floorplan",
+      "status": "default",
+      "levels": [
+        30,
+        40,
+        55,
+        {
+          "$value": 65,
+          "$with": {
+            "PL_TARGET_DENSITY_PCT": 75
+          }
+        }
+      ],
+      "range": {
+        "min": 25,
+        "max": 55
+      },
+      "why": "Core utilisation (LibreLane default 50): die/core size, hence area, wirelength and routability. The 65% level also raises density to 75 so placement stays feasible."
+    },
+    "FP_ASPECT_RATIO": {
+      "group": "floorplan",
+      "status": "default",
+      "levels": [
+        0.5,
+        2.0
+      ],
+      "range": {
+        "min": 0.5,
+        "max": 2.0,
+        "scale": "log"
+      },
+      "why": "Core height/width; affects wirelength and pin access."
+    },
+    "IO_PIN_PLACEMENT_MODE": {
+      "group": "floorplan",
+      "status": "opt_in",
+      "levels": [
+        "annealing",
+        "random_equidistant"
+      ],
+      "why": "Pin-placement algorithm. These modes use OpenROAD ioPlacer's internal fixed seed: not varied by the study, but verify determinism with a same-seed repeat before trusting them.",
+      "caution": "internal_fixed_seed"
+    },
+    "PL_TARGET_DENSITY_PCT": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        55,
+        70,
+        80
+      ],
+      "range": {
+        "min": 55,
+        "max": 85
+      },
+      "why": "Global-placement density target (C0 60 = LibreLane's automatic value at utilisation 50): spreading vs wirelength. Must stay at least FP_CORE_UTIL + 5*GPL_CELL_PADDING + 5 (config_constraints)."
+    },
+    "PL_TIMING_DRIVEN": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Timing-driven global placement (LibreLane default: off)."
+    },
+    "PL_ROUTABILITY_DRIVEN": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Routability-driven global placement (cell inflation in congested regions)."
+    },
+    "PL_WIRE_LENGTH_COEF": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        0.1,
+        0.5
+      ],
+      "range": {
+        "min": 0.05,
+        "max": 1.0,
+        "scale": "log"
+      },
+      "why": "Wirelength weight in RePlAce's objective."
+    },
+    "GPL_CELL_PADDING": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        {
+          "$value": 1,
+          "$with": {
+            "PL_TARGET_DENSITY_PCT": {
+              "$add": 5
+            }
+          }
+        },
+        {
+          "$value": 2,
+          "$with": {
+            "PL_TARGET_DENSITY_PCT": {
+              "$add": 10
+            }
+          }
+        }
+      ],
+      "range": {
+        "min": 0,
+        "max": 2,
+        "integer": true
+      },
+      "why": "Global-placement padding in sites per cell side (PDK default 0 on all three). Each level raises density by 5 per site, exactly as LibreLane's automatic density formula does, so the variant stays placeable."
+    },
+    "DPL_CELL_PADDING": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        1,
+        2
+      ],
+      "range": {
+        "min": 0,
+        "max": 2,
+        "integer": true
+      },
+      "why": "Detailed-placement padding in sites (PDK default 0 on all three): local whitespace for routing and repair."
+    },
+    "PL_OPTIMIZE_MIRRORING": {
+      "group": "placement",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Cell mirroring optimisation in detailed placement."
+    },
+    "RUN_POST_GPL_DESIGN_REPAIR": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Slew/cap/fanout repair after global placement."
+    },
+    "DESIGN_REPAIR_MAX_SLEW_PCT": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        0,
+        10,
+        30
+      ],
+      "range": {
+        "min": 0,
+        "max": 40
+      },
+      "why": "Slew margin for post-GPL design repair.",
+      "requires": {
+        "RUN_POST_GPL_DESIGN_REPAIR": true
+      }
+    },
+    "DESIGN_REPAIR_MAX_CAP_PCT": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        0,
+        10,
+        30
+      ],
+      "range": {
+        "min": 0,
+        "max": 40
+      },
+      "why": "Capacitance margin for post-GPL design repair.",
+      "requires": {
+        "RUN_POST_GPL_DESIGN_REPAIR": true
+      }
+    },
+    "DESIGN_REPAIR_REMOVE_BUFFERS": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Remove synthesis buffers before repair.",
+      "requires": {
+        "RUN_POST_GPL_DESIGN_REPAIR": true
+      }
+    },
+    "RUN_POST_CTS_RESIZER_TIMING": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Setup/hold optimisation after CTS."
+    },
+    "PL_RESIZER_SETUP_SLACK_MARGIN": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        0.0,
+        {
+          "$of": [
+            "CLOCK_PERIOD",
+            0.02
+          ]
+        },
+        {
+          "$of": [
+            "CLOCK_PERIOD",
+            0.05
+          ]
+        }
+      ],
+      "range": {
+        "min": 0.0,
+        "max": 0.06,
+        "of": "CLOCK_PERIOD"
+      },
+      "why": "Extra setup slack the post-CTS resizer aims for (LibreLane default 0.05 ns). Expressed as a fraction of the clock period because periods differ by ~3x across PDKs.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_HOLD_SLACK_MARGIN": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        0.0,
+        0.05,
+        0.25
+      ],
+      "range": {
+        "min": 0.0,
+        "max": 0.4
+      },
+      "why": "Extra hold slack (ns) the post-CTS resizer aims for (LibreLane default 0.1 ns). Hold depends on clock skew and min delays rather than the period, so absolute ns are kept.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_SETUP_MAX_BUFFER_PCT": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        25,
+        75
+      ],
+      "range": {
+        "min": 10,
+        "max": 100
+      },
+      "why": "Cap on buffers added for setup repair (percent of instances).",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_SETUP_GATE_CLONING": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Gate cloning during setup repair.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_SETUP_BUFFERING": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Rebuffering during setup repair.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_SETUP_BUFFER_REMOVAL": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Buffer removal during setup repair.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "PL_RESIZER_FIX_HOLD_FIRST": {
+      "group": "resizer",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Repair hold before setup.",
+      "requires": {
+        "RUN_POST_CTS_RESIZER_TIMING": true
+      }
+    },
+    "RUN_POST_GRT_DESIGN_REPAIR": {
+      "group": "resizer",
+      "status": "opt_in",
+      "levels": [
+        true
+      ],
+      "why": "Design repair after global routing. LibreLane marks it experimental (possible hangs).",
+      "caution": "reroutes_unseeded: re-runs global routing with OpenROAD's default seed, partly overwriting the study seed's effect."
+    },
+    "RUN_POST_GRT_RESIZER_TIMING": {
+      "group": "resizer",
+      "status": "opt_in",
+      "levels": [
+        true
+      ],
+      "why": "Timing repair after global routing. LibreLane marks it experimental (possible hangs).",
+      "caution": "reroutes_unseeded: re-runs global routing with OpenROAD's default seed, partly overwriting the study seed's effect."
+    },
+    "CTS_CLK_MAX_WIRE_LENGTH": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        {
+          "$rows": 50
+        },
+        {
+          "$rows": 100
+        }
+      ],
+      "range": {
+        "min": 20,
+        "max": 150,
+        "unit": "row_height_um"
+      },
+      "why": "Maximum clock wire length before buffering (LibreLane default 0 = unlimited), in row heights per PDK."
+    },
+    "CTS_DISTANCE_BETWEEN_BUFFERS": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        {
+          "$rows": 25
+        },
+        {
+          "$rows": 75
+        }
+      ],
+      "range": {
+        "min": 10,
+        "max": 100,
+        "unit": "row_height_um"
+      },
+      "why": "Buffer spacing for clock wire segments (LibreLane default 0 = automatic), in row heights per PDK."
+    },
+    "CTS_SINK_CLUSTERING_ENABLE": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Cluster clock sinks before building the tree."
+    },
+    "CTS_SINK_CLUSTERING_SIZE": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        10,
+        20,
+        40
+      ],
+      "range": {
+        "min": 5,
+        "max": 50,
+        "integer": true
+      },
+      "why": "Maximum sinks per cluster.",
+      "requires": {
+        "CTS_SINK_CLUSTERING_ENABLE": true
+      }
+    },
+    "CTS_SINK_CLUSTERING_MAX_DIAMETER": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        {
+          "$rows": 10
+        },
+        {
+          "$rows": 20
+        },
+        {
+          "$rows": 40
+        }
+      ],
+      "range": {
+        "min": 5,
+        "max": 50,
+        "unit": "row_height_um"
+      },
+      "why": "Maximum sink-cluster diameter (LibreLane default: OpenROAD automatic), in row heights per PDK.",
+      "requires": {
+        "CTS_SINK_CLUSTERING_ENABLE": true
+      }
+    },
+    "CTS_APPLY_NDR": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        "none",
+        "root_only",
+        "half",
+        "full"
+      ],
+      "why": "Double-spacing non-default rule on clock nets: crosstalk/robustness vs routing resources."
+    },
+    "CTS_BALANCE_LEVELS": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Balance the number of clock-tree levels."
+    },
+    "CTS_DISABLE_POST_PROCESSING": {
+      "group": "cts",
+      "status": "default",
+      "levels": [
+        true,
+        false
+      ],
+      "why": "Skip TritonCTS post-processing (latency/skew optimisation)."
+    },
+    "GRT_ADJUSTMENT": {
+      "group": "global_routing",
+      "status": "default",
+      "levels": [
+        0.1,
+        0.5
+      ],
+      "range": {
+        "min": 0.0,
+        "max": 0.6
+      },
+      "why": "Global capacity reduction: congestion margin vs available routing resources."
+    },
+    "GRT_OVERFLOW_ITERS": {
+      "group": "global_routing",
+      "status": "default",
+      "levels": [
+        25,
+        100
+      ],
+      "range": {
+        "min": 10,
+        "max": 150,
+        "integer": true
+      },
+      "why": "FastRoute overflow-removal iterations."
+    },
+    "GRT_ANTENNA_REPAIR_ITERS": {
+      "group": "global_routing",
+      "status": "default",
+      "levels": [
+        1,
+        5
+      ],
+      "range": {
+        "min": 1,
+        "max": 6,
+        "integer": true
+      },
+      "why": "Antenna repair iterations after global routing."
+    },
+    "GRT_ANTENNA_REPAIR_MARGIN": {
+      "group": "global_routing",
+      "status": "default",
+      "levels": [
+        0,
+        20
+      ],
+      "range": {
+        "min": 0,
+        "max": 30,
+        "integer": true
+      },
+      "why": "Margin (%) when deciding which nets need antenna repair."
+    },
+    "GRT_ALLOW_CONGESTION": {
+      "group": "global_routing",
+      "status": "opt_in",
+      "levels": [
+        true
+      ],
+      "why": "Continue despite global-routing overflow. Changes what counts as a failure, so it is opt-in."
+    },
+    "RUN_ANTENNA_REPAIR": {
+      "group": "global_routing",
+      "status": "opt_in",
+      "levels": [
+        false
+      ],
+      "why": "Disable antenna repair. Opt-in: tends to create antenna violations rather than explore a trade-off."
+    },
+    "DRT_OPT_ITERS": {
+      "group": "detailed_routing",
+      "status": "default",
+      "levels": [
+        16,
+        32
+      ],
+      "range": {
+        "min": 8,
+        "max": 64,
+        "integer": true
+      },
+      "why": "TritonRoute optimisation iterations (runtime vs DRC cleanliness)."
+    },
+    "DRT_ANTENNA_REPAIR_ITERS": {
+      "group": "detailed_routing",
+      "status": "default",
+      "levels": [
+        1,
+        5
+      ],
+      "range": {
+        "min": 0,
+        "max": 6,
+        "integer": true
+      },
+      "why": "Antenna repair iterations inside detailed routing."
+    },
+    "RUN_HEURISTIC_DIODE_INSERTION": {
+      "group": "antenna",
+      "status": "opt_in",
+      "levels": [
+        true
+      ],
+      "why": "Heuristic diode insertion.",
+      "caution": "uncontrolled_randomness: LibreLane's odbpy/diodes.py uses Python random.random() without a seed to choose diode sides, so runs are not reproducible."
+    },
+    "DIODE_ON_PORTS": {
+      "group": "antenna",
+      "status": "opt_in",
+      "levels": [
+        "in",
+        "out",
+        "both"
+      ],
+      "why": "Diodes on ports.",
+      "caution": "uncontrolled_randomness: same unseeded odbpy/diodes.py code path as heuristic insertion."
+    }
+  },
+  "excluded": {
+    "RT_MIN_LAYER, RT_MAX_LAYER, RT_CLOCK_*_LAYER, *_WIRE_RC_LAYERS": "Layer names are PDK-specific. Vary them with {\"$per_pdk\": {...}} in a hand-written variant if needed.",
+    "PDN_*": "Power grid geometry is PDK-specific and mostly a robustness/IR-drop choice rather than a QoR knob.",
+    "CTS_CLK_BUFFERS, CTS_ROOT_BUFFER, SYNTH_*_CELL, *_MAP": "Cell/library names; PDK-specific.",
+    "MAX_TRANSITION_CONSTRAINT, MAX_CAPACITANCE_CONSTRAINT": "Units and sensible values depend on the PDK library; use $per_pdk if needed.",
+    "RUN_*_DRC, RUN_LVS, RUN_*_STREAMOUT, RUN_KLAYOUT_XOR, RUN_EQY": "Sign-off checks, not optimisation knobs. Turning them off weakens the pass criteria.",
+    "DRT_THREADS, STA_THREADS": "Fixed by configs/study.json execution.threads for comparability.",
+    "PL_SKIP_INITIAL_PLACEMENT, PL_MIN/MAX_PHI_COEFFICIENT, PL_MAX_DISPLACEMENT_*": "Convergence/legalisation rescue settings; vary only to fix specific failures."
+  }
+}

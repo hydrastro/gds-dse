@@ -1,0 +1,18 @@
+{
+  "rtl_root": "designs/ascon",
+  "top": "REPLACE_WITH_YOUR_TOP_MODULE",
+  "clock_port": "REPLACE_WITH_YOUR_CLOCK_PORT",
+  "clock_period_ns": 25.0,
+  "sources": [
+    "REPLACE_WITH_ORDERED_SYNTHESIZABLE_FILE_LIST.sv"
+  ],
+  "include_dirs": [],
+  "defines": [],
+  "parameters": [],
+  "use_slang": false,
+  "sdc": "configs/constraints/single_clock.sdc",
+  "flow_overrides": {},
+  "project_sources": [],
+  "project_include_dirs": [],
+  "additional_input_files": []
+}

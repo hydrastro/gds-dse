@@ -1,0 +1,56 @@
+{
+  "//": "Optional exploration: latin hypercube over continuous knobs plus synthesis choices (response surfaces, DSE reliability on many candidates).",
+  "name": "lhs",
+  "strategy": "lhs",
+  "samples": 40,
+  "rng_seed": 1,
+  "knobs": [
+    "CLOCK_PERIOD",
+    "FP_CORE_UTIL",
+    "FP_ASPECT_RATIO",
+    "PL_TARGET_DENSITY_PCT",
+    "PL_WIRE_LENGTH_COEF",
+    "GPL_CELL_PADDING",
+    "DPL_CELL_PADDING",
+    "GRT_ADJUSTMENT",
+    "PL_RESIZER_SETUP_SLACK_MARGIN",
+    "CTS_SINK_CLUSTERING_MAX_DIAMETER",
+    "SYNTH_STRATEGY",
+    "PL_TIMING_DRIVEN"
+  ],
+  "ranges": {
+    "FP_CORE_UTIL": {
+      "min": 25,
+      "max": 50
+    },
+    "PL_TARGET_DENSITY_PCT": {
+      "min": 60,
+      "max": 85
+    },
+    "GPL_CELL_PADDING": {
+      "min": 0,
+      "max": 1
+    }
+  },
+  "include_baseline": true,
+  "experiment_path": "experiments/suite/explore-lhs.json",
+  "experiment": {
+    "phase": "study",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  }
+}

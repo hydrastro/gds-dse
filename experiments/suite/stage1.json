@@ -1,0 +1,37 @@
+{
+  "phase": "study",
+  "designs": [
+    "aes",
+    "sha256",
+    "chacha",
+    "prince"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "repeat": 1,
+  "stop_after": null,
+  "order_seed": 20261015,
+  "configs": [
+    "C0",
+    "s1__CLOCK_PERIOD__x0p8",
+    "s1__CLOCK_PERIOD__x0p9",
+    "s1__CLOCK_PERIOD__x1p2",
+    "s1__FP_CORE_UTIL__40",
+    "s1__FP_CORE_UTIL__60",
+    "s1__PL_TARGET_DENSITY_PCT__70",
+    "s1__PL_TARGET_DENSITY_PCT__80",
+    "s1__SYNTH_STRATEGY__AREA2",
+    "s1__SYNTH_STRATEGY__DELAY1",
+    "s1__SYNTH_HIERARCHY_MODE__keep"
+  ]
+}

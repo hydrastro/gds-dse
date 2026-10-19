@@ -1,0 +1,365 @@
+{
+  "schema": 1,
+  "//": "Study-wide settings formerly hardcoded in scripts/. Frozen (hashed) into every campaign at prepare.",
+  "flow": {
+    "librelane_commit": "01ddb25e4424f6f5aaf6b951b14a2b6fdcf737c0",
+    "flow": "Classic",
+    "variables_snapshot": "configs/librelane_variables.json",
+    "knob_catalog": "configs/knobs.json",
+    "//seeded_step": "The only intentional random intervention: the initial OpenROAD.GlobalRouting call.",
+    "seeded_step": {
+      "replaces": "OpenROAD.GlobalRouting",
+      "id": "Study.SeededGlobalRouting",
+      "grt_script_sha256": "9cceedd2c477f85b25362d5e3833fe0e9c0d85f14248060fc38e3fdec0c6187c",
+      "capacity_perturbation_pct": 0
+    }
+  },
+  "execution": {
+    "threads": 2,
+    "//parallel_jobs": "Flows run at once. 1 = sequential (comparable runtimes). >1 multiplies throughput; keep parallel_jobs x threads <= physical cores and record it in the protocol.",
+    "parallel_jobs": 1,
+    "timeout_s": 0,
+    "kill_grace_s": 10,
+    "pdk_cache_dir": "pdks",
+    "default_order_seed": 20261015,
+    "max_jobs_per_campaign": 20000,
+    "set_omp_num_threads": true,
+    "extra_flow_args": [
+      "--hide-progress-bar"
+    ],
+    "tool_versions": {
+      "yosys": [
+        "yosys",
+        "-V"
+      ],
+      "openroad": [
+        "openroad",
+        "-version"
+      ],
+      "klayout": [
+        "klayout",
+        "-v"
+      ],
+      "verilator": [
+        "verilator",
+        "--version"
+      ]
+    },
+    "hash_executables": [
+      "yosys",
+      "openroad",
+      "klayout",
+      "magic",
+      "netgen"
+    ]
+  },
+  "inputs": {
+    "rtl_hash_extensions": [
+      ".v",
+      ".sv",
+      ".vh",
+      ".svh",
+      ".mem",
+      ".hex"
+    ],
+    "require_calibrated_clock_for_study": true,
+    "//require_calibrated_clock_for_study": "phase=study campaigns need CLOCK_PERIOD in configs/designs/<d>/pdks/<pdk>.json (written by scripts/calibrate_clock.py)."
+  },
+  "//config_constraints": "Checked on every merged job config (names resolve to merged values, then LibreLane defaults). Generators skip variants that violate them.",
+  "config_constraints": [
+    "CLOCK_PERIOD > 0",
+    "PL_TARGET_DENSITY_PCT > 0 and PL_TARGET_DENSITY_PCT < 100",
+    "PL_TARGET_DENSITY_PCT >= FP_CORE_UTIL + 5 * GPL_CELL_PADDING + 5"
+  ],
+  "//checks": "Names are defined in scripts/study.py (CHECKS). study_checks_pass = all 'required' checks True. failure_reason = first required check that is not True.",
+  "checks": {
+    "required": [
+      "exit_ok",
+      "seed_applied",
+      "full_flow",
+      "gds",
+      "post_route_sta",
+      "setup_timing",
+      "hold_timing",
+      "layout_drc",
+      "lvs",
+      "route_drc"
+    ],
+    "reported": [
+      "max_slew",
+      "max_cap",
+      "max_fanout",
+      "antenna",
+      "power_grid"
+    ]
+  },
+  "//metrics": "Columns exported to runs.csv. source: post_route_sta (last OpenROAD.STAPostPNR state) or final (final/metrics.json). corners: how '<key>__corner:*' values are combined (min/max/sum), or 'none' for the plain key. corner_set: restrict to the PDK's 'setup' or 'hold' corners from configs/platforms.json timing_corners (matched across PDKs: nominal RC, slow PVT for setup, fast PVT for hold).",
+  "metrics": [
+    {
+      "column": "instance_area_um2",
+      "key": "design__instance__area",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "stdcell_area_um2",
+      "key": "design__instance__area__stdcell",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "instance_count",
+      "key": "design__instance__count",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "core_area_um2",
+      "key": "design__core__area",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "die_area_um2",
+      "key": "design__die__area",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "utilization",
+      "key": "design__instance__utilization",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "wirelength_um",
+      "key": "route__wirelength",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "vias",
+      "key": "route__vias",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "setup_ws_ns",
+      "key": "timing__setup__ws",
+      "source": "post_route_sta",
+      "corners": "min",
+      "corner_set": "setup"
+    },
+    {
+      "column": "hold_ws_ns",
+      "key": "timing__hold__ws",
+      "source": "post_route_sta",
+      "corners": "min",
+      "corner_set": "hold"
+    },
+    {
+      "column": "setup_tns_ns",
+      "key": "timing__setup__tns",
+      "source": "post_route_sta",
+      "corners": "min",
+      "corner_set": "setup"
+    },
+    {
+      "column": "hold_tns_ns",
+      "key": "timing__hold__tns",
+      "source": "post_route_sta",
+      "corners": "min",
+      "corner_set": "hold"
+    },
+    {
+      "column": "setup_violations",
+      "key": "timing__setup_vio__count",
+      "source": "post_route_sta",
+      "corners": "sum",
+      "corner_set": "setup"
+    },
+    {
+      "column": "hold_violations",
+      "key": "timing__hold_vio__count",
+      "source": "post_route_sta",
+      "corners": "sum",
+      "corner_set": "hold"
+    },
+    {
+      "column": "clock_skew_setup_ns",
+      "key": "clock__skew__worst_setup",
+      "source": "post_route_sta",
+      "corners": "max",
+      "corner_set": "setup"
+    },
+    {
+      "column": "power_total_w",
+      "key": "power__total",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "power_internal_w",
+      "key": "power__internal__total",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "power_switching_w",
+      "key": "power__switching__total",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "power_leakage_w",
+      "key": "power__leakage__total",
+      "source": "post_route_sta",
+      "corners": "none"
+    },
+    {
+      "column": "max_slew_violations",
+      "key": "design__max_slew_violation__count",
+      "source": "post_route_sta",
+      "corners": "sum"
+    },
+    {
+      "column": "max_cap_violations",
+      "key": "design__max_cap_violation__count",
+      "source": "post_route_sta",
+      "corners": "sum"
+    },
+    {
+      "column": "max_fanout_violations",
+      "key": "design__max_fanout_violation__count",
+      "source": "post_route_sta",
+      "corners": "sum"
+    },
+    {
+      "column": "antenna_violating_nets",
+      "key": "antenna__violating__nets",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "power_grid_violations",
+      "key": "design__power_grid_violation__count",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "ir_drop_worst_v",
+      "key": "ir__drop__worst",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "route_drc_errors",
+      "key": "route__drc_errors",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "magic_drc_errors",
+      "key": "magic__drc_error__count",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "klayout_drc_errors",
+      "key": "klayout__drc_error__count",
+      "source": "final",
+      "corners": "none"
+    },
+    {
+      "column": "lvs_errors",
+      "key": "design__lvs_error__count",
+      "source": "final",
+      "corners": "none"
+    }
+  ],
+  "//knob_columns": "runs.csv gets knob__<NAME> for every catalogue knob plus every key set by a variant, read from the resolved run config (falling back to the job config, then the LibreLane default).",
+  "knob_columns": "catalog_and_variants",
+  "summary": {
+    "group_by": [
+      "design",
+      "pdk",
+      "configuration",
+      "machine_id",
+      "threads",
+      "parallel_jobs",
+      "cpu_affinity",
+      "cpu_limits",
+      "process_nice"
+    ],
+    "fields_all_attempts": [
+      "setup_ws_ns",
+      "hold_ws_ns",
+      "wall_time_s"
+    ],
+    "fields_passing_only": [
+      "instance_area_um2",
+      "wirelength_um",
+      "power_total_w"
+    ]
+  },
+  "//analysis": "Read by scripts/analyze.py. direction: which way is better. effect: 'relative' (% of baseline median) or 'absolute' (units). population: 'passing' (study_checks_pass) or 'attempted' (any run with a value).",
+  "analysis": {
+    "baseline_config": "C0",
+    "bootstrap_iterations": 2000,
+    "permutation_iterations": 2000,
+    "rng_seed": 20261017,
+    "confidence": 0.95,
+    "fdr_q": 0.05,
+    "min_seeds_per_group": 3,
+    "min_pass_fraction_for_ranking": 0.8,
+    "single_run_budgets": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "single_run_trials": 2000,
+    "derived": {
+      "setup_slack_frac": "setup_ws_ns / clock_period_ns"
+    },
+    "metrics": [
+      {
+        "column": "instance_area_um2",
+        "direction": "min",
+        "effect": "relative",
+        "population": "passing"
+      },
+      {
+        "column": "wirelength_um",
+        "direction": "min",
+        "effect": "relative",
+        "population": "passing"
+      },
+      {
+        "column": "setup_slack_frac",
+        "direction": "max",
+        "effect": "absolute",
+        "population": "attempted"
+      },
+      {
+        "column": "setup_ws_ns",
+        "direction": "max",
+        "effect": "absolute",
+        "population": "attempted"
+      },
+      {
+        "column": "hold_ws_ns",
+        "direction": "max",
+        "effect": "absolute",
+        "population": "attempted"
+      },
+      {
+        "column": "wall_time_s",
+        "direction": "min",
+        "effect": "relative",
+        "population": "attempted"
+      }
+    ],
+    "//ties": "Exact ties split bootstrap credit; optionally predeclare tie_tolerance_abs and tie_tolerance_rel per metric. Relative tolerance is a fraction."
+  }
+}

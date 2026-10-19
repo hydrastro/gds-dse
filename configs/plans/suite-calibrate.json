@@ -1,0 +1,105 @@
+{
+  "//": [
+    "Clock calibration sweep: 8 absolute periods per PDK (factor ~sqrt(2) apart), 3 seeds, flow stopped after post-route STA.",
+    "Candidate periods differ by platform; validate the range empirically for each design.",
+    "After running: python3 scripts/calibrate_clock.py --label <label> --write; extend a range if the script asks."
+  ],
+  "name": "cal",
+  "strategy": "list",
+  "include_baseline": false,
+  "variants": {
+    "p1": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 4,
+          "gf180mcuD": 8,
+          "ihp-sg13g2": 3
+        }
+      }
+    },
+    "p2": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 5.5,
+          "gf180mcuD": 11,
+          "ihp-sg13g2": 4
+        }
+      }
+    },
+    "p3": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 8,
+          "gf180mcuD": 16,
+          "ihp-sg13g2": 5.5
+        }
+      }
+    },
+    "p4": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 11,
+          "gf180mcuD": 22,
+          "ihp-sg13g2": 8
+        }
+      }
+    },
+    "p5": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 16,
+          "gf180mcuD": 32,
+          "ihp-sg13g2": 11
+        }
+      }
+    },
+    "p6": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 22,
+          "gf180mcuD": 45,
+          "ihp-sg13g2": 16
+        }
+      }
+    },
+    "p7": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 32,
+          "gf180mcuD": 64,
+          "ihp-sg13g2": 22
+        }
+      }
+    },
+    "p8": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 45,
+          "gf180mcuD": 90,
+          "ihp-sg13g2": 32
+        }
+      }
+    }
+  },
+  "experiment_path": "experiments/suite/calibrate.json",
+  "experiment": {
+    "phase": "pilot",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "stop_after": "OpenROAD.STAPostPNR"
+  }
+}

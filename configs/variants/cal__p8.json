@@ -1,0 +1,17 @@
+{
+  "//generated_by": "cal",
+  "//factor:CLOCK_PERIOD": {
+    "$per_pdk": {
+      "sky130A": 45,
+      "gf180mcuD": 90,
+      "ihp-sg13g2": 32
+    }
+  },
+  "CLOCK_PERIOD": {
+    "$per_pdk": {
+      "sky130A": 45,
+      "gf180mcuD": 90,
+      "ihp-sg13g2": 32
+    }
+  }
+}

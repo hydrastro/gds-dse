@@ -1,0 +1,15 @@
+[submodule "tools/librelane"]
+	path = tools/librelane
+	url = https://github.com/librelane/librelane.git
+[submodule "designs/aes"]
+	path = designs/aes
+	url = https://github.com/secworks/aes.git
+[submodule "designs/sha256"]
+	path = designs/sha256
+	url = https://github.com/secworks/sha256.git
+[submodule "designs/chacha"]
+	path = designs/chacha
+	url = https://github.com/secworks/chacha.git
+[submodule "designs/prince"]
+	path = designs/prince
+	url = https://github.com/secworks/prince.git

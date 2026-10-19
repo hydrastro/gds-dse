@@ -1,0 +1,43 @@
+{
+  "//": [
+    "Stage 3: every remaining default knob of the catalogue (synthesis/ABC options, floorplan shape,",
+    "placement, resizer, fanout), one at a time. The stage-1 knobs are excluded (already covered)."
+  ],
+  "name": "s3",
+  "strategy": "ofat",
+  "groups": [
+    "constraints",
+    "synthesis",
+    "floorplan",
+    "placement",
+    "resizer"
+  ],
+  "exclude": [
+    "CLOCK_PERIOD",
+    "FP_CORE_UTIL",
+    "PL_TARGET_DENSITY_PCT",
+    "SYNTH_STRATEGY",
+    "SYNTH_HIERARCHY_MODE"
+  ],
+  "include_baseline": true,
+  "experiment_path": "experiments/suite/stage3.json",
+  "experiment": {
+    "phase": "study",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ]
+  }
+}

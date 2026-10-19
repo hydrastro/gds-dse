@@ -1,0 +1,26 @@
+{
+  "//": [
+    "SHA-224/256, one round per cycle, 32-bit modular adders (secworks/sha256 837c5cc).",
+    "Top = the 32-bit register-interface wrapper (about 76 I/O), not the wide raw core.",
+    "clock_period_ns is only a fallback: the per-PDK reference is written to pdks/<pdk>.json by scripts/calibrate_clock.py."
+  ],
+  "rtl_root": "designs/sha256",
+  "top": "sha256",
+  "clock_port": "clk",
+  "clock_period_ns": 25.0,
+  "sources": [
+    "src/rtl/sha256.v",
+    "src/rtl/sha256_core.v",
+    "src/rtl/sha256_k_constants.v",
+    "src/rtl/sha256_w_mem.v"
+  ],
+  "include_dirs": [],
+  "defines": [],
+  "parameters": [],
+  "use_slang": false,
+  "sdc": "configs/constraints/single_clock.sdc",
+  "flow_overrides": {},
+  "project_sources": [],
+  "project_include_dirs": [],
+  "additional_input_files": []
+}

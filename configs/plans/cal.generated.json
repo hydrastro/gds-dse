@@ -1,0 +1,82 @@
+{
+  "notes": [],
+  "plan": "configs/plans/suite-calibrate.json",
+  "strategy": "list",
+  "knobs": [],
+  "baseline": "C0",
+  "variants": {
+    "cal__p1": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 4,
+          "gf180mcuD": 8,
+          "ihp-sg13g2": 3
+        }
+      }
+    },
+    "cal__p2": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 5.5,
+          "gf180mcuD": 11,
+          "ihp-sg13g2": 4
+        }
+      }
+    },
+    "cal__p3": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 8,
+          "gf180mcuD": 16,
+          "ihp-sg13g2": 5.5
+        }
+      }
+    },
+    "cal__p4": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 11,
+          "gf180mcuD": 22,
+          "ihp-sg13g2": 8
+        }
+      }
+    },
+    "cal__p5": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 16,
+          "gf180mcuD": 32,
+          "ihp-sg13g2": 11
+        }
+      }
+    },
+    "cal__p6": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 22,
+          "gf180mcuD": 45,
+          "ihp-sg13g2": 16
+        }
+      }
+    },
+    "cal__p7": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 32,
+          "gf180mcuD": 64,
+          "ihp-sg13g2": 22
+        }
+      }
+    },
+    "cal__p8": {
+      "CLOCK_PERIOD": {
+        "$per_pdk": {
+          "sky130A": 45,
+          "gf180mcuD": 90,
+          "ihp-sg13g2": 32
+        }
+      }
+    }
+  },
+  "skipped": []
+}

@@ -1,0 +1,82 @@
+{
+  "//": [
+    "Per-PDK settings. 'overrides' is config layer 2 (above defaults.json). Values are each PDK's own LibreLane",
+    "defaults at the versions pinned by tools/librelane/librelane/pdk_hashes.yaml, written out explicitly so that",
+    "(a) C0 is documented, (b) relative variants ($scale/$add) have a base, (c) a PDK rebuild cannot change C0 silently.",
+    "Sources: open_pdks 8afc8346 sky130/openlane/{config.tcl,sky130_fd_sc_hd/config.tcl};",
+    "open_pdks 54435919 gf180mcu/openlane/{config.tcl,gf180mcu_fd_sc_mcu7t5v0/config.tcl};",
+    "IHP-Open-PDK c4b8b4e5 ihp-sg13g2/libs.tech/librelane/{config.tcl,sg13g2_stdcell/config.tcl};",
+    "LibreLane 01ddb25e librelane/config/pdk_compat.py (fills fanout/uncertainty/transition/derate/IO delay for sky130 and gf180).",
+    "Only SETUP/HOLD_VIOLATION_CORNERS deviate from the PDK defaults (which check typical only): see timing_corners.",
+    "See docs/pdk-values.md for the full table and rationale."
+  ],
+  "sky130A": {
+    "scl": "sky130_fd_sc_hd",
+    "overrides": {
+      "MAX_FANOUT_CONSTRAINT": 10,
+      "CLOCK_UNCERTAINTY_CONSTRAINT": 0.25,
+      "CLOCK_TRANSITION_CONSTRAINT": 0.15,
+      "TIME_DERATING_CONSTRAINT": 5,
+      "IO_DELAY_CONSTRAINT": 20,
+      "OUTPUT_CAP_LOAD": 33.442,
+      "GPL_CELL_PADDING": 0,
+      "DPL_CELL_PADDING": 0,
+      "SETUP_VIOLATION_CORNERS": ["nom_ss_100C_1v60"],
+      "HOLD_VIOLATION_CORNERS": ["nom_ff_n40C_1v95"]
+    },
+    "timing_corners": {"setup": ["nom_ss_100C_1v60"], "hold": ["nom_ff_n40C_1v95"]},
+    "reference": {
+      "process_nm": 130, "vdd_v": 1.8, "site": "unithd", "site_width_um": 0.46, "row_height_um": 2.72,
+      "rt_layers": "met1-met5", "pdn_layers": "met4/met5",
+      "sta_corners": "nom/min/max RC x tt_025C_1v80, ss_100C_1v60, ff_n40C_1v95",
+      "adder_maps": "FA, RCA, CSA available",
+      "max_transition_ns": 0.75, "max_capacitance_pf": 0.2, "driving_cell": "sky130_fd_sc_hd__inv_2/Y"
+    }
+  },
+  "gf180mcuD": {
+    "scl": "gf180mcu_fd_sc_mcu7t5v0",
+    "overrides": {
+      "MAX_FANOUT_CONSTRAINT": 10,
+      "CLOCK_UNCERTAINTY_CONSTRAINT": 0.25,
+      "CLOCK_TRANSITION_CONSTRAINT": 0.15,
+      "TIME_DERATING_CONSTRAINT": 5,
+      "IO_DELAY_CONSTRAINT": 20,
+      "OUTPUT_CAP_LOAD": 72.91,
+      "GPL_CELL_PADDING": 0,
+      "DPL_CELL_PADDING": 0,
+      "SETUP_VIOLATION_CORNERS": ["nom_ss_125C_4v50"],
+      "HOLD_VIOLATION_CORNERS": ["nom_ff_n40C_5v50"]
+    },
+    "timing_corners": {"setup": ["nom_ss_125C_4v50"], "hold": ["nom_ff_n40C_5v50"]},
+    "reference": {
+      "process_nm": 180, "vdd_v": 5.0, "site": "GF018hv5v_mcu_sc7", "site_width_um": 0.56, "row_height_um": 3.92,
+      "rt_layers": "Metal2-Metal5", "pdn_layers": "Metal4/Metal5",
+      "sta_corners": "nom/min/max RC x tt_025C_5v00, ss_125C_4v50, ff_n40C_5v50",
+      "adder_maps": "none (LibreLane removes them for gf180mcu): SYNTH_ADDER_TYPE FA/RCA/CSA has no effect",
+      "max_transition_ns": 3, "max_capacitance_pf": 0.2, "driving_cell": "gf180mcu_fd_sc_mcu7t5v0__inv_1/ZN"
+    }
+  },
+  "ihp-sg13g2": {
+    "scl": "sg13g2_stdcell",
+    "overrides": {
+      "MAX_FANOUT_CONSTRAINT": 10,
+      "CLOCK_UNCERTAINTY_CONSTRAINT": 0.25,
+      "CLOCK_TRANSITION_CONSTRAINT": 0.15,
+      "TIME_DERATING_CONSTRAINT": 5,
+      "IO_DELAY_CONSTRAINT": 20,
+      "OUTPUT_CAP_LOAD": 6.0,
+      "GPL_CELL_PADDING": 0,
+      "DPL_CELL_PADDING": 0,
+      "SETUP_VIOLATION_CORNERS": ["nom_slow_1p08V_125C"],
+      "HOLD_VIOLATION_CORNERS": ["nom_fast_1p32V_m40C"]
+    },
+    "timing_corners": {"setup": ["nom_slow_1p08V_125C"], "hold": ["nom_fast_1p32V_m40C"]},
+    "reference": {
+      "process_nm": 130, "vdd_v": 1.2, "site": "CoreSite", "site_width_um": 0.48, "row_height_um": 3.78,
+      "rt_layers": "Metal2-TopMetal2", "pdn_layers": "TopMetal1/TopMetal2",
+      "sta_corners": "nom RC only x typ_1p20V_25C, slow_1p08V_125C, fast_1p32V_m40C",
+      "adder_maps": "none: SYNTH_ADDER_TYPE FA/RCA/CSA has no effect",
+      "max_transition_ns": "not set by PDK", "max_capacitance_pf": "not set by PDK", "driving_cell": "sg13g2_buf_4/X"
+    }
+  }
+}

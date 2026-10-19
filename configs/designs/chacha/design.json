@@ -1,0 +1,25 @@
+{
+  "//": [
+    "ChaCha stream cipher, add-rotate-xor datapath with four parallel quarter-rounds (secworks/chacha 7eaba36).",
+    "Top = the 32-bit register-interface wrapper (about 76 I/O), not the wide raw core.",
+    "clock_period_ns is only a fallback: the per-PDK reference is written to pdks/<pdk>.json by scripts/calibrate_clock.py."
+  ],
+  "rtl_root": "designs/chacha",
+  "top": "chacha",
+  "clock_port": "clk",
+  "clock_period_ns": 25.0,
+  "sources": [
+    "src/rtl/chacha.v",
+    "src/rtl/chacha_core.v",
+    "src/rtl/chacha_qr.v"
+  ],
+  "include_dirs": [],
+  "defines": [],
+  "parameters": [],
+  "use_slang": false,
+  "sdc": "configs/constraints/single_clock.sdc",
+  "flow_overrides": {},
+  "project_sources": [],
+  "project_include_dirs": [],
+  "additional_input_files": []
+}

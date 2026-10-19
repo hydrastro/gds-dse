@@ -1,0 +1,11 @@
+{
+  "//generated_by": "s1",
+  "//factor:FP_CORE_UTIL": {
+    "$value": 60,
+    "$with": {
+      "PL_TARGET_DENSITY_PCT": 70
+    }
+  },
+  "FP_CORE_UTIL": 60,
+  "PL_TARGET_DENSITY_PCT": 70
+}

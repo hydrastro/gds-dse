@@ -1,0 +1,21 @@
+# Generated campaigns: archive selected ones separately (see reports/README.md).
+/results/
+
+# Ciel PDK cache downloaded by LibreLane.
+/pdks/
+
+# Machine-specific PDK paths; snapshotted into each campaign instead.
+/machine.local.json
+
+# Python / analysis environments.
+__pycache__/
+*.py[cod]
+/.venv*/
+/.analysis-venv/
+
+# Editors and OS clutter.
+.DS_Store
+*.swp
+*~
+.vscode/
+.idea/

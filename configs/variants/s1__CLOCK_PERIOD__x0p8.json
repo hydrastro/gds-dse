@@ -1,0 +1,9 @@
+{
+  "//generated_by": "s1",
+  "//factor:CLOCK_PERIOD": {
+    "$scale": 0.8
+  },
+  "CLOCK_PERIOD": {
+    "$scale": 0.8
+  }
+}

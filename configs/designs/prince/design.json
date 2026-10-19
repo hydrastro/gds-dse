@@ -1,0 +1,26 @@
+{
+  "//": [
+    "PRINCE lightweight 64-bit block cipher, pipelined (secworks/prince f40631d).",
+    "Top = the 32-bit register-interface wrapper (about 76 I/O), not the wide raw core.",
+    "clock_period_ns is only a fallback: the per-PDK reference is written to pdks/<pdk>.json by scripts/calibrate_clock.py."
+  ],
+  "rtl_root": "designs/prince",
+  "top": "prince",
+  "clock_port": "clk",
+  "clock_period_ns": 25.0,
+  "sources": [
+    "src/rtl/prince.v",
+    "src/rtl/prince_core.v"
+  ],
+  "include_dirs": [
+    "src/rtl"
+  ],
+  "defines": [],
+  "parameters": [],
+  "use_slang": false,
+  "sdc": "configs/constraints/single_clock.sdc",
+  "flow_overrides": {},
+  "project_sources": [],
+  "project_include_dirs": [],
+  "additional_input_files": []
+}

@@ -1,0 +1,31 @@
+{
+  "phase": "study",
+  "designs": [
+    "ascon"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "configs": [
+    "Cminus",
+    "C0",
+    "Cplus"
+  ],
+  "seeds": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "repeat": 1,
+  "stop_after": null,
+  "order_seed": 20261015
+}

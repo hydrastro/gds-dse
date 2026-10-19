@@ -1,0 +1,6235 @@
+{
+ "flow": "Classic",
+ "librelane_commit": "01ddb25e4424f6f5aaf6b951b14a2b6fdcf737c0",
+ "schema": 1,
+ "steps": [
+  "Verilator.Lint",
+  "Checker.LintTimingConstructs",
+  "Checker.LintErrors",
+  "Checker.LintWarnings",
+  "Yosys.JsonHeader",
+  "Yosys.Synthesis",
+  "Checker.YosysUnmappedCells",
+  "Checker.YosysSynthChecks",
+  "Checker.NetlistAssignStatements",
+  "OpenROAD.CheckSDCFiles",
+  "OpenROAD.CheckMacroInstances",
+  "OpenROAD.STAPrePNR",
+  "OpenROAD.Floorplan",
+  "OpenROAD.DumpRCValues",
+  "Odb.CheckMacroAntennaProperties",
+  "Odb.SetPowerConnections",
+  "Odb.ManualMacroPlacement",
+  "OpenROAD.CutRows",
+  "OpenROAD.TapEndcapInsertion",
+  "Odb.AddPDNObstructions",
+  "OpenROAD.GeneratePDN",
+  "Odb.RemovePDNObstructions",
+  "Odb.AddRoutingObstructions",
+  "OpenROAD.GlobalPlacementSkipIO",
+  "OpenROAD.IOPlacement",
+  "Odb.CustomIOPlacement",
+  "Odb.ApplyDEFTemplate",
+  "OpenROAD.GlobalPlacement",
+  "Odb.WriteVerilogHeader",
+  "Checker.PowerGridViolations",
+  "OpenROAD.STAMidPNR",
+  "OpenROAD.RepairDesignPostGPL",
+  "Odb.ManualGlobalPlacement",
+  "OpenROAD.DetailedPlacement",
+  "OpenROAD.CTS",
+  "OpenROAD.STAMidPNR-1",
+  "OpenROAD.ResizerTimingPostCTS",
+  "OpenROAD.STAMidPNR-2",
+  "OpenROAD.GlobalRouting",
+  "OpenROAD.CheckAntennas",
+  "OpenROAD.RepairDesignPostGRT",
+  "Odb.DiodesOnPorts",
+  "Odb.HeuristicDiodeInsertion",
+  "OpenROAD.RepairAntennas",
+  "OpenROAD.ResizerTimingPostGRT",
+  "OpenROAD.STAMidPNR-3",
+  "OpenROAD.DetailedRouting",
+  "Odb.RemoveRoutingObstructions",
+  "OpenROAD.CheckAntennas-1",
+  "Checker.TrDRC",
+  "Odb.ReportDisconnectedPins",
+  "Checker.DisconnectedPins",
+  "Odb.ReportWireLength",
+  "Checker.WireLength",
+  "OpenROAD.FillInsertion",
+  "Odb.CellFrequencyTables",
+  "OpenROAD.RCX",
+  "OpenROAD.STAPostPNR",
+  "OpenROAD.IRDropReport",
+  "Magic.StreamOut",
+  "KLayout.StreamOut",
+  "KLayout.Render",
+  "Magic.WriteLEF",
+  "Odb.CheckDesignAntennaProperties",
+  "KLayout.XOR",
+  "Checker.XOR",
+  "Magic.DRC",
+  "KLayout.DRC",
+  "Checker.MagicDRC",
+  "Checker.KLayoutDRC",
+  "Magic.SpiceExtraction",
+  "Checker.IllegalOverlap",
+  "Netgen.LVS",
+  "Checker.LVS",
+  "Yosys.EQY",
+  "Checker.SetupViolations",
+  "Checker.HoldViolations",
+  "Checker.MaxSlewViolations",
+  "Checker.MaxCapViolations",
+  "Misc.ReportManufacturability"
+ ],
+ "variables": {
+  "BOTTOM_MARGIN_MULT": {
+   "default": 4,
+   "deprecated_names": [],
+   "description": "The core margin, in multiples of site heights, from the bottom boundary. If `DIEA_AREA` and `CORE_AREA` are set, this variable has no effect.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "CELL_BB_VERILOG_MODELS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Path(s) to cells' black-box Verilog model(s)",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_CDLS": {
+   "default": null,
+   "deprecated_names": [
+    "STD_CELL_LIBRARY_CDL"
+   ],
+   "description": "A circuit-design language view of the standard cell library.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_GDS": {
+   "default": null,
+   "deprecated_names": [
+    "GDS_FILES",
+    "CELLS_GDS"
+   ],
+   "description": "Path(s) to the cells' GDSII file(s).",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_LEFS": {
+   "default": null,
+   "deprecated_names": [
+    "CELLS_LEF"
+   ],
+   "description": "Path(s) to the cells' LEF file(s).",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_MAGLEFS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of pre-processed abstract LEF views for cells. Read as a fallback for undefined cells in scripts where cells are black-boxed.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_MAGS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of pre-processed concrete views for cells. Read as a fallback for undefined cells.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_PAD_EXCLUDE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines a list of cells to be excluded from cell padding.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "CELL_SPICE_MODELS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Path(s) to cells' SPICE model(s)",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CELL_VERILOG_MODELS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Path(s) to cells' Verilog model(s)",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "CLOCK_NET": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The name of the net input to root clock buffer. If unset, it is presumed to be equal to CLOCK_PORT.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.Union[NoneType, str, typing.List[str]]",
+   "units": null
+  },
+  "CLOCK_PERIOD": {
+   "default": 10.0,
+   "deprecated_names": [],
+   "description": "The clock period for the design.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "CLOCK_PORT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The name(s) of the design's clock port(s).",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.Union[NoneType, str, typing.List[str]]",
+   "units": null
+  },
+  "CLOCK_TRANSITION_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_CLOCK_TRANSITION"
+   ],
+   "description": "Specifies a value for the clock transition/slew for timing analysis.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "CLOCK_UNCERTAINTY_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_CLOCK_UNCERTAINTY"
+   ],
+   "description": "Specifies a value for the clock uncertainty/jitter for timing analysis.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "CLOCK_WIRE_RC_LAYERS": {
+   "default": null,
+   "deprecated_names": [
+    "CLOCK_WIRE_RC_LAYER"
+   ],
+   "description": "Sets estimated clock wire RC values to the average of these layers'. If you provide more than two, the averages are grouped by preferred routing direction and you must provide at least one layer for each routing direction.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "CORE_AREA": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies a core area (i.e. die area minus margins) to be used in floorplanning. It must be paired with `DIE_AREA`.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "typing.Tuple[decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]",
+   "units": "\u00b5m"
+  },
+  "CTS_APPLY_NDR": {
+   "choices": [
+    "none",
+    "root_only",
+    "half",
+    "full"
+   ],
+   "default": "half",
+   "deprecated_names": [],
+   "description": "Applies 2X spacing non-default rule to clock nets except leaf-level nets following some strategy. There are four strategy options: 'none', 'root_only', 'half', 'full'.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "CTS_BALANCE_LEVELS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Attempts to keep a similar number of levels in the clock tree across non-register cells (e.g., clock-gate or inverter).",
+   "kind": "bool",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "CTS_CLK_BUFFERS": {
+   "default": null,
+   "deprecated_names": [
+    "CTS_CLK_BUFFER_LIST"
+   ],
+   "description": "Defines the list of clock buffer names or buffer name wildcards to be used in CTS.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "CTS_CLK_MAX_WIRE_LENGTH": {
+   "default": 0,
+   "deprecated_names": [],
+   "description": "Specifies the maximum wire length on the clock net.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "CTS_CORNERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Clock tree synthesis step-specific override for PNR_CORNERS.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "CTS_DELAY_BUFFER_DERATE_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "This option balances latencies between macro cells and registers by inserting delay buffersThe value of 100 means all needed delay buffers are inserted",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "CTS_DISABLE_POST_PROCESSING": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Specifies whether or not to disable post cts processing for outlier sinks.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "CTS_DISTANCE_BETWEEN_BUFFERS": {
+   "default": 0,
+   "deprecated_names": [],
+   "description": "Specifies the distance between buffers when creating the clock tree.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "CTS_MACRO_CLUSTERING_MAX_DIAMETER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the maximum diameter of the sink cluster for the macro tree.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "CTS_MACRO_CLUSTERING_SIZE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the maximum number of sinks per cluster for the macro tree.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "CTS_MAX_CAP": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Overrides the maximum capacitance CTS characterization will test. If omitted, the capacitance is extracted from the lib information of the buffers in CTS_CLK_BUFFERS.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "pF"
+  },
+  "CTS_MAX_SLEW": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Overrides the maximum transition time CTS characterization will test. If omitted, the slew is extracted from the lib information of the buffers in CTS_CLK_BUFFERS.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "CTS_OBSTRUCTION_AWARE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Enables obstruction-aware buffering such that clock buffers are not placed on top of blockages or hard macros. This option may reduce legalizer displacement, leading to better latency, skew or timing QoR.",
+   "kind": "bool",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "CTS_ROOT_BUFFER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the cell inserted at the root of the clock tree. Used in CTS.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "CTS_SINK_BUFFER_MAX_CAP_DERATE_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Controls automatic buffer selection. To favor strong(weak) drive strength buffers use a small(large) value.The value of 100 means no derating of max cap limit",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "CTS_SINK_CLUSTERING_ENABLE": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables pre-clustering of sinks to create one level of sub-tree before building the H-tree. Each cluster is driven by a buffer which becomes the end point of the H-tree structure.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "CTS_SINK_CLUSTERING_MAX_DIAMETER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the maximum diameter of the sink cluster.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "CTS_SINK_CLUSTERING_SIZE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the maximum number of sinks per cluster.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CTS"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "DECAP_CELLS": {
+   "default": null,
+   "deprecated_names": [
+    "DECAP_CELL"
+   ],
+   "description": "A list of cell names or wildcards of decap cells to be used in fill insertion.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "DEDUPLICATE_CORNERS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Cull duplicate IPVT corners during PNR, i.e. corners that share the same set of lib files and values for LAYERS_RC and VIAS_R as another corner are not considered outside of STA.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DEFAULT_CORNER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The interconnect/process/voltage/temperature corner (IPVT) to use the characterized lib files compatible with by default.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "DEFAULT_MAX_TRAN": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the default maximum transition value used in Synthesis and CTS.\nA minimum of 0.1 * CLOCK_PERIOD and this variable, if defined, is used.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "DESIGN_DIR": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The directory of the design. Should be set via command-line arguments or :meth:`Config.load` flags and not actual configuration files. If using a configuration file, ``DESIGN_DIR`` will be the directory where that file exists.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "DESIGN_NAME": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The name of the top level module of the design. Must be a valid C identifier, i.e., matches the regular expression `[_a-zA-Z][_a-zA-Z0-9]+`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "DESIGN_REPAIR_BUFFER_INPUT_PORTS": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_BUFFER_INPUT_PORTS"
+   ],
+   "description": "Specifies whether or not to insert buffers on input ports when design repairs are run.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DESIGN_REPAIR_BUFFER_OUTPUT_PORTS": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_BUFFER_OUTPUT_PORTS"
+   ],
+   "description": "Specifies whether or not to insert buffers on output ports when design repairs are run.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DESIGN_REPAIR_MAX_CAP_PCT": {
+   "default": 20,
+   "deprecated_names": [
+    "PL_RESIZER_MAX_CAP_MARGIN"
+   ],
+   "description": "Specifies a margin for the capacitances during design repair.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "DESIGN_REPAIR_MAX_SLEW_PCT": {
+   "default": 20,
+   "deprecated_names": [
+    "PL_RESIZER_MAX_SLEW_MARGIN"
+   ],
+   "description": "Specifies a margin for the slews during design repair.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "DESIGN_REPAIR_MAX_WIRE_LENGTH": {
+   "default": 0,
+   "deprecated_names": [
+    "PL_RESIZER_MAX_WIRE_LENGTH"
+   ],
+   "description": "Specifies the maximum wire length cap used by resizer to insert buffers during design repair. If set to 0, no buffers will be inserted.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "DESIGN_REPAIR_REMOVE_BUFFERS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Invokes OpenROAD's remove_buffers command to remove buffers from synthesis, which gives OpenROAD more flexibility when buffering nets.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DESIGN_REPAIR_TIE_FANOUT": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_REPAIR_TIE_FANOUT"
+   ],
+   "description": "Specifies whether or not to repair tie cells fanout when design repairs are run.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DESIGN_REPAIR_TIE_SEPARATION": {
+   "default": false,
+   "deprecated_names": [
+    "PL_RESIZER_TIE_SEPERATION"
+   ],
+   "description": "Allows tie separation when performing design repairs.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DIE_AREA": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specific die area to be used in floorplanning when `FP_SIZING` is set to `absolute`. Specified as a 4-corner rectangle \"x0 y0 x1 y1\".",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.StreamOut",
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.Tuple[decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]",
+   "units": "\u00b5m"
+  },
+  "DIODE_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines a diode cell used to fix antenna violations, in the format `{cell}/{port}`. If not defined, steps should not attempt to repair the antenna effect by inserting diode cells.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "DIODE_ON_PORTS": {
+   "choices": [
+    "none",
+    "in",
+    "out",
+    "both"
+   ],
+   "default": "none",
+   "deprecated_names": [],
+   "description": "Always insert diodes on ports with the specified polarities.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Odb.DiodesOnPorts"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "DIODE_PADDING": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Diode cell padding; increases the width of diode cells during placement checks..",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": "sites"
+  },
+  "DPL_CELL_PADDING": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Cell padding value (in sites) for detailed placement. The number will be integer divided by 2 and placed on both sides. Should be <= global placement.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": true,
+   "python_type": "int",
+   "units": "sites"
+  },
+  "DRT_ANTENNA_REPAIR_DIODE_ONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Only use antenna diodes to fix antenna violations. Cannot be used in conjunction with DRT_ANTENNA_REPAIR_JUMPER_ONLY.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DRT_ANTENNA_REPAIR_ITERS": {
+   "default": 3,
+   "deprecated_names": [],
+   "description": "The maximum number of iterations to run antenna repair. Set to a positive integer to attempt to repair antennas and then re-run DRT as appropriate.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "DRT_ANTENNA_REPAIR_JUMPER_ONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Only use jumpers to fix antenna violations. Cannot be used in conjunction with DRT_ANTENNA_REPAIR_DIODE_ONLY.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DRT_ANTENNA_REPAIR_MARGIN": {
+   "default": 10,
+   "deprecated_names": [
+    "DRT_ANTENNA_MARGIN"
+   ],
+   "description": "The margin to over fix antenna violations.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": "%"
+  },
+  "DRT_ASSIGN_NDR": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specify which nets should be assigned to which non-default rule. The net name is a regular expression. Use '^name$' to match an exact name.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "dict[str, str]",
+   "units": null
+  },
+  "DRT_OPT_ITERS": {
+   "default": 64,
+   "deprecated_names": [],
+   "description": "Specifies the maximum number of optimization iterations during Detailed Routing in TritonRoute.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "DRT_SAVE_DRC_REPORT_ITERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Write a DRC report every N iterations. If DRT_SAVE_SNAPSHOTS is enabled, there is an implicit default value of 1.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "DRT_SAVE_SNAPSHOTS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Experimental: saves an odb snapshot of the layout each routing iteration. This increases disk usage considerably but is useful for debugging.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "DRT_THREADS": {
+   "default": null,
+   "deprecated_names": [
+    "ROUTING_CORES"
+   ],
+   "description": "Specifies the number of threads to be used in OpenROAD Detailed Routing. If unset, this will be equal to your machine's thread count.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "ENDCAP_CELL": {
+   "default": null,
+   "deprecated_names": [
+    "FP_ENDCAP_CELL"
+   ],
+   "description": "Defines the so-called 'end-cap' cell- class of decap cells placed at either sides of a design, if available.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "EQY_FORCE_ACCEPT_PDK": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Attempt to run EQY even if the PDK's Verilog models are supported by this step. Will likely result in a failure.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "EQY_SCRIPT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The EQY script to use. If unset, a generic EQY script will be generated, but this fails in a number of scenarios.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "ERRORS_ON_UNMATCHED_IO": {
+   "choices": [
+    "none",
+    "unmatched_design",
+    "unmatched_cfg",
+    "both"
+   ],
+   "default": "unmatched_design",
+   "deprecated_names": [
+    "QUIT_ON_UNMATCHED_IO"
+   ],
+   "description": "Controls whether to emit an error in: no situation, when pins exist in the design that do not exist in the config file, when pins exist in the config file that do not exist in the design, and both respectively. `both` is recommended, as the default is only for backwards compatibility with LibreLane 1.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "ERROR_ON_DISCONNECTED_PINS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_DISCONNECTED_PINS"
+   ],
+   "description": "Checks for disconnected instance pins after detailed routing and quits immediately if so.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.DisconnectedPins"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_ILLEGAL_OVERLAPS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_ILLEGAL_OVERLAPS"
+   ],
+   "description": "Checks for illegal overlaps during Magic extraction. In some cases, these imply existing undetected shorts in the design. It raises an error at the end of the flow if so.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.IllegalOverlap"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_KLAYOUT_DRC": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_KLAYOUT_DRC"
+   ],
+   "description": "Checks for DRC violations after KLayout DRC is executed and exits the flow if any was found.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.KLayoutDRC"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_LINTER_ERRORS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_VERILATOR_ERRORS",
+    "QUIT_ON_LINTER_ERRORS"
+   ],
+   "description": "Quit immediately on any linter errors.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.LintErrors"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_LINTER_TIMING_CONSTRUCTS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_LINTER_TIMING_CONSTRUCTS"
+   ],
+   "description": "Quit immediately on any discovered timing constructs during linting.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.LintTimingConstructs"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_LINTER_WARNINGS": {
+   "default": false,
+   "deprecated_names": [
+    "QUIT_ON_VERILATOR_WARNINGS",
+    "QUIT_ON_LINTER_WARNINGS"
+   ],
+   "description": "Raise an error immediately on any linter warnings.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.LintWarnings"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_LONG_WIRE": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_LONG_WIRE"
+   ],
+   "description": "Checks if any wire length exceeds the threshold set in the PDK. If so, an error is raised at the end of the flow.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.WireLength"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_LVS_ERROR": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_LVS_ERROR"
+   ],
+   "description": "Checks for LVS errors after Netgen is executed. If any exist, it raises an error at the end of the flow.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.LVS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_MAGIC_DRC": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_MAGIC_DRC"
+   ],
+   "description": "Checks for DRC violations after magic DRC is executed and exits the flow if any was found.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.MagicDRC"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_NL_ASSIGN_STATEMENTS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Whether to emit an error or simply warn about the existence",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.NetlistAssignStatements"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_PDN_VIOLATIONS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_PDN_VIOLATIONS",
+    "FP_PDN_CHECK_NODES"
+   ],
+   "description": "Checks for unconnected nodes in the power grid. If any exists, an error is raised at the end of the flow.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.PowerGridViolations"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_SYNTH_CHECKS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_SYNTH_CHECKS"
+   ],
+   "description": "Quits the flow immediately if one or more synthesis check errors are flagged. This checks for combinational loops and/or wires with no drivers.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.YosysSynthChecks"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_TR_DRC": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_TR_DRC"
+   ],
+   "description": "Checks for DRC violations after routing and exits the flow if any was found.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.TrDRC"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_UNMAPPED_CELLS": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_UNMAPPED_CELLS",
+    "CHECK_UNMAPPED_CELLS"
+   ],
+   "description": "Checks for unmapped cells after synthesis and quits immediately if so.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.YosysUnmappedCells"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "ERROR_ON_XOR_ERROR": {
+   "default": true,
+   "deprecated_names": [
+    "QUIT_ON_XOR_ERROR"
+   ],
+   "description": "Checks for geometric differences between the Magic and KLayout stream-outs. If any exist, raise an error at the end of the flow.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Checker.XOR"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "EXTRA_CDLS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies miscellaneous CDL netlists to be loaded indiscriminately whenever CDL netlists are loaded.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "EXTRA_EXCLUDED_CELLS": {
+   "default": null,
+   "deprecated_names": [
+    "RSZ_DONT_USE_CELLS",
+    "DONT_USE_CELLS"
+   ],
+   "description": "Wildcards matching additional cells to exclude from both synthesis and PnR.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "EXTRA_GDS": {
+   "default": null,
+   "deprecated_names": [
+    "EXTRA_GDS_FILES"
+   ],
+   "description": "Specifies GDS files of pre-hardened macros used in the current design, used during tape-out.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "EXTRA_LEFS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies miscellaneous LEF files to be loaded indiscriminately whenever LEFs are loaded.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "EXTRA_LIBS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies LIB files of pre-hardened macros used in the current design, used during timing analyses (and during parasitics-based STA as a fallback). These are loaded indiscriminately for all timing corners.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "EXTRA_SITES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Explicitly specify sites other than `PLACE_SITE` to create rows for. If the alternate-site standard cells properly declare the `SITE` property, you do not need to provide this explicitly.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "EXTRA_SPEFS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A variable that only exists for backwards compatibility with LibreLane <2.0.0 and should not be used by new designs.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.STAPostPNR"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[typing.Union[str, librelane.common.types.Path]]",
+   "units": null
+  },
+  "EXTRA_SPICE_MODELS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies miscellaneous SPICE models to be loaded indiscriminately whenever SPICE models are loaded.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "EXTRA_VERILOG_MODELS": {
+   "default": null,
+   "deprecated_names": [
+    "VERILOG_FILES_BLACKBOX"
+   ],
+   "description": "Specifies miscellaneous Verilog models to be loaded indiscriminately during synthesis.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "FALLBACK_SDC": {
+   "default": "Path('<librelane>/librelane/scripts/base.sdc')",
+   "deprecated_names": [
+    "FALLBACK_SDC_FILE",
+    "BASE_SDC_FILE",
+    "SDC_FILE"
+   ],
+   "description": "A fallback SDC file for when a step-specific SDC file is not defined.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "FILL_CELLS": {
+   "default": null,
+   "deprecated_names": [
+    "FILL_CELL"
+   ],
+   "description": "A list of cell names or wildcards of fill cells to be used in fill insertion.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "FP_ASPECT_RATIO": {
+   "default": 1,
+   "deprecated_names": [],
+   "description": "The core's aspect ratio (height / width).",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "FP_CORE_UTIL": {
+   "default": 50,
+   "deprecated_names": [],
+   "description": "The core utilization percentage.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "FP_DEF_TEMPLATE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Points to the DEF file to be used as a template.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "Odb.ApplyDEFTemplate"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "FP_FLIP_SITES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Flip these sites vertically. Useful in niche alignment scenarios where single-height cells have ground at the south side and double-height cells have power at the south side, causing a short. In that situation, flipping the sites for single-height cells resolves the issue.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "FP_MACRO_HORIZONTAL_HALO": {
+   "default": 10,
+   "deprecated_names": [
+    "FP_TAP_HORIZONTAL_HALO"
+   ],
+   "description": "Specify the horizontal halo size around macros.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "FP_MACRO_VERTICAL_HALO": {
+   "default": 10,
+   "deprecated_names": [
+    "FP_TAP_VERTICAL_HALO"
+   ],
+   "description": "Specify the vertical halo size around macros.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "FP_OBSTRUCTIONS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Obstructions applied at floorplanning stage. Placement sites are never generated at these locations, which guarantees that it will remain empty throughout the entire flow.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[typing.Tuple[decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]]",
+   "units": "\u00b5m"
+  },
+  "FP_PRUNE_THRESHOLD": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "If specified, all rows smaller in width than this value will be removed. This helps avoid \"islets\" of cells that are hard to route and connect to PDNs.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CutRows"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "FP_SIZING": {
+   "choices": [
+    "absolute",
+    "relative"
+   ],
+   "default": "relative",
+   "deprecated_names": [],
+   "description": "Sizing mode for floorplanning",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "FP_TAPCELL_DIST": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The distance between tap cell columns. Must be specified if WELLTAP_CELL is specified.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.TapEndcapInsertion"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "FP_TEMPLATE_COPY_POWER_PINS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Whether to *always* copy all power pins from the DEF template to the design.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Odb.ApplyDEFTemplate"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "FP_TEMPLATE_MATCH_MODE": {
+   "choices": [
+    "strict",
+    "permissive"
+   ],
+   "default": "strict",
+   "deprecated_names": [],
+   "description": "Whether to require that the pin set of the DEF template and the design should be identical. In permissive mode, pins that are in the design and not in the template will be excluded, and vice versa.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Odb.ApplyDEFTemplate"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "FP_TRACKS_INFO": {
+   "default": null,
+   "deprecated_names": [
+    "TRACKS_INFO_FILE"
+   ],
+   "description": "A path to the a classic OpenROAD `.tracks` file. Used by the floorplanner to generate tracks.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "GND_NETS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the ground nets/pins to be used when creating the power grid for the design.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "GND_PIN": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The ground pin for the cells.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "GPL_CELL_PADDING": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Cell padding value (in sites) for global placement. The number will be integer divided by 2 and placed on both sides.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion"
+   ],
+   "pdk": true,
+   "python_type": "int",
+   "units": "sites"
+  },
+  "GRT_ADJUSTMENT": {
+   "default": 0.3,
+   "deprecated_names": [],
+   "description": "Reduction in the routing capacity of the edges between the cells in the global routing graph for all layers. Values range from 0 to 1.  1 = most reduction, 0 = least reduction.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "GRT_ALLOW_CONGESTION": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Allow congestion during global routing",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_ANTENNA_REPAIR_DIODE_ONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Only use antenna diodes to fix antenna violations. Cannot be used in conjunction with GRT_ANTENNA_REPAIR_JUMPER_ONLY.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_ANTENNA_REPAIR_ITERS": {
+   "default": 3,
+   "deprecated_names": [
+    "GRT_ANT_ITERS",
+    "GRT_ANTENNA_ITERS"
+   ],
+   "description": "The maximum number of iterations for global antenna repairs.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "GRT_ANTENNA_REPAIR_JUMPER_ONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Only use jumpers to fix antenna violations. Cannot be used in conjunction with GRT_ANTENNA_REPAIR_DIODE_ONLY.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_ANTENNA_REPAIR_MARGIN": {
+   "default": 10,
+   "deprecated_names": [
+    "GRT_ANT_MARGIN",
+    "GRT_ANTENNA_MARGIN"
+   ],
+   "description": "The margin to over fix antenna violations.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": "%"
+  },
+  "GRT_DESIGN_REPAIR_MAX_CAP_PCT": {
+   "default": 10,
+   "deprecated_names": [
+    "GLB_RESIZER_MAX_CAP_MARGIN"
+   ],
+   "description": "Specifies a margin for the capacitances during design post-grt repair.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_DESIGN_REPAIR_MAX_SLEW_PCT": {
+   "default": 10,
+   "deprecated_names": [
+    "GLB_RESIZER_MAX_SLEW_MARGIN"
+   ],
+   "description": "Specifies a margin for the slews during post-grt design repair.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_DESIGN_REPAIR_MAX_WIRE_LENGTH": {
+   "default": 0,
+   "deprecated_names": [
+    "GLB_RESIZER_MAX_WIRE_LENGTH"
+   ],
+   "description": "Specifies the maximum wire length cap used by resizer to insert buffers during post-grt design repair. If set to 0, no buffers will be inserted.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "GRT_DESIGN_REPAIR_RUN_GRT": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables running GRT before and after running resizer",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_LAYER_ADJUSTMENTS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Layer-specific reductions in the routing capacity of the edges between the cells in the global routing graph, delimited by commas. Values range from 0 through 1.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[decimal.Decimal]",
+   "units": null
+  },
+  "GRT_MACRO_EXTENSION": {
+   "default": 0,
+   "deprecated_names": [],
+   "description": "Sets the number of GCells added to the blockages boundaries from macros. A GCell is typically defined in terms of Mx routing tracks. The default GCell size is 15 M3 pitches.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "GRT_OVERFLOW_ITERS": {
+   "default": 50,
+   "deprecated_names": [],
+   "description": "The maximum number of iterations waiting for the overflow to reach the desired value.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "GRT_RESIZER_ALLOW_SETUP_VIOS": {
+   "default": false,
+   "deprecated_names": [
+    "GLB_RESIZER_ALLOW_SETUP_VIOS"
+   ],
+   "description": "Allows setup violations when fixing hold.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_FIX_HOLD_FIRST": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Experimental: attempt to fix hold violations before setup violations, which may lead to better timing results.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_HOLD_MAX_BUFFER_PCT": {
+   "default": 50,
+   "deprecated_names": [
+    "GLB_RESIZER_HOLD_MAX_BUFFER_PERCENT"
+   ],
+   "description": "Specifies a max number of buffers to insert to fix hold violations. This number is calculated as a percentage of the number of instances in the design.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_HOLD_MAX_UTIL_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the percentage of core area used during hold fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_HOLD_REPAIR_TNS_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Percentage of violating endpoints to repair during hold fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_HOLD_SLACK_MARGIN": {
+   "default": 0.05,
+   "deprecated_names": [
+    "GLB_RESIZER_HOLD_SLACK_MARGIN"
+   ],
+   "description": "Specifies a time margin for the slack when fixing hold violations. Normally the resizer will stop when it reaches zero slack. This option allows you to overfix.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "GRT_RESIZER_RUN_GRT": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Gates running global routing after resizer steps. May be useful to disable for designs where global routing takes non-trivial time.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_SETUP_BUFFERING": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Rebuffering and load splitting during setup fixing.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_SETUP_BUFFER_REMOVAL": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Buffer removal transform during setup fixing.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_SETUP_GATE_CLONING": {
+   "default": true,
+   "deprecated_names": [
+    "GRT_RESIZER_GATE_CLONING"
+   ],
+   "description": "Enables gate cloning when attempting to fix setup violations",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "GRT_RESIZER_SETUP_MAX_BUFFER_PCT": {
+   "default": 50,
+   "deprecated_names": [
+    "GLB_RESIZER_SETUP_MAX_BUFFER_PERCENT"
+   ],
+   "description": "Specifies a max number of buffers to insert to fix setup violations. This number is calculated as a percentage of the number of instances in the design.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_SETUP_MAX_UTIL_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the percentage of core area used during setup fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_SETUP_REPAIR_TNS_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Percentage of violating endpoints to repair during setup fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "GRT_RESIZER_SETUP_SLACK_MARGIN": {
+   "default": 0.025,
+   "deprecated_names": [
+    "GLB_RESIZER_SETUP_SLACK_MARGIN"
+   ],
+   "description": "Specifies a time margin for the slack when fixing setup violations.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "HEURISTIC_ANTENNA_THRESHOLD": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A Manhattan distance above which a diode is recommended to be inserted by the heuristic inserter. If not specified, the heuristic algorithm.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "Odb.HeuristicDiodeInsertion"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "HOLD_VIOLATION_CORNERS": {
+   "default": [
+    "*"
+   ],
+   "deprecated_names": [],
+   "description": "A list of wildcards matching IPVT corners to use during checking for hold violations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Checker.HoldViolations"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "IGNORE_DISCONNECTED_MODULES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Modules (or cells) to ignore when checking for disconnected pins.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Odb.ReportDisconnectedPins"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "IO_DELAY_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "IO_PCT"
+   ],
+   "description": "Specifies the percentage of the clock period used in the input/output delays.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "IO_EXCLUDE_PIN_REGION": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "List of regions where pins cannot be placed. The regions are strings in the format `{edge}:{interval}` where edge is `top|bottom|left|right` and the interval is either `*` to exclude the entire edge or `{begin}-{end}` to exclude a part of the edge, where `begin` and `end` are either absolute distance values or themselves `*` to denote the very start or end of an edge.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_CORNER_AVOIDANCE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The distance from each corner within which pin placement should be avoided.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_H_EXTENSION": {
+   "default": 0,
+   "deprecated_names": [
+    "FP_IO_HEXTEND"
+   ],
+   "description": "Extends the horizontal io pins outside of the die by the specified units.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_H_LAYER": {
+   "default": null,
+   "deprecated_names": [
+    "FP_IO_HLAYER"
+   ],
+   "description": "The metal layer on which to place horizontally-aligned (long side parallel with the horizon) pins alongside the east and west edges of the die.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "IO_PIN_H_LENGTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_IO_HLENGTH"
+   ],
+   "description": "\n        The length of the pins with an east or west orientation. If unspecified by a PDK, OpenROAD will use whichever is higher of the following two values:\n            * The pin width\n            * The minimum value satisfying the minimum area constraint given the pin width\n        ",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_H_THICKNESS_MULT": {
+   "default": 2,
+   "deprecated_names": [
+    "FP_IO_HTHICKNESS_MULT"
+   ],
+   "description": "A multiplier for horizontal pin thickness. Base thickness is the pins layer min width.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "IO_PIN_MIN_DISTANCE": {
+   "default": null,
+   "deprecated_names": [
+    "FP_IO_MIN_DISTANCE"
+   ],
+   "description": "The minimum distance between two pins. The unit is microns or routing tracks, depending on whether IO_PIN_MIN_DISTANCE_IN_TRACKS is set. If unspecified by a PDK, OpenROAD will use the length of two routing tracks.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m or routing tracks"
+  },
+  "IO_PIN_MIN_DISTANCE_IN_TRACKS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Setting this variable to true allows IO_PIN_MIN_DISTANCE to be set in number of tracks instead of microns.",
+   "kind": "bool",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "bool",
+   "units": null
+  },
+  "IO_PIN_ORDER_CFG": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PIN_ORDER_CFG"
+   ],
+   "description": "Path to a custom pin configuration file.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "IO_PIN_PLACEMENT_MODE": {
+   "choices": [
+    "matching",
+    "annealing",
+    "random_equidistant"
+   ],
+   "default": "matching",
+   "deprecated_names": [
+    "FP_PPL_MODE"
+   ],
+   "description": "Decides the mode of the random IO placement option.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "IO_PIN_V_EXTENSION": {
+   "default": 0,
+   "deprecated_names": [
+    "FP_IO_VEXTEND"
+   ],
+   "description": "Extends the vertical io pins outside of the die by the specified units.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_V_LAYER": {
+   "default": null,
+   "deprecated_names": [
+    "FP_IO_VLAYER"
+   ],
+   "description": "The metal layer on which to place vertically-aligned (long side perpendicular to the horizon) pins alongside the north and south edges of the die.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "IO_PIN_V_LENGTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_IO_VLENGTH"
+   ],
+   "description": "\n        The length of the pins with a north or south orientation. If unspecified by a PDK, OpenROAD will use whichever is higher of the following two values:\n            * The pin width\n            * The minimum value satisfying the minimum area constraint given the pin width\n        ",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "IO_PIN_V_THICKNESS_MULT": {
+   "default": 2,
+   "deprecated_names": [
+    "FP_IO_VTHICKNESS_MULT"
+   ],
+   "description": "A multiplier for vertical pin thickness. Base thickness is the pins layer min width.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.IOPlacement",
+    "Odb.CustomIOPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "KLAYOUT_CONFLICT_RESOLUTION": {
+   "choices": [
+    "AddToCell",
+    "OverwriteCell",
+    "RenameCell",
+    "SkipNewCell"
+   ],
+   "default": "RenameCell",
+   "deprecated_names": [],
+   "description": "Specifies the conflict resolution if a cell name conflict arises.",
+   "kind": "choice",
+   "optional": true,
+   "owners": [
+    "KLayout.StreamOut"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "KLAYOUT_DEF_LAYER_MAP": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A path to the KLayout LEF/DEF layer mapping (.map) file.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "KLayout.StreamOut",
+    "KLayout.Render",
+    "KLayout.XOR",
+    "KLayout.DRC"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "KLAYOUT_DRC_DEFINES": {
+   "default": null,
+   "deprecated_names": [
+    "KLAYOUT_DRC_OPTIONS"
+   ],
+   "description": "Options passed directly to the KLayout DRC runset. They vary from one PDK to another.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "KLayout.DRC"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, str]",
+   "units": null
+  },
+  "KLAYOUT_DRC_RUNSET": {
+   "default": null,
+   "deprecated_names": [
+    "KLAYOUT_DRC_TECH_SCRIPT"
+   ],
+   "description": "A path to KLayout DRC runset.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "KLayout.DRC"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "KLAYOUT_DRC_THREADS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the number of threads to be used in KLayout DRC.If unset, this will be equal to your machine's thread count.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "KLayout.DRC"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "KLAYOUT_PROPERTIES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A path to the KLayout layer properties (.lyp) file.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "KLayout.StreamOut",
+    "KLayout.Render",
+    "KLayout.XOR",
+    "KLayout.DRC"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "KLAYOUT_RENDER_BACKGROUND_COLOR": {
+   "choices": [
+    "white",
+    "black"
+   ],
+   "default": "white",
+   "deprecated_names": [],
+   "description": "The background color of the image.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "KLAYOUT_RENDER_GRID_VISBLE": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Render the grid in the image.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "KLAYOUT_RENDER_OVERSAMPLING": {
+   "default": 0,
+   "deprecated_names": [],
+   "description": "The oversampling factor (1..3), or 0 for disabling oversampling.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "KLAYOUT_RENDER_RESOLUTION": {
+   "default": 1000,
+   "deprecated_names": [],
+   "description": "The horizontal resolution of the image in pixel.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "KLAYOUT_RENDER_SHOW_RULER": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enable the ruler in the image.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "KLAYOUT_RENDER_TEXT_VISIBLE": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enable text in the image.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "KLayout.Render"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "KLAYOUT_TECH": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A path to the KLayout layer technology (.lyt) file.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "KLayout.StreamOut",
+    "KLayout.Render",
+    "KLayout.XOR",
+    "KLayout.DRC"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "KLAYOUT_XOR_IGNORE_LAYERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "KLayout layers to ignore during XOR operations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "KLayout.XOR"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "KLAYOUT_XOR_THREADS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies number of threads used in the KLayout XOR check. If unset, this will be equal to your machine's thread count.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "KLayout.XOR"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "KLAYOUT_XOR_TILE_SIZE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The tile size to parallelize the XOR process with.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "KLayout.XOR"
+   ],
+   "pdk": true,
+   "python_type": "int",
+   "units": "\u00b5m"
+  },
+  "LAYERS_RC": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Used during PNR steps, Specific custom resistance and capacitance values for metal layers. For each IPVT corner, a mapping for each metal layer is provided. Each mapping describes custom resistance and capacitance values. Usage of wildcards for specifying IPVT corners is allowed. Units are resistance and capacitance per unit length as defined in the first lib file.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, typing.Dict[str, typing.Dict[str, decimal.Decimal]]]",
+   "units": null
+  },
+  "LEFT_MARGIN_MULT": {
+   "default": 12,
+   "deprecated_names": [],
+   "description": "The core margin, in multiples of site widths, from the left boundary. If `DIE_AREA` are `CORE_AREA` are set, this variable has no effect.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "LIB": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A map from corner patterns to a list of associated liberty files. Exactly one entry must match the `DEFAULT_CORNER`.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, typing.List[librelane.common.types.Path]]",
+   "units": null
+  },
+  "LINTER_DEFINES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Linter-specific preprocessor definitions; overrides VERILOG_DEFINES for the lint step if exists",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "LINTER_DISABLE_WARNINGS": {
+   "default": [
+    "DECLFILENAME",
+    "EOFNEWLINE"
+   ],
+   "deprecated_names": [],
+   "description": "Warning codes that are passed to the linter to be disabled.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "LINTER_DISABLE_WARNINGS_BLACKBOX": {
+   "default": [
+    "UNDRIVEN",
+    "UNUSEDSIGNAL"
+   ],
+   "deprecated_names": [],
+   "description": "Warning codes that are passed to the linter to be disabled for all blackbox modules.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "LINTER_ERROR_ON_LATCH": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "When a latch is inferred by an `always` block that is not explicitly marked as `always_latch`, report this as a linter error.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "LINTER_ERROR_ON_MULTIDRIVEN": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "When a net has multiple drivers, report this as a linter error.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "LINTER_INCLUDE_PDK_MODELS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Include Verilog models of the PDK",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "LINTER_RELATIVE_INCLUDES": {
+   "default": true,
+   "deprecated_names": [
+    "VERILATOR_RELATIVE_INCLUDES"
+   ],
+   "description": "When a file references an include file, resolve the filename relative to the path of the referencing file, instead of relative to the current directory.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "LINTER_VLT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Path to a Verilator Configuration format file (`.vlt`) that is passed to the linter.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "LVS_FLATTEN_CELLS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of cell names to be flattened while running LVS",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Netgen.LVS"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "LVS_IGNORE_CELLS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of cell names to be ignored while running LVS",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Netgen.LVS"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "LVS_INCLUDE_MARCO_NETLISTS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag that enables including the gate-level netlist of macros while running Netgen",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Netgen.LVS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MACROS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A dictionary of Macro definition objects. See {py:class}`librelane.config.Macro` for more info.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.Dict[str, librelane.config.variable.Macro]",
+   "units": null
+  },
+  "MACRO_PLACEMENT_CFG": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Path to an optional override for instance placement instead of the `MACROS` object for compatibility with LibreLane 1. If both are `None`, this step is skipped.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Odb.ManualMacroPlacement",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "MAGICRC": {
+   "default": null,
+   "deprecated_names": [
+    "MAGIC_MAGICRC"
+   ],
+   "description": "A path to the `.magicrc` file which is sourced before running magic in the flow.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "MAGIC_CAPTURE_ERRORS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Capture errors print by Magic and quit when a fatal error is encountered. Fatal errors are determined heuristically. It is not guaranteed that they are fatal errors. Hence this is function is gated by a variable. This function is needed because Magic does not throw errors.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_DEF_LABELS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to choose whether labels are read with DEF files or not. From magic docs: \"The '-labels' option to the 'def read' command causes each net in the NETS and SPECIALNETS sections of the DEF file to be annotated with a label having the net name as the label text.\" If LVS fails, try disabling this option.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_DEF_NO_BLOCKAGES": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If set to true, blockages in DEF files are ignored. Otherwise, they are read as sheets of metal by Magic.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_DISABLE_CIF_INFO": {
+   "default": true,
+   "deprecated_names": [
+    "MAGIC_DISABLE_HIER_GDS"
+   ],
+   "description": "A flag to disable writing Caltech Intermediate Format (CIF) hierarchy and subcell array information to the GDSII file.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_DRC_MAGLEFS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of pre-processed abstract LEF views for cells. They are read in before the design and act as blackboxes during DRC.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.DRC"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "MAGIC_DRC_USE_GDS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "A flag to choose whether to run the Magic DRC checks on GDS or not. If not, then the checks will be done on the DEF view of the design, which is a bit faster, but may be less accurate as some DEF/LEF elements are abstract.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.DRC"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_EXT_ABSTRACT": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Extracts a SPICE netlist based on black-boxed standard cells and macros (basically, anything with a LEF) rather than transistors. An error will be thrown if both this and `MAGIC_EXT_USE_GDS` is set to ``True``.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_EXT_ABSTRACT_CELLS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of regular expressions which are matched against the cells of a the design. Matches are abstracted (black-boxed) during SPICE extraction.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "MAGIC_EXT_SHORT_RESISTOR": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enables adding resistors to shorts- resolves LVS issues if more than one top-level pin is connected to the same net, but may increase runtime and break some designs. Proceed with caution.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_EXT_UNIQUE": {
+   "choices": [
+    "all",
+    "notopports",
+    "noports",
+    "none"
+   ],
+   "default": "all",
+   "deprecated_names": [
+    "MAGIC_NO_EXT_UNIQUE",
+    "LVS_CONNECT_BY_LABEL"
+   ],
+   "description": "Runs `extract unique` with the specified option. The default is \"all\", and \"none\" disables `extract unique`, allowing connections between separate nets by label in LVS.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "MAGIC_EXT_USE_GDS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to choose whether to use GDS for spice extraction or not. If not, then the extraction will be done using the DEF/LEF, which is faster.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.SpiceExtraction",
+    "Netgen.LVS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_FEEDBACK_CONVERSION_THRESHOLD": {
+   "default": 10000,
+   "deprecated_names": [],
+   "description": "If Magic provides more feedback items than this threshold, conversion to KLayout databases is skipped (as something has gone horribly wrong.)",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "MAGIC_GDS_FLATGLOB": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Flatten cells by name pattern on input. May be used to avoid false positive DRC errors. The strings may use standard shell-type glob patterns, with * for any length string match, ? for any single character match, \\ for special characters, and [] for matching character sets or ranges.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Magic.DRC"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "MAGIC_GDS_MERGE": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "A flag to enable merging of connected tiles into polygons during gds write. From magic docs: \"Depending on the tile geometry, this may make the output file up to four times smaller, at the cost of speed in generating the output file.\"",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_GDS_POLYGON_SUBCELLS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to enable polygon subcells in magic for gds read potentially speeding up magic. From magic docs: \"Put non-Manhattan polygons. This prevents interations with other polygons on the same plane and so reduces tile splitting.\"",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_INCLUDE_GDS_POINTERS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to choose whether to include GDS pointers in the generated mag files or not.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_LEF_WRITE_USE_GDS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to choose whether to use GDS for LEF writing. If not, then the extraction will be done using abstract LEF views.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.WriteLEF"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_MACRO_STD_CELL_SOURCE": {
+   "choices": [
+    "PDK",
+    "macro"
+   ],
+   "default": "macro",
+   "deprecated_names": [],
+   "description": "If set to PDK, magic will use the PDK definition of the STD cells for macros inside the design. Otherwise, the macro is completely treated as a blackbox and magic will use the existing cell definition inside the macro gds. This mode is only supported for macros specified in MACROS variable",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "MAGIC_PDK_SETUP": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A path to a PDK-specific setup file sourced by `.magicrc`.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "MAGIC_TECH": {
+   "default": null,
+   "deprecated_names": [
+    "MAGIC_TECH_FILE"
+   ],
+   "description": "A path to a Magic tech file which, mainly, has DRC rules.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut",
+    "Magic.WriteLEF",
+    "Magic.DRC",
+    "Magic.SpiceExtraction"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "MAGIC_WRITE_FULL_LEF": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to specify whether or not the output LEF should include all shapes inside the macro or an abstracted view of the macro LEF view via magic.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.WriteLEF"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_WRITE_LEF_PINONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "If true, the LEF write will mark only areas that are port labels as pins, while marking the rest of each related net as an obstruction. Otherwise, the labeled port and the any connected metal on the same layer are marked as a pin.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.WriteLEF"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MAGIC_ZEROIZE_ORIGIN": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "A flag to move the layout such that it's origin in the lef generated by magic is 0,0.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Magic.StreamOut"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "MANUAL_GLOBAL_PLACEMENTS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A dictionary of instances to their global (non-legalized and unfixed) placement location.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Odb.ManualGlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "typing.Dict[str, librelane.config.variable.Instance]",
+   "units": null
+  },
+  "MAX_CAPACITANCE_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The maximum capacitance constraint. If not provided, the constraint is not set in the SDC file which will fall back to the value set by the liberty file",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "pF"
+  },
+  "MAX_CAP_VIOLATION_CORNERS": {
+   "default": [
+    ""
+   ],
+   "deprecated_names": [],
+   "description": "A list of wildcards matching IPVT corners to use during checking for max cap violations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Checker.MaxCapViolations"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "MAX_FANOUT_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_MAX_FANOUT"
+   ],
+   "description": "The max load that the output ports can drive to be used as a constraint on Synthesis and CTS.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "int",
+   "units": "cells"
+  },
+  "MAX_SLEW_VIOLATION_CORNERS": {
+   "default": [
+    ""
+   ],
+   "deprecated_names": [],
+   "description": "A list of wildcards matching IPVT corners to use during checking for max slew violations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Checker.MaxSlewViolations"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "MAX_TRANSITION_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_MAX_TRAN"
+   ],
+   "description": "The max transition time (slew) from high to low or low to high on cell inputs in ns to be used as a constraint on Synthesis and CTS. If not provided, it is calculated at runtime as `10%` of the provided clock period, unless that exceeds the PDK's `DEFAULT_MAX_TRAN` value.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "NETGEN_SETUP": {
+   "default": null,
+   "deprecated_names": [
+    "NETGEN_SETUP_FILE"
+   ],
+   "description": "A path to the setup file for Netgen used to configure LVS. If set to None, this PDK will not support Netgen-based steps.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Netgen.LVS"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "NON_DEFAULT_RULES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specify non-default rules. Can be used to change the width, spacing and vias of a net.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "dict[str, librelane.steps.openroad.NDR]",
+   "units": null
+  },
+  "OUTPUT_CAP_LOAD": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_CAP_LOAD"
+   ],
+   "description": "Defines the capacitive load on the output ports.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "fF"
+  },
+  "PDK": {
+   "default": "sky130A",
+   "deprecated_names": [],
+   "description": "Specifies the process design kit (PDK). Must be a valid C identifier, i.e., matches the regular expression `[_a-zA-Z][_a-zA-Z0-9]+`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "PDK_ROOT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The home path of all PDKs. Should be set via command-line arguments or :meth:`Config.load` flags and not actual configuration files.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "PDN_CFG": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CFG"
+   ],
+   "description": "A custom PDN configuration file. If not provided, the default PDN config will be used.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "PDN_CONNECT_MACROS_TO_GRID": {
+   "default": true,
+   "deprecated_names": [
+    "FP_PDN_ENABLE_MACROS_GRID"
+   ],
+   "description": "Enables the connection of macros to the top level power grid.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_CORE_HORIZONTAL_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the horizontal PDN layer for the core ring. Falls back to `PDN_HORIZONTAL_LAYER` if undefined.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PDN_CORE_RING": {
+   "default": false,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING"
+   ],
+   "description": "Enables adding a core ring around the design. More details on the control variables in the PDK config documentation.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_CORE_RING_ALLOW_OUT_OF_DIE": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If specified, the ring shapes are allowed to be outside the die boundary.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_CORE_RING_CONNECT_TO_PADS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "If specified, the core side of the pad pins will be connected to the ring.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_CORE_RING_HOFFSET": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_HOFFSET"
+   ],
+   "description": "The offset for the horizontal layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_RING_HSPACING": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_HSPACING"
+   ],
+   "description": "The spacing for the horizontal layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_RING_HWIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_HWIDTH"
+   ],
+   "description": "The width for the horizontal layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_RING_VOFFSET": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_VOFFSET"
+   ],
+   "description": "The offset for the vertical layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_RING_VSPACING": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_VSPACING"
+   ],
+   "description": "The spacing for the vertical layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_RING_VWIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_CORE_RING_VWIDTH"
+   ],
+   "description": "The width for the vertical layer in the core ring of generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_CORE_VERTICAL_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the vertical PDN layer for the core ring. Falls back to `PDN_VERTICAL_LAYER` if undefined.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PDN_ENABLE_GLOBAL_CONNECTIONS": {
+   "default": true,
+   "deprecated_names": [
+    "FP_PDN_ENABLE_GLOBAL_CONNECTIONS"
+   ],
+   "description": "Enables the creation of global connections in PDN generation.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_ENABLE_PINS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If specified, the power straps will be promoted to block pins.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_ENABLE_RAILS": {
+   "default": true,
+   "deprecated_names": [
+    "FP_PDN_ENABLE_RAILS"
+   ],
+   "description": "Enables the creation of rails in the power grid.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_EXTEND_TO": {
+   "choices": [
+    "core_ring",
+    "boundary"
+   ],
+   "default": "core_ring",
+   "deprecated_names": [],
+   "description": "Defines how far the stripes and rings extend.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "units": null
+  },
+  "PDN_HOFFSET": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_HOFFSET"
+   ],
+   "description": "Initial offset for sets of horizontal power straps.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_HORIZONTAL_HALO": {
+   "default": 10,
+   "deprecated_names": [
+    "FP_PDN_HORIZONTAL_HALO"
+   ],
+   "description": "Sets the horizontal halo around the macros during power grid insertion.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_HORIZONTAL_LAYER": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_HORIZONTAL_LAYER",
+    "FP_PDN_UPPER_LAYER"
+   ],
+   "description": "Defines the horizontal PDN layer.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PDN_HPITCH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_HPITCH"
+   ],
+   "description": "Inter-distance (between sets) of horizontal power straps in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_HSPACING": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_HSPACING"
+   ],
+   "description": "Intra-spacing (within a set) of horizontal straps in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_HWIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_HWIDTH"
+   ],
+   "description": "The strap width for the horizontal layer in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_MACRO_CONNECTIONS": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_MACRO_HOOKS"
+   ],
+   "description": "Specifies explicit power connections of internal macros to the top level power grid, in the format: regex matching macro instance names, power domain vdd and ground net names, and macro vdd and ground pin names `<instance_name_rx> <vdd_net> <gnd_net> <vdd_pin> <gnd_pin>`.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "PDN_MULTILAYER": {
+   "default": true,
+   "deprecated_names": [
+    "FP_PDN_MULTILAYER",
+    "DESIGN_IS_CORE"
+   ],
+   "description": "Controls the layers used in the power grid. If set to false, only the lower layer will be used, which is useful when hardening a macro for integrating into a larger top-level design.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_OBSTRUCTIONS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Add routing obstructions to the design before PDN stage. If set to `None`, this step is skipped. Format of each obstruction item is a tuple of: layer name, llx, lly, urx, ury,.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Odb.AddPDNObstructions",
+    "Odb.RemovePDNObstructions"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[typing.Tuple[str, decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]]",
+   "units": "\u00b5m"
+  },
+  "PDN_RAIL_LAYER": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_RAIL_LAYER",
+    "FP_PDN_RAILS_LAYER"
+   ],
+   "description": "Defines the metal layer used for PDN rails.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PDN_RAIL_OFFSET": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_RAIL_OFFSET"
+   ],
+   "description": "The offset for the power distribution network rails for first metal layer.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_RAIL_WIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_RAIL_WIDTH"
+   ],
+   "description": "Defines the width of PDN rails on the `PDN_RAIL_LAYER` layer.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_SKIPTRIM": {
+   "default": false,
+   "deprecated_names": [
+    "FP_PDN_SKIPTRIM"
+   ],
+   "description": "Enables `-skip_trim` option during pdngen which skips the metal trim step, which attempts to remove metal stubs.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PDN_VERTICAL_HALO": {
+   "default": 10,
+   "deprecated_names": [
+    "FP_PDN_VERTICAL_HALO"
+   ],
+   "description": "Sets the vertical halo around the macros during power grid insertion.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_VERTICAL_LAYER": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_VERTICAL_LAYER",
+    "FP_PDN_LOWER_LAYER"
+   ],
+   "description": "Defines the vertical PDN layer.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PDN_VOFFSET": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_VOFFSET"
+   ],
+   "description": "Initial offset for sets of vertical power straps.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_VPITCH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_VPITCH"
+   ],
+   "description": "Inter-distance (between sets) of vertical power straps in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_VSPACING": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_VSPACING"
+   ],
+   "description": "Intra-spacing (within a set) of vertical straps in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PDN_VWIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "FP_PDN_VWIDTH"
+   ],
+   "description": "The strap width for the vertical layer in generated power distribution networks.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GeneratePDN"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "PLACE_SITE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the primary placement site in placement as specified in the technology LEF files, to generate the placement grid.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "PL_KEEP_RESIZE_BELOW_OVERFLOW": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Only applicable when PL_TIMING_DRIVEN is enabled. When the overflow is below the set value, timing-driven iterations will retain the resizer changes instead of reverting them. Allowed values are 0 to 1. If not set, a nonzero default value from OpenROAD will be used",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PL_MAX_DISPLACEMENT_X": {
+   "default": 500,
+   "deprecated_names": [],
+   "description": "Specifies how far an instance can be moved along the X-axis when finding a site where it can be placed during detailed placement.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": "\u00b5m"
+  },
+  "PL_MAX_DISPLACEMENT_Y": {
+   "default": 100,
+   "deprecated_names": [],
+   "description": "Specifies how far an instance can be moved along the Y-axis when finding a site where it can be placed during detailed placement.",
+   "kind": "int",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": "\u00b5m"
+  },
+  "PL_MAX_PHI_COEFFICIENT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Sets a upper bound on the \u00b5_k variable in the GPL algorithm. Useful if global placement diverges.See https://openroad.readthedocs.io/en/latest/main/src/gpl/README.html",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PL_MIN_PHI_COEFFICIENT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Sets a lower bound on the \u00b5_k variable in the GPL algorithm. Useful if global placement diverges. See https://openroad.readthedocs.io/en/latest/main/src/gpl/README.html",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PL_OPTIMIZE_MIRRORING": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Specifies whether or not to run an optimize_mirroring pass whenever detailed placement happens. This pass will mirror the cells whenever possible to optimize the design.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_ALLOW_SETUP_VIOS": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Allows the creation of setup violations when fixing hold violations. Setup violations are less dangerous as they simply mean a chip may not run at its rated speed, however, chips with hold violations are essentially dead-on-arrival.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_FIX_HOLD_FIRST": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Experimental: attempt to fix hold violations before setup violations, which may lead to better timing results.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_HOLD_MAX_BUFFER_PCT": {
+   "default": 50,
+   "deprecated_names": [
+    "PL_RESIZER_HOLD_MAX_BUFFER_PERCENT"
+   ],
+   "description": "Specifies a max number of buffers to insert to fix hold violations. This number is calculated as a percentage of the number of instances in the design.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PL_RESIZER_HOLD_MAX_UTIL_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the percentage of core area used during hold fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_RESIZER_HOLD_REPAIR_TNS_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Percentage of violating endpoints to repair during hold fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_RESIZER_HOLD_SLACK_MARGIN": {
+   "default": 0.1,
+   "deprecated_names": [],
+   "description": "Specifies a time margin for the slack when fixing hold violations. Normally the resizer will stop when it reaches zero slack. This option allows you to overfix.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "PL_RESIZER_SETUP_BUFFERING": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Rebuffering and load splitting during setup fixing.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_SETUP_BUFFER_REMOVAL": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Buffer removal transform during setup fixing.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_SETUP_GATE_CLONING": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_GATE_CLONING"
+   ],
+   "description": "Enables gate cloning when attempting to fix setup violations",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_RESIZER_SETUP_MAX_BUFFER_PCT": {
+   "default": 50,
+   "deprecated_names": [
+    "PL_RESIZER_SETUP_MAX_BUFFER_PERCENT"
+   ],
+   "description": "Specifies a max number of buffers to insert to fix setup violations. This number is calculated as a percentage of the number of instances in the design.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_RESIZER_SETUP_MAX_UTIL_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the percentage of core area used during setup fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_RESIZER_SETUP_REPAIR_TNS_PCT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Percentage of violating endpoints to repair during setup fixing.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_RESIZER_SETUP_SLACK_MARGIN": {
+   "default": 0.05,
+   "deprecated_names": [],
+   "description": "Specifies a time margin for the slack when fixing setup violations.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.ResizerTimingPostCTS"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "ns"
+  },
+  "PL_ROUTABILITY_DRIVEN": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Specifies whether the placer should use routability driven placement.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_ROUTABILITY_OVERFLOW_THRESHOLD": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Sets overflow threshold for routability mode.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PL_SKIP_INITIAL_PLACEMENT": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Specifies whether the placer should run initial placement or not.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_SOFT_OBSTRUCTIONS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Soft placement blockages applied at the floorplanning stage. Areas that are soft-blocked will not be used by the initial placer, however, later phases such as buffer insertion or clock tree synthesis are still allowed to place cells in this area.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[typing.Tuple[decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]]",
+   "units": "\u00b5m"
+  },
+  "PL_TARGET_DENSITY_PCT": {
+   "default": null,
+   "deprecated_names": [
+    "PL_TARGET_DENSITY"
+   ],
+   "description": "The desired placement density of cells. If not specified, the value will be equal to (`FP_CORE_UTIL` + 5 * `GPL_CELL_PADDING` + 10).",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "PL_TIMING_DRIVEN": {
+   "default": false,
+   "deprecated_names": [
+    "PL_TIME_DRIVEN"
+   ],
+   "description": "Specifies whether the placer should use timing-driven placement.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "PL_WIRE_LENGTH_COEF": {
+   "default": 0.25,
+   "deprecated_names": [
+    "PL_WIRELENGTH_COEF"
+   ],
+   "description": "Global placement initial wirelength coefficient. Decreasing the variable will modify the initial placement of the standard cells to reduce the wirelengths",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "PNR_CORNERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of fully-qualified IPVT corners to use during PnR. If unspecified, the value for `STA_CORNERS` from the PDK will be used.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "PNR_EXCLUDED_CELL_FILE": {
+   "default": null,
+   "deprecated_names": [
+    "DRC_EXCLUDE_CELL_LIST",
+    "PNR_EXCLUSION_CELL_LIST"
+   ],
+   "description": "Path to a text file containing a list of undesirable or bad (DRC-failed or complex pinout) cells or wildcards matching cells to be excluded from synthesis AND PnR.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "PNR_SDC_FILE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the SDC file used during all implementation (PnR) steps",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckSDCFiles",
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "PRIMARY_GDSII_STREAMOUT_TOOL": {
+   "default": null,
+   "deprecated_names": [
+    "PRIMARY_SIGNOFF_TOOL"
+   ],
+   "description": "Specify the primary GDSII streamout tool for this PDK. For most open-source PDKs, that would be 'magic'.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "RCX_MERGE_VIA_WIRE_RES": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If enabled, the via and wire resistances will be merged.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RCX"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RCX_RULESETS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Map of corner patterns to OpenRCX extraction rules.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "OpenROAD.RCX"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, librelane.common.types.Path]",
+   "units": null
+  },
+  "RCX_SDC_FILE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies SDC file to be used for RCX-based STA, which can be different from the one used for implementation.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.RCX"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "RIGHT_MARGIN_MULT": {
+   "default": 12,
+   "deprecated_names": [],
+   "description": "The core margin, in multiples of site widths, from the right boundary. If `DIE_AREA` are `CORE_AREA` are set, this variable has no effect.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "ROUTING_OBSTRUCTIONS": {
+   "default": null,
+   "deprecated_names": [
+    "GRT_OBS"
+   ],
+   "description": "Add routing obstructions to the design. If set to `None`, this step is skipped. Format of each obstruction item is a tuple of: layer name, llx, lly, urx, ury.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Odb.AddRoutingObstructions",
+    "Odb.RemoveRoutingObstructions"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[typing.Tuple[str, decimal.Decimal, decimal.Decimal, decimal.Decimal, decimal.Decimal]]",
+   "units": "\u00b5m"
+  },
+  "RSZ_CORNERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Resizer step-specific override for PNR_CORNERS.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.RepairDesignPostGRT",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "RSZ_DONT_TOUCH_LIST": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of nets and instances as \"don't touch\" by design repairs or resizer optimizations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.RepairDesignPostGRT",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "RSZ_DONT_TOUCH_RX": {
+   "default": "$^",
+   "deprecated_names": [
+    "UNBUFFER_NETS"
+   ],
+   "description": "A single regular expression designating nets or instances as \"don't touch\" by design repairs or resizer optimizations.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.RepairDesignPostGRT",
+    "OpenROAD.ResizerTimingPostGRT"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "RT_CLOCK_MAX_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The name of highest layer to be used in routing the clock net.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "RT_CLOCK_MIN_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The name of lowest layer to be used in routing the clock net.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.DetailedRouting"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "RT_MAX_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The highest metal layer to route on.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "RT_MIN_LAYER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The lowest metal layer to route on.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "RUN_ANTENNA_REPAIR": {
+   "default": true,
+   "deprecated_names": [
+    "GRT_REPAIR_ANTENNAS"
+   ],
+   "description": "Enables the OpenROAD.RepairAntennas step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_CTS": {
+   "default": true,
+   "deprecated_names": [
+    "CLOCK_TREE_SYNTH"
+   ],
+   "description": "Enables clock tree synthesis using the OpenROAD.CTS step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_DRT": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables the OpenROAD.DetailedRouting step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_EQY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enables the Yosys.EQY step. Not valid for VHDLClassic.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_FILL_INSERTION": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables the OpenROAD.FillInsertion step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_HEURISTIC_DIODE_INSERTION": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enables the Odb.HeuristicDiodeInsertion step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_IRDROP_REPORT": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables generation of an IR Drop report using the OpenROAD.IRDropReport step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_KLAYOUT_DRC": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables the KLayout.DRC step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_KLAYOUT_STREAMOUT": {
+   "default": true,
+   "deprecated_names": [
+    "RUN_KLAYOUT"
+   ],
+   "description": "Enables the KLayout.StreamOut step to generate GDSII.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_KLAYOUT_XOR": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables running the KLayout.XOR step on the two GDSII files generated by Magic and Klayout. Stream-outs for both KLayout and Magic should have already run, and the PDK must support both signoff tools.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_LINTER": {
+   "default": true,
+   "deprecated_names": [
+    "RUN_VERILATOR"
+   ],
+   "description": "Enables the Verilator.Lint step and associated checker steps. Not valid for VHDLClassic.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_LVS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables the Netgen.LVS step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_MAGIC_DRC": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables the Magic.DRC step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_MAGIC_STREAMOUT": {
+   "default": true,
+   "deprecated_names": [
+    "RUN_MAGIC"
+   ],
+   "description": "Enables the Magic.StreamOut step to generate GDSII.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_MAGIC_WRITE_LEF": {
+   "default": true,
+   "deprecated_names": [
+    "MAGIC_GENERATE_LEF"
+   ],
+   "description": "Enables the Magic.WriteLEF step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_MCSTA": {
+   "default": true,
+   "deprecated_names": [
+    "RUN_SPEF_STA"
+   ],
+   "description": "Enables multi-corner static timing analysis using the OpenROAD.STAPostPNR step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_POST_CTS_RESIZER_TIMING": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_TIMING_OPTIMIZATIONS"
+   ],
+   "description": "Enables resizer timing optimizations after clock tree synthesis using the OpenROAD.ResizerTimingPostCTS step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_POST_GPL_DESIGN_REPAIR": {
+   "default": true,
+   "deprecated_names": [
+    "PL_RESIZER_DESIGN_OPTIMIZATIONS",
+    "RUN_REPAIR_DESIGN"
+   ],
+   "description": "Enables resizer design repair after global placement using the OpenROAD.RepairDesignPostGPL step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_POST_GRT_DESIGN_REPAIR": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enables resizer design repair after global placement using the OpenROAD.RepairDesignPostGPL step. This is experimental and may result in hangs and/or extended run times.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_POST_GRT_RESIZER_TIMING": {
+   "default": false,
+   "deprecated_names": [
+    "GLB_RESIZER_TIMING_OPTIMIZATIONS"
+   ],
+   "description": "Enables resizer timing optimizations after global routing using the OpenROAD.ResizerTimingPostGRT step. This is experimental and may result in hangs and/or extended run times.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_SPEF_EXTRACTION": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Enables parasitics extraction using the OpenROAD.RCX step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "RUN_TAP_ENDCAP_INSERTION": {
+   "default": true,
+   "deprecated_names": [
+    "TAP_DECAP_INSERTION",
+    "RUN_TAP_DECAP_INSERTION"
+   ],
+   "description": "Enables the OpenROAD.TapEndcapInsertion step.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "flow:Classic"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SCL_GROUND_PINS": {
+   "default": null,
+   "deprecated_names": [
+    "STD_CELL_GROUND_PINS"
+   ],
+   "description": "SCL-specific ground pins",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SCL_POWER_PINS": {
+   "default": null,
+   "deprecated_names": [
+    "STD_CELL_POWER_PINS"
+   ],
+   "description": "SCL-specific power pins",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SETUP_VIOLATION_CORNERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of wildcards matching IPVT corners to use during checking for setup violations.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Checker.SetupViolations"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SET_RC_VERBOSE": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "If set to true, set_rc commands are echoed. Quite noisy, but may be useful for debugging.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SIGNAL_WIRE_RC_LAYERS": {
+   "default": null,
+   "deprecated_names": [
+    "WIRE_RC_LAYER",
+    "DATA_WIRE_RC_LAYER"
+   ],
+   "description": "Sets estimated signal wire RC values to the average of these layers'. If you provide more than two, the averages are grouped by preferred routing direction and you must provide at least one layer for each routing direction.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SIGNOFF_SDC_FILE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the SDC file for STA during signoff",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckSDCFiles",
+    "OpenROAD.STAPostPNR"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SLANG_ARGUMENTS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Pass arguments to the Slang frontend.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "STA_CORNERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of fully qualified IPVT (Interconnect, transistor Process, Voltage, and Temperature) timing corners on which to conduct multi-corner static timing analysis.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "STA_EXTRA_CORNER_TCL_FILE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Experimental: specifies a additional configuration .tcl file to be called during (PnR) steps.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "STA_MACRO_PRIORITIZE_NL": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Prioritize the use of Netlists + SPEF files over LIB files if available for Macros. Useful if extraction was done using OpenROAD, where SPEF files are far more accurate.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.STAPostPNR"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "STA_MAX_VIOLATOR_COUNT": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Maximum number of violators to list in violator_list.rpt",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.STAPostPNR"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "STA_THREADS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The maximum number of STA corners to run in parallel. If unset, this will be equal to your machine's thread count.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "STD_CELL_LIBRARY": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the default standard cell library to be used under the specified PDK. Must be a valid C identifier, i.e., matches the regular expression `[_a-zA-Z][_a-zA-Z0-9]+`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_ABC_AREA_USE_NF": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Experimental: uses the &nf delay-based mapper with a very high value instead of the amap area mapper, which may be better in some scenarios at recovering area.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ABC_BUFFERING": {
+   "default": false,
+   "deprecated_names": [
+    "SYNTH_BUFFERING"
+   ],
+   "description": "Enables `abc` cell buffering.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ABC_DFF": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Passes D-flipflop cells through ABC for optimization (which can for example, eliminate identical flip-flops).",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ABC_LEGACY_REFACTOR": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Replaces the ABC command `drf -l` with `refactor` which matches older versions of LibreLane but is more unstable.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ABC_LEGACY_REWRITE": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Replaces the ABC command `drw -l` with `rewrite` which matches older versions of LibreLane but is more unstable.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ABC_USE_MFS3": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Experimental: attempts a SAT-based remapping in all area and delay strategies before 'retime', which may improve PPA results.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_ADDER_TYPE": {
+   "choices": [
+    "YOSYS",
+    "FA",
+    "RCA",
+    "CSA"
+   ],
+   "default": "YOSYS",
+   "deprecated_names": [],
+   "description": "Adder type to which the $add and $sub operators are mapped to.  Possible values are `YOSYS/FA/RCA/CSA`; where `YOSYS` refers to using Yosys internal adder definition, `FA` refers to full-adder structure, `RCA` refers to ripple carry adder structure, and `CSA` refers to carry select adder.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "SYNTH_AUTONAME": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Generates names for netlist instances. This results in instance names that can be extremely long, but are more human-readable.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_BUFFER_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines a buffer port to be used by yosys during synthesis: in the format `{cell}/{input_port}/{output_port}`",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_CHECKS_ALLOW_TRISTATE": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Ignore multiple-driver warnings if they are connected to tri-state buffers on a best-effort basis.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_CLK_DRIVING_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The cell to drive the clock input ports, used in synthesis and static timing analysis, in the format `{cell}/{port}`. If not specified, `SYNTH_DRIVING_CELL` will be used.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_CLOCKGATE_MIN_WIDTH": {
+   "default": null,
+   "deprecated_names": [
+    "USE_LIGHTER"
+   ],
+   "description": "If set to a value, a group of flip-flops with size >= SYNTH_CLOCKGATE_MIN_WIDTH and an enable signal are clock-gated instead.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "SYNTH_CLOCKGATE_NEGEDGE_ICG": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The integrated clock gate cell used for positive-edge flip-flops, in the format `<cell>/<active-high clock enable port>/<clk port>/<gated clk port>`.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_CLOCKGATE_POSEDGE_ICG": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The integrated clock gate cell used for positive-edge flip-flops, in the format `<cell>/<active-high clock enable port>/<clk port>/<gated clk port>`.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_CORNER": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A fully qualified IPVT corner to use during synthesis. If unspecified, the value for `DEFAULT_CORNER` from the PDK will be used.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_CSA_MAP": {
+   "default": null,
+   "deprecated_names": [
+    "CARRY_SELECT_ADDER_MAP"
+   ],
+   "description": "A path to a file containing the carry-select adder mapping for Yosys.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_DIRECT_WIRE_BUFFERING": {
+   "default": true,
+   "deprecated_names": [
+    "SYNTH_BUFFER_DIRECT_WIRES"
+   ],
+   "description": "Enables inserting buffer cells for directly connected wires.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_DRIVING_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The cell to drive the input ports, used in synthesis and static timing analysis, in the format `{cell}/{port}`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_ELABORATE_ONLY": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "\"Elaborate\" the design only without attempting any logic mapping. Useful when dealing with structural Verilog netlists.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_EXCLUDED_CELL_FILE": {
+   "default": null,
+   "deprecated_names": [
+    "NO_SYNTH_CELL_LIST",
+    "SYNTH_EXCLUSION_CELL_LIST"
+   ],
+   "description": "Path to a text file containing a list of (wildcards matching) cells to be excluded from the lib file in synthesis alone.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_EXTRA_MAPPING_FILE": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Points to an extra techmap file for yosys that runs right after yosys `synth` before generic techmap.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_FA_MAP": {
+   "default": null,
+   "deprecated_names": [
+    "FULL_ADDER_MAP"
+   ],
+   "description": "A path to a file containing the full adder mapping for Yosys.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_HIERARCHY_MODE": {
+   "choices": [
+    "flatten",
+    "deferred_flatten",
+    "keep"
+   ],
+   "default": "flatten",
+   "deprecated_names": [
+    "SYNTH_NO_FLAT",
+    "SYNTH_ELABORATE_FLATTEN",
+    "SYNTH_FLAT_TOP"
+   ],
+   "description": "Affects how hierarchy is maintained throughout and after synthesis. 'flatten' flattens it during and after synthesis. 'deferred_flatten' flattens it after synthesis. 'keep' never flattens it. Please note that when using the Slang plugin, you need to pass '--keep-hierarchy' to `SLANG_ARGUMENTS` separately. To keep the hierarchy partially, use one of the flattening options and set the 'keep_hierarchy' attribute on instances or modules via: `SYNTH_KEEP_HIERARCHY_INSTANCES`, `SYNTH_KEEP_HIERARCHY_MODULES` or `SYNTH_KEEP_HIERARCHY_MIN_COST`.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "SYNTH_KEEP_HIERARCHY_INSTANCES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of instances for which to set the 'keep_hierarchy' attribute. This variable only affects the design when 'flatten' is called through `SYNTH_HIERARCHY_MODE`.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SYNTH_KEEP_HIERARCHY_MIN_COST": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Sets the 'keep_hierarchy' attribute on modules where the gate count is estimated to exceed the specified threshold. This prevents larger modules from being flattened. This variable only affects the design when 'flatten' is called through `SYNTH_HIERARCHY_MODE`.",
+   "kind": "int",
+   "optional": true,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "int",
+   "units": null
+  },
+  "SYNTH_KEEP_HIERARCHY_MODULES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A list of modules for which to set the 'keep_hierarchy' attribute. This variable only affects the design when 'flatten' is called through `SYNTH_HIERARCHY_MODE`.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SYNTH_LATCH_MAP": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A path to a file containing the latch mapping for Yosys.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_MUL_BOOTH": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Runs the booth pass as part of synthesis: See https://yosyshq.readthedocs.io/projects/yosys/en/latest/cmd/booth.html",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_NORMALIZE_SINGLE_BIT_VECTORS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If true, vectors with the shape [0:0] are converted to normal wires in the netlist. If disabled, even one-width pins will be suffixed [0] in the layout when imported by most PnR tools.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_PARAMETERS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Key-value pairs to be `chparam`ed in Yosys, in the format `key1=value1`.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "SYNTH_RCA_MAP": {
+   "default": null,
+   "deprecated_names": [
+    "RIPPLE_CARRY_ADDER_MAP"
+   ],
+   "description": "A path to a file containing the ripple-carry adder mapping for Yosys.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_SHARE_RESOURCES": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "A flag that enables yosys to reduce the number of cells by determining shareable resources and merging them.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_SHOW": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Generate a graphviz DOT file for the design. This will fail on a completely empty design.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_SIZING": {
+   "default": false,
+   "deprecated_names": [],
+   "description": "Enables `abc` cell sizing (instead of buffering).",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_SPLITNETS": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "Splits multi-bit nets into single-bit nets. Easier to trace but may not be supported by all tools.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "SYNTH_STRATEGY": {
+   "choices": [
+    "AREA 0",
+    "AREA 1",
+    "AREA 2",
+    "AREA 3",
+    "DELAY 0",
+    "DELAY 1",
+    "DELAY 2",
+    "DELAY 3",
+    "DELAY 4"
+   ],
+   "default": "AREA 0",
+   "deprecated_names": [],
+   "description": "Strategies for abc logic synthesis and technology mapping. AREA strategies usually result in a more compact design, while DELAY strategies usually result in a design that runs at a higher frequency. Please note that there is no way to know which strategy is the best before trying them.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "SYNTH_TIEHI_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the tie high cell followed by the port that implements the tie high functionality, in the format `{cell}/{port}`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_TIELO_CELL": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Defines the tie high cell followed by the port that implements the tie low functionality, in the format `{cell}/{port}`.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "SYNTH_TIE_UNDEFINED": {
+   "choices": [
+    "high",
+    "low"
+   ],
+   "default": "low",
+   "deprecated_names": [],
+   "description": "Whether to tie undefined values low or high. Explicitly provide null if you wish to simply leave them undriven.",
+   "kind": "choice",
+   "optional": true,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "units": null
+  },
+  "SYNTH_TRISTATE_MAP": {
+   "default": null,
+   "deprecated_names": [
+    "TRISTATE_BUFFER_MAP"
+   ],
+   "description": "A path to a file containing the tri-state buffer mapping for Yosys.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": true,
+   "python_type": "<class 'librelane.common.types.Path'>",
+   "units": null
+  },
+  "SYNTH_WRITE_NOATTR": {
+   "default": true,
+   "deprecated_names": [],
+   "description": "If true, Verilog-2001 attributes are omitted from output netlists. Some utilities do not support attributes.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.Synthesis"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "TECH_LEFS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Map of corner patterns to technology LEF files. A corner not matched here will not be supported by OpenRCX in the default flow.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, librelane.common.types.Path]",
+   "units": null
+  },
+  "TIME_DERATING_CONSTRAINT": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_TIMING_DERATE"
+   ],
+   "description": "Specifies a derating factor to multiply the path delays with. It specifies the upper and lower ranges of timing.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "%"
+  },
+  "TIMING_VIOLATION_CORNERS": {
+   "default": null,
+   "deprecated_names": [
+    "TIMING_VIOLATIONS_CORNERS"
+   ],
+   "description": "A list of wildcards matching IPVT corners to use during checking for timing violations.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Checker.SetupViolations",
+    "Checker.HoldViolations",
+    "Checker.MaxSlewViolations",
+    "Checker.MaxCapViolations"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "TOP_MARGIN_MULT": {
+   "default": 4,
+   "deprecated_names": [],
+   "description": "The core margin, in multiples of site heights, from the top boundary. If `DIE_AREA` and `CORE_AREA` are set, this variable has no effect.",
+   "kind": "number",
+   "optional": false,
+   "owners": [
+    "OpenROAD.Floorplan"
+   ],
+   "pdk": false,
+   "python_type": "Decimal",
+   "units": null
+  },
+  "TRISTATE_CELLS": {
+   "default": null,
+   "deprecated_names": [
+    "TRISTATE_CELL_PREFIX"
+   ],
+   "description": "A list of cell names or wildcards of tri-state buffers.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "USE_SLANG": {
+   "default": false,
+   "deprecated_names": [
+    "USE_SYNLIG"
+   ],
+   "description": "Use the Slang frontend to process files, which has better SystemVerilog parsing capabilities but is not as battle-tested as the default Yosys friend.",
+   "kind": "bool",
+   "optional": false,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "bool",
+   "units": null
+  },
+  "VDD_NETS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the power nets/pins to be used when creating the power grid for the design.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "common:option"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "VDD_PIN": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The power pin for the cells.",
+   "kind": "str",
+   "optional": false,
+   "owners": [
+    "common:pdk"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "VERILOG_DEFINES": {
+   "default": null,
+   "deprecated_names": [
+    "SYNTH_DEFINES"
+   ],
+   "description": "Preprocessor defines for input Verilog files",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint",
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[str]",
+   "units": null
+  },
+  "VERILOG_FILES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "The paths of the design's Verilog files.",
+   "kind": "other",
+   "optional": false,
+   "owners": [
+    "Verilator.Lint",
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "VERILOG_INCLUDE_DIRS": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Specifies the Verilog `include` directories.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint",
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "typing.List[librelane.common.types.Path]",
+   "units": null
+  },
+  "VERILOG_POWER_DEFINE": {
+   "default": "USE_POWER_PINS",
+   "deprecated_names": [
+    "SYNTH_USE_PG_PINS_DEFINES",
+    "SYNTH_POWER_DEFINE"
+   ],
+   "description": "Specifies the name of the define used to guard power and ground connections in the input RTL.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "Verilator.Lint",
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Odb.WriteVerilogHeader",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "python_type": "str",
+   "units": null
+  },
+  "VIAS_R": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Used during PNR steps, Specific custom resistance values for via layers. For each IPVT corner, a mapping for each via layer is provided. Each mapping describes custom resistance values. Usage of wildcards for specifying IPVT corners is allowed. Via resistance is per cut/via with units asdefined in the first lib file.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.CheckMacroInstances",
+    "OpenROAD.STAPrePNR",
+    "OpenROAD.Floorplan",
+    "OpenROAD.DumpRCValues",
+    "OpenROAD.CutRows",
+    "OpenROAD.TapEndcapInsertion",
+    "OpenROAD.GeneratePDN",
+    "OpenROAD.GlobalPlacementSkipIO",
+    "OpenROAD.IOPlacement",
+    "OpenROAD.GlobalPlacement",
+    "OpenROAD.STAMidPNR",
+    "OpenROAD.RepairDesignPostGPL",
+    "OpenROAD.DetailedPlacement",
+    "OpenROAD.CTS",
+    "OpenROAD.STAMidPNR-1",
+    "OpenROAD.ResizerTimingPostCTS",
+    "OpenROAD.STAMidPNR-2",
+    "OpenROAD.GlobalRouting",
+    "OpenROAD.CheckAntennas",
+    "OpenROAD.RepairDesignPostGRT",
+    "Odb.DiodesOnPorts",
+    "Odb.HeuristicDiodeInsertion",
+    "OpenROAD.RepairAntennas",
+    "OpenROAD.ResizerTimingPostGRT",
+    "OpenROAD.STAMidPNR-3",
+    "OpenROAD.DetailedRouting",
+    "OpenROAD.CheckAntennas-1",
+    "OpenROAD.FillInsertion",
+    "OpenROAD.RCX",
+    "OpenROAD.STAPostPNR",
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": true,
+   "python_type": "typing.Dict[str, typing.Dict[str, typing.Dict[str, decimal.Decimal]]]",
+   "units": null
+  },
+  "VSRC_LOC_FILES": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "Map of power and ground nets to OpenROAD PSM location files. See [this](https://github.com/The-OpenROAD-Project/OpenROAD/tree/master/src/psm#commands) for more info.",
+   "kind": "other",
+   "optional": true,
+   "owners": [
+    "OpenROAD.IRDropReport"
+   ],
+   "pdk": false,
+   "python_type": "typing.Dict[str, librelane.common.types.Path]",
+   "units": null
+  },
+  "WELLTAP_CELL": {
+   "default": null,
+   "deprecated_names": [
+    "FP_WELLTAP_CELL"
+   ],
+   "description": "Defines the cell used for tap insertion. If not defined, steps should not attempt to insert welltap cells.",
+   "kind": "str",
+   "optional": true,
+   "owners": [
+    "common:scl"
+   ],
+   "pdk": true,
+   "python_type": "str",
+   "units": null
+  },
+  "WIRE_LENGTH_THRESHOLD": {
+   "default": null,
+   "deprecated_names": [],
+   "description": "A value above which wire lengths generate warnings.",
+   "kind": "number",
+   "optional": true,
+   "owners": [
+    "Checker.WireLength"
+   ],
+   "pdk": true,
+   "python_type": "Decimal",
+   "units": "\u00b5m"
+  },
+  "YOSYS_LOG_LEVEL": {
+   "choices": [
+    "ALL",
+    "WARNING",
+    "ERROR"
+   ],
+   "default": "ALL",
+   "deprecated_names": [],
+   "description": "Which log level for Yosys. At WARNING or higher, the initialization splash is also disabled.",
+   "kind": "choice",
+   "optional": false,
+   "owners": [
+    "Yosys.JsonHeader",
+    "Yosys.Synthesis",
+    "Yosys.EQY"
+   ],
+   "pdk": false,
+   "units": null
+  }
+ }
+}

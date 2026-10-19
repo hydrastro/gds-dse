@@ -1,0 +1,36 @@
+{
+  "//": [
+    "Stage 2: clock-tree synthesis and routing options ('alcune opzioni di CTS e routing'), one at a time.",
+    "Generate when stage 1 is done: python3 scripts/variants.py generate configs/plans/stage2-cts-routing.json"
+  ],
+  "name": "s2",
+  "strategy": "ofat",
+  "groups": [
+    "cts",
+    "global_routing",
+    "detailed_routing"
+  ],
+  "include_baseline": true,
+  "experiment_path": "experiments/suite/stage2.json",
+  "experiment": {
+    "phase": "study",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+}

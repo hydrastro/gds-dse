@@ -1,0 +1,25 @@
+{
+  "//": "Same-seed repeatability (run before trusting any spread): seeds 1 and 2, each twice. Identical results expected.",
+  "phase": "pilot",
+  "designs": [
+    "aes",
+    "sha256",
+    "chacha",
+    "prince"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "configs": [
+    "C0"
+  ],
+  "seeds": [
+    1,
+    2
+  ],
+  "repeat": 2,
+  "stop_after": null,
+  "order_seed": 20261015
+}
