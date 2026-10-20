@@ -1,10 +1,10 @@
 {
   "//": [
-    "Layer 1 (lowest precedence). C0 = LibreLane's out-of-the-box Classic flow, made explicit.",
+    "Layer 1 (lowest precedence). Shared baseline settings; C0 also includes the platform, design and study constraints.",
     "FP_CORE_UTIL 50 is LibreLane's default. PL_TARGET_DENSITY_PCT 60 equals LibreLane's automatic value",
     "(FP_CORE_UTIL + 5*GPL_CELL_PADDING + 10 with padding 0 on all three PDKs); it is written explicitly so the",
     "density knob is independent of the utilisation knob. Interface/SDC values come from each PDK (platforms.json).",
-    "Clock period: per design x PDK in configs/designs/<design>/pdks/<pdk>.json, measured by scripts/calibrate_clock.py."
+    "Clock target: choose and document it per design x PDK in configs/designs/<design>/pdks/<pdk>.json. The calibration helper is optional."
   ],
   "flow_overrides": {
     "FP_CORE_UTIL": 50,

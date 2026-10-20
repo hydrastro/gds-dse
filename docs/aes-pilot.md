@@ -1,9 +1,14 @@
-# AES selection of the shared pilot
+# AES pilot
 
-The previous AES-only experiment additions changed no RTL. The shared workflow
-now covers AES, SHA-256, ChaCha and PRINCE without duplicate design-specific
-experiment presets. See [running-study.md](running-study.md) and select AES with
-`--designs aes`. Existing experiments/aes files remain optional legacy selections.
+AES uses the same flow settings and runner as the other designs. Its source
+submodule stays unchanged.
 
-The calibration, ranking and transfer bugs from the initial review have been
-corrected. See [project-review.md](project-review.md) and the updated analysis guide.
+Start with [the ten-seed baseline](running-study.md). The
+[study plan](study-plan.md#what-were-the-extra-aes-settings) explains the optional
+2 × 2 preset and its overlap with existing variants. It is not required for the
+first dataset.
+
+The files in `experiments/aes/` are convenience selections.
+`experiments/suite/pilot-baseline.json --designs aes --pdks sky130A` selects the
+same baseline scope as `experiments/aes/baseline-10.json`.
+Choose one route; running both duplicates seeds.

@@ -1,6 +1,6 @@
 {
   "//": [
-    "Stage 1: the five parameters named in the project discussion, one at a time (OFAT), few levels each.",
+    "Optional broad screen: five flow parameters, one at a time (OFAT), with a few levels each.",
     "clock target, core utilisation, placement density, synthesis strategy (area vs delay), flattening.",
     "10 variants + C0 = 11 configurations x 4 designs x 3 PDKs x 5 seeds = 660 runs."
   ],

@@ -1,228 +1,211 @@
-# Running unchanged crypto designs with shared flow settings
+# Running the study
 
-The four upstream RTL submodules are unchanged: secworks AES, SHA-256, ChaCha
-and PRINCE. No added wrapper, crypto feature, architecture variant or RTL
-optimization is part of this update. Each manifest uses the upstream repository's
-own register-interface top. That top is part of the benchmark; switching to an
-internal core would be a different benchmark, so keep the chosen top fixed.
+Complete [setup](setup.md) and use the pinned Nix shell. Start with one unchanged
+design and one PDK. The commands below select AES and SKY130 explicitly.
 
-General flow variants belong in configs/variants/ and can be shared by every
-design. Design manifests and per-design/per-PDK clock targets describe necessary
-integration and constraints. They do not modify the RTL. The previous AES-only
-experiment files were just selections; the shared presets below supersede that
-workflow and avoid maintaining equivalent experiment files for each design.
+## Before preparing a campaign
 
-## Setup
+Select the clock/constraints, requested threads and CPU policy. The defaults in
+`configs/study.json` request two threads and one simultaneous flow. Use the
+same policy throughout the comparison.
 
-Apply the update files to your existing project, preserving your own changes.
-Do not apply them in the middle of a prepared/running campaign: scripts and
-settings are hashed inputs. Finish or archive that campaign first, retain its
-original checkout for resumption, and prepare new campaign labels for this version.
+A campaign label identifies a saved batch. `prepare` expands the selected
+designs × PDKs × configurations × seeds × repeats, checks the configuration,
+freezes inputs and saves a shuffled schedule. It does not run the EDA tools.
+It prints the job count and refuses an existing label.
 
-From the project root:
+CLI selections such as `--designs aes` replace the corresponding list in the
+experiment file. The selections and original definition are both recorded.
+
+## Run one, then the remaining nine
 
 ```bash
-git submodule update --init
-git submodule status
+python3 scripts/study.py prepare \
+  --experiment experiments/suite/pilot-baseline.json \
+  --designs aes --pdks sky130A --seeds 1 --label aes-sky130-first
+
+python3 scripts/study.py run --label aes-sky130-first --machine-id desktop
 ```
 
-Install Nix and the FOSSi binary cache following the
-[official LibreLane Linux instructions](https://librelane.readthedocs.io/en/stable/installation/nix_installation/installation_linux.html).
-Then use the existing pinned checkout:
+Inspect `results/aes-sky130-first/runs.csv`, the job's `console.log`, and the
+reports beneath `jobs/<job-id>/runs/run/`. Confirm the intended top and source
+list, actual seed application, final STA, GDS availability, setup/hold, DRC and
+LVS. Check for unexpected black boxes, latches or unconstrained endpoints.
+A GDS file by itself does not establish a passing implementation.
+
+If the setup needs repair, preserve this campaign as bring-up, make the change
+and use a new label. If the setup is appropriate, leave the inputs untouched:
 
 ```bash
-nix-shell tools/librelane/shell.nix
-librelane --smoke-test
-python3 -m unittest discover -s tests -v
-python3 scripts/variants.py check
+python3 scripts/study.py prepare \
+  --experiment experiments/suite/pilot-baseline.json \
+  --designs aes --pdks sky130A --seeds 2 3 4 5 6 7 8 9 10 \
+  --label aes-sky130-rest
+
+python3 scripts/study.py run --label aes-sky130-rest --machine-id desktop
+
+python3 scripts/analyze.py \
+  --label aes-sky130-first --label aes-sky130-rest \
+  --out reports/aes/sky130-baseline
 ```
 
-Leave machine.local.json absent to use Ciel-managed PDKs at the pinned revisions.
-Use it only for intentional manual PDK installations, recording their real
-revisions. The runner caches the automatic installations under pdks/.
+This is ten attempts, not ten guaranteed successes. Record failures under the
+frozen setup. Do not keep trying new seeds until ten happen to pass.
 
-Run each upstream design's functional tests and retain their summaries. For AES:
+Combining batches requires unchanged shared inputs, compatible tool evidence,
+the same machine/resource context and disjoint seed cells. Even comment-only
+edits to hashed configs can prevent pooling. Decide the setup before the first
+batch and leave it fixed through the second.
+
+## Run all ten together
+
+Use this alternative when the baseline setup has already been validated:
 
 ```bash
-make -C designs/aes/toolruns sim-top sim-core sim-keymem sim-encipher sim-decipher
+python3 scripts/study.py prepare \
+  --experiment experiments/suite/pilot-baseline.json \
+  --designs aes --pdks sky130A --label aes-sky130-baseline
+
+python3 scripts/study.py run --label aes-sky130-baseline --machine-id desktop
+python3 scripts/analyze.py --label aes-sky130-baseline
 ```
 
-Inspect the other submodules' own Makefiles/FuseSoC targets rather than assuming
-AES's target names apply. Some testbenches print failures but exit zero. No FPGA
-board is required for the ASIC experiment. Upstream provenance and RTL validation
-are separate from successful physical implementation.
+Choose either this route or the one-plus-nine route. Running both would
+duplicate the same observations.
 
-Review `git status`, then commit the intended scaffold, settings and submodule
-pointers. The uploaded parent repository had no commit. Formal study campaigns
-still require a clean committed repository; this protection has not been removed.
-Do not commit results/, pdks/, machine-local paths or downloaded update archives.
+## Choose a fixed clock
 
-## CPU control
+Each design currently has a 25 ns fallback; the supplied per-PDK files are
+empty. This is a starting value, not a timing result.
 
-The updated configs/study.json defaults are:
+Put a chosen target in
+`configs/designs/<design>/pdks/<pdk>.json` as a numeric `CLOCK_PERIOD` in
+nanoseconds. Record the requirement or bring-up evidence supporting it.
+Changing this file requires a new campaign. A slower clock may reduce setup
+pressure; it does not repair hold, DRC or LVS errors.
 
-```json
-"execution": {
-  "threads": 2,
-  "parallel_jobs": 1
-}
+Keep the target fixed for all configurations compared within a design/PDK.
+Selecting a comfortable target is valid for a seed-sensitivity pilot; finding
+maximum frequency is a separate question.
+
+The field `require_calibrated_clock_for_study` has a historical name. Its actual
+gate is the presence of an explicit `CLOCK_PERIOD` in the per-PDK file.
+It does not require an automated sweep or certify that the value was measured.
+Document the evidence yourself.
+
+### Optional calibration helper
+
+Use this only if a clock sweep is needed. The selection below costs **24
+partial-flow runs**: eight periods × three seeds, through post-route STA.
+
+```bash
+python3 scripts/study.py prepare \
+  --experiment experiments/suite/calibrate.json \
+  --designs aes --pdks sky130A --label aes-sky130-clock
+
+python3 scripts/study.py run --label aes-sky130-clock --machine-id desktop
+python3 scripts/calibrate_clock.py --label aes-sky130-clock
 ```
 
-These are fields within the existing execution object; retain its other fields.
-`threads` is passed to LibreLane, detailed routing, STA and OMP_NUM_THREADS.
-`parallel_jobs` controls simultaneous flows. Their product is a planning estimate,
-not an OS-enforced percentage limit; some tool subprocesses can use other threads.
-Change these settings before preparing a campaign and keep them fixed throughout.
+Review its output before using `--write` to update the per-PDK file. The helper
+requires complete planned observations, frozen-config checks, seed evidence and
+finite setup measurements. Missing or failed executions block writing; completed
+negative-slack measurements are valid observations of failing periods.
 
-On Linux with a systemd user manager and an available delegated CPU controller,
-run the whole campaign in a quota-limited scope from inside the pinned Nix shell:
+The default headroom rule divides a selected observed passing period by 0.85.
+It is a target-selection policy, not measured Fmax or guaranteed timing closure.
+Validate the selected target with a full flow. Keep the sweep separate from the
+seed dataset.
+
+## Limit CPU use
+
+Set `execution.threads` and `execution.parallel_jobs` in
+`configs/study.json` before preparation. The default values are 2 and 1.
+They limit requested tool parallelism, not an enforced percentage of the host.
+
+On Linux with a systemd user manager and a delegated CPU controller, replace
+each `run` command with a scope like this, from inside the pinned shell:
 
 ```bash
 systemd-run --user --scope -p CPUQuota=200% \
-  python3 scripts/study.py run --label aes-pilot-001 --machine-id desktop
+  python3 scripts/study.py run --label aes-sky130-first --machine-id desktop
 ```
 
-200% allows at most two CPUs' worth of aggregate CPU time over each quota period,
-shared across the runner and its descendants. It is not 200% of the whole machine
-or a reservation of two physical cores. Use 100% for one CPU's worth or 50% for
-half of one. A university scheduler's assigned resources take precedence; use
-its allocation controls and ask the administrator if user scopes are unavailable.
-The command must succeed; do not assume a rejected quota is active.
+Use the same prefix for the remaining batch. A 200% quota caps the scope and
+its descendants at two CPUs' worth of aggregate CPU time per quota period.
+100% means one CPU's worth; 50% means half of one. It does not reserve physical
+cores. Check that the command succeeds.
 
-For responsiveness without a hard cap, `nice -n 10 python3 scripts/study.py run ...`
-lowers scheduling priority but may still use all available CPU when the system is
-idle. `taskset` limits eligible logical CPUs, not a percentage; it also matters
-which logical CPUs share a physical core. cpulimit uses stop/continue throttling;
-a cgroup quota is a cleaner choice for this multi-process toolchain.
+`nice -n 10` lowers scheduling priority without imposing a hard cap.
+`taskset` limits eligible logical CPUs. `cpulimit` uses stop/continue signals;
+a cgroup quota fits this multi-process flow more directly.
 
-The runner records affinity, nice level, parallel job count and visible cgroup-v2
-quota/cpuset information in environment and attempt records and runs.csv. A parent
-quota may be shared with other processes. This does not record every source of
-contention; keep comparable machine conditions and limit policies, especially for
-runtime claims. Throttling can cause wall-clock timeouts.
+On a university server, use its scheduler's resource allocation. Record the
+allocation, wall-time limit and resource policy. The runner captures machine
+identity, requested threads, affinity, nice level and visible cgroup-v2 limits;
+it cannot observe every competing workload or scheduler restriction.
+
+Keep resource settings fixed for comparisons. A throttling-induced timeout is
+an execution outcome, not evidence that the physical design cannot route.
 
 References: [systemd resource control](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html),
 [systemd-run](https://www.freedesktop.org/software/systemd/man/latest/systemd-run.html),
 [cpulimit](https://github.com/opsengine/cpulimit).
 
-## Shared presets and job counts
+## Resume and collect
 
-All four presets use phase=pilot and default to SKY130 and all four designs.
+Repeat the same `run --label ...` command after an interruption. The runner
+continues unattempted jobs and restarts incomplete attempts, preserving their
+partial files under the job's `aborted/` directory. Recorded flow errors,
+timeouts and launcher errors remain recorded; they are not silently retried.
 
-| Preset under experiments/suite/ | Default jobs | With --designs aes |
-| --- | ---: | ---: |
-| smoke.json | 4 | 1 |
-| pilot-seed-check.json | 16 | 4 |
-| pilot-baseline.json | 40 | 10 |
-| pilot-2x2.json | 160 | 40 |
+Do not edit frozen inputs while resuming. After intentional input changes,
+prepare a new label. A runner lock prevents two processes from running the
+same campaign concurrently.
 
-The 2x2 preset crosses placement density 60/70 with synthesis AREA 0/DELAY 1.
-The four configs are C0, pilot_d70_area0, pilot_d60_delay1 and pilot_d70_delay1.
-Core utilization remains 50 and the clock stays fixed within each design/PDK.
-These candidate levels are not claims of best performance. You can instead keep
-only C0 for the initial ten-seed baseline, or use Cminus/C0/Cplus for a 30-flow
-single-design density pilot.
-
-CLI selections replace the corresponding list in the preset. They are recorded
-in manifest.json alongside the original experiment, so there is no hidden manual
-edit. --designs, --pdks, --configs and --seeds accept space-separated values.
-
-## Bring up one design and PDK
+Collection and summary happen automatically after a normal finish or handled
+interruption. After a power loss or forced kill, refresh them explicitly:
 
 ```bash
-python3 scripts/study.py prepare --experiment experiments/suite/smoke.json \
-  --designs aes --pdks sky130A --label aes-smoke-001
-python3 scripts/study.py run --label aes-smoke-001 --machine-id desktop
+python3 scripts/study.py collect --label aes-sky130-first
+python3 scripts/study.py summarize --label aes-sky130-first
 ```
 
-Use the systemd-run prefix above on run commands when you want a hard quota.
-A complete successful run establishes tool/PDK integration and gives a resource
-estimate. Inspect the logs, GDS availability, timing and required checks.
+| Output under `results/<label>/` | Contents |
+| --- | --- |
+| `manifest.json`, `schedule.json` | Selected jobs, input hashes and execution order |
+| `inputs/` | Frozen configuration, constraints and toolchain pin records |
+| `environment-*.json` | Execution environment and tool evidence |
+| `jobs/` | Per-attempt commands, status, logs and flow outputs |
+| `runs.csv` | One row per planned job, including failures and missing outcomes |
+| `metrics_long.csv` | Collected detailed metrics |
+| `summary.csv` | Grouped counts, pass fractions and descriptive statistics |
+| `analysis/` | Analysis tables and report, unless `--out` selects another path |
 
-The original 25 ns design fallback is unvalidated. If unsuitable, choose a new
-candidate in configs/designs/<design>/pdks/<pdk>.json, document the evidence, and
-prepare a new campaign. A slower period can address setup pressure but cannot
-repair hold, LVS or DRC problems. Keep the selected reference fixed across the
-configuration comparison. Record targets before preparing campaigns you will pool.
+Keep the entire campaign when archiving results. The tables are automatically
+collected JSON/CSV files; no database setup or manual seed log is needed.
 
-An audited clock sweep is also available using the existing calibration preset:
+## Expand only when the question is clear
 
-```bash
-python3 scripts/study.py prepare --experiment experiments/suite/calibrate.json \
-  --designs aes --pdks sky130A --label aes-cal-001
-python3 scripts/study.py run --label aes-cal-001 --machine-id desktop
-python3 scripts/calibrate_clock.py --label aes-cal-001
-python3 scripts/calibrate_clock.py --label aes-cal-001 --write
-```
+For a second-PDK baseline, select `--pdks gf180mcuD` or `--pdks ihp-sg13g2`,
+choose an appropriate documented clock and use a new label. Bring up that
+platform first. For another design, replace `--designs aes` with its ID after
+validating its RTL.
 
-This selection is 8 periods x 3 seeds = 24 jobs through post-route STA. The script
-now requires every manifest job, verified frozen config, successful execution,
-seed evidence and finite setup measurements at the intended period. Missing or
-failed execution blocks writing; completed negative-slack measurements remain
-valid observations of a failing period. Only the clock and routing seed may vary.
+For a density study, use `--configs Cminus C0 Cplus` with the baseline preset.
+That schedules 30 runs per design/PDK at ten seeds. Prepare the candidates in
+one campaign so their execution order is shuffled together.
 
-The selected observed passing period is divided by .85 as a chosen headroom
-policy. It is not a measured Fmax or a guarantee that the reference will meet
-all checks. Validate the written reference with full flows before confirmation.
-If every sampled period passes, extend toward faster periods only if frequency
-characterization is part of your question. If none passes, inspect failures and
-extend toward slower periods as appropriate. Commit clocks and evidence.
+The [study plan](study-plan.md) explains when the optional 2 × 2 comparison
+helps. The [experiment index](../experiments/README.md) lists the much larger
+presets; none is a prerequisite for the baseline.
 
-## Repeatability and the pilot
+## Pilot and formal campaigns
 
-```bash
-python3 scripts/study.py prepare --experiment experiments/suite/pilot-seed-check.json \
-  --designs aes --label aes-seedcheck-001
-python3 scripts/study.py run --label aes-seedcheck-001 --machine-id desktop
-```
+`phase: pilot` permits bring-up with uncommitted study files and records their
+state. The LibreLane pin and frozen-input checks still apply.
 
-Compare repeat 1 versus repeat 2 for each seed in runs.csv: statuses/checks,
-setup/hold slack, area and wirelength. Runtime naturally varies; GDS metadata
-can differ without a geometry change. Investigate other differences before
-attributing measured spread to the routing seed. Repeats are diagnostic samples.
-
-For ten seeds and two knobs on one design:
-
-```bash
-python3 scripts/study.py prepare --experiment experiments/suite/pilot-2x2.json \
-  --designs aes --label aes-pilot-001
-python3 scripts/study.py run --label aes-pilot-001 --machine-id desktop
-```
-
-For all four unchanged designs after their baselines work:
-
-```bash
-python3 scripts/study.py prepare --experiment experiments/suite/pilot-2x2.json \
-  --label crypto-pilot-001
-python3 scripts/study.py run --label crypto-pilot-001 --machine-id desktop
-```
-
-Add `--pdks sky130A gf180mcuD ihp-sg13g2` to preparation when all three platform
-baselines work; four designs x three PDKs x four configurations x ten seeds is
-480 full flows. Start smaller to measure feasibility and cost. The original
-large suite presets remain available; they are not required first steps.
-
-Changing order_seed is unnecessary; it only determines the saved schedule. You
-may reuse the same seed list and order_seed across designs and PDKs. Identical
-numeric routing seeds do not imply identical physical perturbations in different
-netlists. Reusing identical design/PDK/configuration/seed cells does not create
-new independent seed observations.
-
-## Collect, inspect and preserve
-
-Run automatically collects and summarizes on completion or a handled interruption.
-The same run command resumes unattempted jobs and preserves interrupted attempts;
-recorded flow errors/timeouts remain outcomes. After intentional input changes,
-prepare a new label. Do not modify inputs while a campaign is running.
-
-```bash
-python3 scripts/study.py collect --label crypto-pilot-001
-python3 scripts/study.py summarize --label crypto-pilot-001
-python3 scripts/analyze.py --label crypto-pilot-001
-```
-
-This produces JSON/CSV records, not a database server. Seeds, schedule, commands,
-resources, failures and results are collected automatically. Review raw data and
-missing outcomes. Back up the entire results/<label>/ directory, including raw
-logs, frozen inputs, environment records and GDS outputs. Read analysis-guide.md
-for tie handling, transfer, pooling and the limits of exploratory resampling.
+`phase: study` requires a clean committed parent repository, submodules at their
+recorded revisions, an explicit per-design/per-PDK clock, distinct seeds and a
+complete flow. Prepare a tracked experiment with that phase after the protocol
+and inputs are fixed. Phase labels do not establish statistical validity.

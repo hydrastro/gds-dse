@@ -95,7 +95,7 @@ the platform; differences are not attributable solely to process geometry.
 
 ## Selection stability is exploratory
 
-`dse_reliability.csv` now reports `observed_best_set` and `p_pick_observed_best`.
+`dse_reliability.csv` reports `observed_best_set` and `p_pick_observed_best`.
 For each sampling budget, only candidates with enough observations enter both
 the resampling pool and the reference ranking. Tied sample winners are selected
 uniformly. Chance agreement is the size of the observed best set divided by the
@@ -110,7 +110,7 @@ failures. No synthetic resampling curve substitutes for those new runs.
 
 ## Timing, power and signoff scope
 
-The default analysis no longer computes Fmax, achieved period or area-delay from
+The default analysis does not compute Fmax, achieved period or area-delay from
 `clock_period - worst_setup_slack`. The SDC includes I/O paths with delays that
 scale with the clock; the formula is not a general frequency bound. The analyser
 also disables these named legacy derived metrics when reading old frozen settings,
@@ -122,7 +122,7 @@ Workload-level power claims require an explicit switching-activity methodology.
 
 `study_checks_pass` refers to the declared checks and selected nominal-RC timing
 corners. Some violation classes are reported rather than required. It is not a
-fabrication/signoff certificate. Missing any explicitly selected corner now makes
+fabrication/signoff certificate. Missing any explicitly selected corner makes
 that aggregated metric unknown rather than silently using the available subset.
 
 ## Combining campaigns and comparing runtime

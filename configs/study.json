@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "//": "Study-wide settings formerly hardcoded in scripts/. Frozen (hashed) into every campaign at prepare.",
+  "//": "Study-wide settings. Frozen (hashed) into every campaign at prepare; see docs/configuration.md.",
   "flow": {
     "librelane_commit": "01ddb25e4424f6f5aaf6b951b14a2b6fdcf737c0",
     "flow": "Classic",
@@ -63,7 +63,7 @@
       ".hex"
     ],
     "require_calibrated_clock_for_study": true,
-    "//require_calibrated_clock_for_study": "phase=study campaigns need CLOCK_PERIOD in configs/designs/<d>/pdks/<pdk>.json (written by scripts/calibrate_clock.py)."
+    "//require_calibrated_clock_for_study": "Historical field name: phase=study requires an explicit CLOCK_PERIOD in configs/designs/<d>/pdks/<pdk>.json. Document the target's evidence; using scripts/calibrate_clock.py is optional."
   },
   "//config_constraints": "Checked on every merged job config (names resolve to merged values, then LibreLane defaults). Generators skip variants that violate them.",
   "config_constraints": [

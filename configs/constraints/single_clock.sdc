@@ -4,7 +4,7 @@
 # virtual clock), and no input is excluded (reset is timed like any other input).
 # Every value comes from the merged job configuration via $::env(...); each PDK's defaults
 # are in configs/platforms.json. Units: ns, pF (OUTPUT_CAP_LOAD is fF, as in LibreLane).
-# Optional study-only values can be added as STUDY_SDC_* placeholders written between '@' signs (see README).
+# Optional study-only values can be added as STUDY_SDC_* placeholders written between '@' signs (see docs/configuration.md).
 if {[llength $::env(CLOCK_PORT)] != 1} {
     error "This study SDC requires exactly one clock port."
 }
