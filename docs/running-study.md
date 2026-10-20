@@ -1,77 +1,89 @@
 # Running the study
 
-Complete [setup](setup.md) and use the pinned Nix shell. Start with one unchanged
-design and one PDK. The commands below select AES and SKY130 explicitly.
+Complete [setup](setup.md) and use the pinned Nix shell. The target experiment
+includes `sky130A`, `gf180mcuD` and `ihp-sg13g2`. AES comes first; the other
+three designs follow the same protocol.
 
 ## Before preparing a campaign
 
-Select the clock/constraints, requested threads and CPU policy. The defaults in
+Bring up each platform and choose its clock/constraints. SKY130 can be the first
+installation check, followed by GF180MCU and IHP SG13G2. Select the targets for
+all three before preparing the batches that will form one pooled dataset.
+The baseline command below selects all three explicitly; the preset itself has
+a small SKY130 default for restricted bring-up.
+
+Select requested threads and CPU policy before preparation. The defaults in
 `configs/study.json` request two threads and one simultaneous flow. Use the
-same policy throughout the comparison.
+same resource policy throughout the comparison.
 
 A campaign label identifies a saved batch. `prepare` expands the selected
 designs × PDKs × configurations × seeds × repeats, checks the configuration,
 freezes inputs and saves a shuffled schedule. It does not run the EDA tools.
 It prints the job count and refuses an existing label.
 
-CLI selections such as `--designs aes` replace the corresponding list in the
-experiment file. The selections and original definition are both recorded.
+CLI selections replace the corresponding list in the experiment file. The
+selections and original definition are both recorded. To bring up one platform
+alone, select only its ID with `--pdks` and use a separate diagnostic label.
 
-## Run one, then the remaining nine
+## Run one seed per PDK, then the remaining nine
 
 ```bash
 python3 scripts/study.py prepare \
   --experiment experiments/suite/pilot-baseline.json \
-  --designs aes --pdks sky130A --seeds 1 --label aes-sky130-first
+  --designs aes --pdks sky130A gf180mcuD ihp-sg13g2 \
+  --seeds 1 --label aes-baseline-first
 
-python3 scripts/study.py run --label aes-sky130-first --machine-id desktop
+python3 scripts/study.py run --label aes-baseline-first --machine-id desktop
 ```
 
-Inspect `results/aes-sky130-first/runs.csv`, the job's `console.log`, and the
-reports beneath `jobs/<job-id>/runs/run/`. Confirm the intended top and source
-list, actual seed application, final STA, GDS availability, setup/hold, DRC and
-LVS. Check for unexpected black boxes, latches or unconstrained endpoints.
-A GDS file by itself does not establish a passing implementation.
+This schedules three full-flow attempts. Inspect `results/aes-baseline-first/runs.csv`,
+each job's `console.log`, and the reports beneath `jobs/<job-id>/runs/run/`.
+Confirm the intended top and sources, actual seed application, final STA, GDS
+availability, setup/hold, DRC and LVS. Check for unexpected black boxes, latches
+or unconstrained endpoints. GDS availability alone does not establish a pass.
 
-If the setup needs repair, preserve this campaign as bring-up, make the change
-and use a new label. If the setup is appropriate, leave the inputs untouched:
+If a setup needs repair, preserve the results as bring-up, make the change and
+use a new label. If the setups are appropriate, leave the inputs untouched:
 
 ```bash
 python3 scripts/study.py prepare \
   --experiment experiments/suite/pilot-baseline.json \
-  --designs aes --pdks sky130A --seeds 2 3 4 5 6 7 8 9 10 \
-  --label aes-sky130-rest
+  --designs aes --pdks sky130A gf180mcuD ihp-sg13g2 \
+  --seeds 2 3 4 5 6 7 8 9 10 --label aes-baseline-rest
 
-python3 scripts/study.py run --label aes-sky130-rest --machine-id desktop
+python3 scripts/study.py run --label aes-baseline-rest --machine-id desktop
 
 python3 scripts/analyze.py \
-  --label aes-sky130-first --label aes-sky130-rest \
-  --out reports/aes/sky130-baseline
+  --label aes-baseline-first --label aes-baseline-rest \
+  --out reports/aes/baseline-all-pdks
 ```
 
-This is ten attempts, not ten guaranteed successes. Record failures under the
-frozen setup. Do not keep trying new seeds until ten happen to pass.
+This is thirty attempts, not thirty guaranteed successes. Record failures under
+the frozen setup. Do not keep trying new seeds until ten per platform happen
+to pass. The analyser groups by PDK; combining campaigns does not merge the
+three technologies into one metric distribution.
 
 Combining batches requires unchanged shared inputs, compatible tool evidence,
-the same machine/resource context and disjoint seed cells. Even comment-only
-edits to hashed configs can prevent pooling. Decide the setup before the first
-batch and leave it fixed through the second.
+the same machine/resource context within each design/PDK and disjoint seed cells.
+Even comment-only edits to hashed configs can prevent pooling. Leave all
+comparison inputs fixed from the first batch through the second.
 
-## Run all ten together
+## Run all thirty together
 
-Use this alternative when the baseline setup has already been validated:
+Use this alternative when the three baseline setups have already been validated:
 
 ```bash
 python3 scripts/study.py prepare \
   --experiment experiments/suite/pilot-baseline.json \
-  --designs aes --pdks sky130A --label aes-sky130-baseline
+  --designs aes --pdks sky130A gf180mcuD ihp-sg13g2 \
+  --label aes-baseline-all-pdks
 
-python3 scripts/study.py run --label aes-sky130-baseline --machine-id desktop
-python3 scripts/analyze.py --label aes-sky130-baseline
+python3 scripts/study.py run --label aes-baseline-all-pdks --machine-id desktop
+python3 scripts/analyze.py --label aes-baseline-all-pdks
 ```
 
-Choose either this route or the one-plus-nine route. Running both would
-duplicate the same observations.
+Choose either this route or the three-plus-twenty-seven route. Running both
+would duplicate the same observations.
 
 ## Choose a fixed clock
 
@@ -128,7 +140,7 @@ each `run` command with a scope like this, from inside the pinned shell:
 
 ```bash
 systemd-run --user --scope -p CPUQuota=200% \
-  python3 scripts/study.py run --label aes-sky130-first --machine-id desktop
+  python3 scripts/study.py run --label aes-baseline-first --machine-id desktop
 ```
 
 Use the same prefix for the remaining batch. A 200% quota caps the scope and
@@ -167,8 +179,8 @@ Collection and summary happen automatically after a normal finish or handled
 interruption. After a power loss or forced kill, refresh them explicitly:
 
 ```bash
-python3 scripts/study.py collect --label aes-sky130-first
-python3 scripts/study.py summarize --label aes-sky130-first
+python3 scripts/study.py collect --label aes-baseline-first
+python3 scripts/study.py summarize --label aes-baseline-first
 ```
 
 | Output under `results/<label>/` | Contents |
@@ -185,20 +197,25 @@ python3 scripts/study.py summarize --label aes-sky130-first
 Keep the entire campaign when archiving results. The tables are automatically
 collected JSON/CSV files; no database setup or manual seed log is needed.
 
-## Expand only when the question is clear
+## Compare configurations and add designs
 
-For a second-PDK baseline, select `--pdks gf180mcuD` or `--pdks ihp-sg13g2`,
-choose an appropriate documented clock and use a new label. Bring up that
-platform first. For another design, replace `--designs aes` with its ID after
-validating its RTL.
+For a density comparison, add `--configs Cminus C0 Cplus` to the preparation
+command that selects all three PDKs. That schedules **90 runs for AES**:
+three PDKs × three configurations × ten seeds. Prepare the candidates together
+so their execution order is shuffled within one campaign.
 
-For a density study, use `--configs Cminus C0 Cplus` with the baseline preset.
-That schedules 30 runs per design/PDK at ten seeds. Prepare the candidates in
-one campaign so their execution order is shuffled together.
+Select that comparison instead of a baseline-only campaign if it is already
+the agreed question. If baseline results exist, consider provenance and blocking
+before reuse; do not automatically rerun or pool the same C0 seed cells.
 
-The [study plan](study-plan.md) explains when the optional 2 × 2 comparison
-helps. The [experiment index](../experiments/README.md) lists the much larger
-presets; none is a prerequisite for the baseline.
+After validating the other cores and their platform targets, select
+`--designs aes sha256 chacha prince`. The same three-density experiment then
+contains **360 runs** across the full suite.
+
+The [study plan](study-plan.md) explains when an optional 2 × 2 knob comparison
+helps. Its extra synthesis dimension is optional; inclusion of the three PDKs
+is part of the planned study. The [experiment index](../experiments/README.md)
+lists available templates and their default counts.
 
 ## Pilot and formal campaigns
 

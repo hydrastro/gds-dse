@@ -1,6 +1,6 @@
 # Documentation
 
-Start with setup and the first ten-seed experiment. The reference pages are
+Start with setup and ten seeds on each of the three PDKs. The reference pages are
 there when a configuration or result needs a closer look.
 
 | Guide | What it answers |

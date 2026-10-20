@@ -2,23 +2,29 @@
 
 The research question is whether an implementation choice remains convincing
 when a flow is repeated with different seeds, and whether that choice transfers
-to another PDK.
+between **SKY130, GF180MCU and IHP SG13G2**.
 
-The first task is deliberately smaller: measure one unchanged design, on one
-PDK, under one baseline configuration.
+All three PDKs are part of the project. Bringing up SKY130 first is an execution
+order, not a reduction of the scientific scope. AES is the first benchmark;
+SHA-256, ChaCha and PRINCE are the planned wider suite.
 
 ## The first dataset
 
-Use AES, `sky130A`, `C0` and routing seeds 1–10. Keep the source revision, top
-module, clock target, SDC, tools, PDK, machine and execution settings fixed.
-Request the complete flow, including GDSII and the configured checks.
+Use AES, all three PDKs, `C0` and routing seeds 1–10:
+**one design × three PDKs × one configuration × ten seeds = 30 runs**.
 
-Run seed 1 first. If the setup is appropriate, it can count toward the ten runs;
-then execute seeds 2–10 without changing inputs. If bring-up requires a change,
-retain the first result as diagnostic evidence and start the dataset under the
-new fixed setup. Do not silently replace unsuccessful seeds with favourable ones.
+For each PDK, keep its selected library, clock and electrical assumptions fixed
+through the seed/configuration comparison. Keep the RTL revision, top, flow
+revision and resource policy fixed too. The PDK is the intentional platform
+factor; its library and physical rules cannot be identical across platforms.
 
-Report:
+Bring up the platforms one at a time if useful. The documented campaign starts
+with seed 1 on each PDK, then adds seeds 2–10. The first three runs can count
+toward the thirty if the frozen inputs remain unchanged. If integration requires
+changes, retain those attempts as diagnostics and establish the dataset under
+the corrected setup. Do not replace unsuccessful seeds with favourable ones.
+
+Report separately for each platform:
 
 - how many attempts reached each relevant stage and passed the declared checks;
 - setup and hold slack, area and wirelength for the stated data population;
@@ -30,29 +36,32 @@ Capacity perturbation is set to zero. Synthesis, placement and later tool seeds
 are not independently swept. A small spread does not establish that the entire
 flow is insensitive to randomness.
 
-## What comes after the baseline?
+## Configuration comparison across all three PDKs
 
-Choose the next experiment from the question, rather than running every preset.
+The baseline measures seed sensitivity on each platform. To answer whether the
+preferred configuration transfers, compare the same candidate configurations on
+all three PDKs. A single candidate cannot establish a configuration ranking.
 
-| Question | One design, one PDK | Purpose |
+| Candidate set | AES on all three PDKs | Purpose |
 | --- | ---: | --- |
-| Does the baseline vary across seeds? | 1 config × 10 seeds = **10** | First dataset |
-| Does placement density affect the result? | 3 configs × 10 seeds = **30** | `Cminus`, `C0`, `Cplus` |
-| Do density and synthesis strategy interact? | 4 configs × 10 seeds = **40** | Optional 2 × 2 comparison |
-| Does the preferred configuration transfer? | Same candidates × 10 seeds on a second PDK | Evaluate the source choice on the destination |
+| `C0` | 1 × 3 × 10 = **30** | Baseline seed sensitivity |
+| `Cminus`, `C0`, `Cplus` | 3 × 3 × 10 = **90** | Local density effects and cross-PDK ranking |
+| Two densities × two synthesis strategies | 4 × 3 × 10 = **120** | Optional interaction study |
 
-The second-PDK baseline alone costs another ten runs and checks whether baseline
-seed sensitivity differs. It cannot establish transfer of a *winning
-configuration* when only one candidate was tested.
+These are total sizes of alternative campaign definitions, not an instruction
+to run all three campaigns. Choose the candidate set before the comparison.
+If C0 was already measured, reuse needs compatible inputs and a defensible
+execution/blocking strategy; the old baseline is not automatically concurrent
+control data. Never count repeated seed cells as independent observations.
 
-A three-density study over two PDKs is 60 runs for one design. Four designs,
-three PDKs, three densities and ten seeds would be 360 runs. Neither expansion
-is part of the first ten-run task.
+The three-density comparison across the full four-design suite would contain
+**4 × 3 × 3 × 10 = 360 runs**. Start execution with AES, then extend the same
+protocol to the other designs after their integration is ready.
 
-A ten-seed sample is a pilot budget, not a promise of sufficient statistical
-precision. Decide whether more seeds or designs are useful after seeing the
-spread, failures, effect sizes and runtime. Keep conclusions specific to the
-tested candidates, designs, operating targets and PDK versions.
+Ten seeds per configuration/PDK is a pilot budget, not a guarantee of precision.
+Use spread, failures, effect sizes and runtime to decide whether more seeds or
+candidate settings resolve a useful uncertainty. All three PDKs remain in scope.
+Keep conclusions specific to the tested candidates, designs and operating targets.
 
 ## Why three densities?
 

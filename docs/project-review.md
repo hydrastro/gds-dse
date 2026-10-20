@@ -44,5 +44,5 @@ The analysis preserves unsuccessful transfers, splits credit for tied rankings
 and checks provenance before pooling. These safeguards prevent some misleading
 summaries; they do not replace a sound experiment.
 
-See [the study plan](study-plan.md) for the scope of the first ten runs and
+See [the study plan](study-plan.md) for the scope of the thirty-run baseline across the three PDKs and
 [the analysis guide](analysis-guide.md) for the statistical definitions.

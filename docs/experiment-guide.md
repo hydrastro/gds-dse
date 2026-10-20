@@ -37,7 +37,7 @@ vectors. Record its algorithm/version and parameter choices. Exclude
 testbench-only files and FPGA-specific primitives from synthesis inputs;
 any required ASIC adaptation needs its own review and functional validation.
 
-Start with one seed on one PDK using the shared baseline preset and
+Bring up one PDK at a time using the shared baseline preset and
 `--designs <id>`. Check synthesis structure, expected state elements,
 nonconstant outputs, timing constraints, routing and physical checks.
 Fix integration problems before freezing a seed comparison.
@@ -56,5 +56,5 @@ Add the design to a multi-design campaign only when its own baseline and fixed
 clock are ready. Additional designs improve coverage, but their raw area and
 timing values should not be pooled as if they implement the same workload.
 
-Keep the first campaign small. Follow [the run guide](running-study.md) for
-the one-plus-nine baseline pattern.
+Apply the same seed/configuration protocol to all three PDKs. Follow
+[the run guide](running-study.md) for the three-plus-twenty-seven baseline pattern.

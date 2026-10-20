@@ -3,10 +3,14 @@
 A definition selects designs, PDKs, shared flow variants, seeds and repetitions.
 Nothing runs because a file exists here.
 
-The first task uses `suite/pilot-baseline.json` with
-`--designs aes --pdks sky130A`: ten baseline attempts.
-The [run guide](../docs/running-study.md) starts with one seed and then the other
-nine, so bring-up can be checked before spending the full budget.
+The baseline dataset uses `suite/pilot-baseline.json` with
+`--designs aes --pdks sky130A gf180mcuD ihp-sg13g2`:
+**ten seeds per PDK, thirty baseline attempts in total**.
+The [run guide](../docs/running-study.md) starts with one seed on each PDK and
+then the remaining nine. All three PDKs are part of the project scope.
+
+The file's SKY130-only default remains available for a restricted bring-up
+check. Always include the three-PDK selection for the intended comparison.
 
 ## Shared presets
 

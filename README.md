@@ -6,9 +6,9 @@ GDS-DSE runs controlled implementation experiments with LibreLane. It keeps the
 RTL, constraints and tool versions fixed, changes selected flow settings, and
 records every attempt—including failures.
 
-The study starts with AES and ten routing seeds on SKY130. SHA-256, ChaCha,
-PRINCE and two more PDKs are available when the first results justify expanding
-the experiment.
+The project compares unchanged cryptographic cores across **SKY130, GF180MCU
+and IHP SG13G2**. AES is the first design; SHA-256, ChaCha and PRINCE form the
+planned wider suite. All three PDKs are part of the study's scope.
 
 [Setup](docs/setup.md) · [Study plan](docs/study-plan.md) ·
 [Run guide](docs/running-study.md) · [Configuration](docs/configuration.md) ·
@@ -23,14 +23,15 @@ There are two questions:
 2. **Configuration transfer:** when several flow settings are compared, does
    the preferred setting stay preferred on another PDK?
 
-The first ten runs address the first question. Comparing configurations and
-PDKs comes later. The seed intervention changes initial global-routing net
-order; it does not randomize placement, synthesis or the entire flow.
+The baseline uses ten seeds on each of the three PDKs: thirty runs for AES.
+Comparing several configurations across those PDKs addresses the second
+question. The seed intervention changes initial global-routing net order;
+it does not randomize placement, synthesis or the entire flow.
 
 All four benchmarks use unchanged upstream RTL and its existing top-level
 interface. This repository adds experiment definitions and measurement tools.
 
-## Start small
+## Start with the three-PDK baseline
 
 Complete [setup](docs/setup.md), then enter the pinned environment from the
 repository root:
@@ -39,41 +40,46 @@ repository root:
 nix-shell tools/librelane/shell.nix
 ```
 
-**Run one seed first:**
+Bring-up can proceed one platform at a time, starting with SKY130. Select and
+document each platform's clock and constraints before freezing the dataset.
+The supplied **25 ns clock is an unvalidated starting value**.
+
+**Run one seed on each PDK first:**
 
 ```bash
 python3 scripts/study.py prepare \
   --experiment experiments/suite/pilot-baseline.json \
-  --designs aes --pdks sky130A --seeds 1 --label aes-sky130-first
+  --designs aes --pdks sky130A gf180mcuD ihp-sg13g2 \
+  --seeds 1 --label aes-baseline-first
 
-python3 scripts/study.py run --label aes-sky130-first --machine-id desktop
+python3 scripts/study.py run --label aes-baseline-first --machine-id desktop
 ```
 
-Read `results/aes-sky130-first/runs.csv` and the flow logs. Check that the intended
-design reached GDSII, that the routing seed was applied, and that timing, DRC and
-LVS results make sense. The supplied **25 ns clock is an unvalidated starting
-value**. The [run guide](docs/running-study.md) explains how to handle a failed
-bring-up without mixing different setups.
+This schedules three full-flow attempts. Inspect `results/aes-baseline-first/runs.csv`
+and the logs for each platform. Check the intended design, seed application,
+GDS, timing, DRC and LVS. The [run guide](docs/running-study.md) explains how to
+handle bring-up changes without mixing different setups.
 
-**If the setup is sound, keep it unchanged and run the other nine seeds:**
+**If the setups are sound, keep them fixed and run the other nine seeds per PDK:**
 
 ```bash
 python3 scripts/study.py prepare \
   --experiment experiments/suite/pilot-baseline.json \
-  --designs aes --pdks sky130A --seeds 2 3 4 5 6 7 8 9 10 \
-  --label aes-sky130-rest
+  --designs aes --pdks sky130A gf180mcuD ihp-sg13g2 \
+  --seeds 2 3 4 5 6 7 8 9 10 --label aes-baseline-rest
 
-python3 scripts/study.py run --label aes-sky130-rest --machine-id desktop
+python3 scripts/study.py run --label aes-baseline-rest --machine-id desktop
 
 python3 scripts/analyze.py \
-  --label aes-sky130-first --label aes-sky130-rest \
-  --out reports/aes/sky130-baseline
+  --label aes-baseline-first --label aes-baseline-rest \
+  --out reports/aes/baseline-all-pdks
 ```
 
-That is **ten full-flow attempts in total**. Keep the same machine and resource
-settings for both batches. The analyser checks compatibility before combining
-them. Once the setup is already validated, all ten seeds can instead be prepared
-as [one campaign](docs/running-study.md#run-all-ten-together).
+That is **30 full-flow attempts: one design × three PDKs × one configuration
+× ten seeds**. Keep the same machine and resource policy for both batches.
+The analyser checks compatibility before combining them. Once the setups are
+validated, all thirty can instead be prepared as
+[one campaign](docs/running-study.md#run-all-thirty-together).
 
 The default is one flow at a time with two requested threads. For a hard CPU
 limit, see [resource controls](docs/running-study.md#limit-cpu-use).
