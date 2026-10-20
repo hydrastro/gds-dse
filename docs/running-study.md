@@ -135,7 +135,7 @@ seed dataset.
 ## Limit CPU use
 
 Set `execution.threads` and `execution.parallel_jobs` in
-`configs/study.json` before preparation. The default values are 2 and 1.
+`configs/study.json` before preparation. The current server settings are 4 and 6.
 They limit requested tool parallelism, not an enforced percentage of the host.
 
 On Linux with a systemd user manager and a delegated CPU controller, replace

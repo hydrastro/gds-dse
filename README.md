@@ -42,7 +42,7 @@ Complete [setup](docs/setup.md), then enter the pinned environment from the
 repository root:
 
 ```bash
-nix-shell tools/librelane/shell.nix
+bash scripts/enter-env.sh
 ```
 
 Bring-up can proceed one platform at a time, starting with SKY130. Select and
@@ -86,8 +86,12 @@ The analyser checks compatibility before combining them. Once the setups are
 validated, all thirty can instead be prepared as
 [one campaign](docs/running-study.md#run-all-thirty-together).
 
-The default is one flow at a time with two requested threads. For a hard CPU
-limit, see [resource controls](docs/running-study.md#limit-cpu-use).
+Execution is currently set for the university server: six flows at a time with
+four requested threads each. Adjust this before preparation on smaller machines.
+For an enforced CPU limit, see [resource controls](docs/running-study.md#limit-cpu-use).
+
+The [AES three-knob experiment](experiments/aes/three-knob-20.json) selects eight
+configurations across three PDKs and twenty seeds: 480 full-flow attempts.
 
 ## Where things live
 
