@@ -1,8 +1,10 @@
 # Analysing the flow study
 
 The experimental unit is a run of one upstream design, PDK, flow configuration
-and routing seed. Analyse each design separately. Keep the RTL and flow inputs
-fixed while comparing general flow settings. The injected seed randomizes only
+and routing seed. Flow configurations are the DSE candidates; seeds measure
+variability within them. Compare baseline-relative QoR and configuration
+rankings across PDKs. Analyse each design separately. Keep the RTL and
+non-varied flow inputs fixed while comparing the selected flow settings. The injected seed randomizes only
 the initial global-routing net order; it does not sample all flow randomness.
 
 ## Start with the observations

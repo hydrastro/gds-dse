@@ -3,7 +3,8 @@
 A definition selects designs, PDKs, shared flow variants, seeds and repetitions.
 Nothing runs because a file exists here.
 
-The baseline dataset uses `suite/pilot-baseline.json` with
+The main study compares selected flow configurations across three PDKs, with
+repeated seeds for each configuration. The baseline-only diagnostic uses `suite/pilot-baseline.json` with
 `--designs aes --pdks sky130A gf180mcuD ihp-sg13g2`:
 **ten seeds per PDK, thirty baseline attempts in total**.
 The [run guide](../docs/running-study.md) starts with one seed on each PDK and

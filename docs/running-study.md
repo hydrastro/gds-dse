@@ -2,7 +2,8 @@
 
 Complete [setup](setup.md) and use the pinned Nix shell. The target experiment
 includes `sky130A`, `gf180mcuD` and `ihp-sg13g2`. AES comes first; the other
-three designs follow the same protocol.
+three designs follow the same protocol. Flow-parameter DSE is the main
+experiment; the C0-only walkthrough below is a baseline diagnostic.
 
 ## Before preparing a campaign
 
@@ -25,7 +26,7 @@ CLI selections replace the corresponding list in the experiment file. The
 selections and original definition are both recorded. To bring up one platform
 alone, select only its ID with `--pdks` and use a separate diagnostic label.
 
-## Run one seed per PDK, then the remaining nine
+## Baseline diagnostic: one seed per PDK, then the remaining nine
 
 ```bash
 python3 scripts/study.py prepare \
@@ -96,9 +97,11 @@ nanoseconds. Record the requirement or bring-up evidence supporting it.
 Changing this file requires a new campaign. A slower clock may reduce setup
 pressure; it does not repair hold, DRC or LVS errors.
 
-Keep the target fixed for all configurations compared within a design/PDK.
-Selecting a comfortable target is valid for a seed-sensitivity pilot; finding
-maximum frequency is a separate question.
+Keep the target fixed across seeds within each configuration. It can vary
+between configurations when clock target is a declared DSE knob. A baseline
+reference supports relative clock variants; it does not establish maximum
+frequency. More slack under a looser target does not establish better achieved
+performance, so define the evaluation criterion before ranking clock variants.
 
 The field `require_calibrated_clock_for_study` has a historical name. Its actual
 gate is the presence of an explicit `CLOCK_PERIOD` in the per-PDK file.
@@ -197,9 +200,12 @@ python3 scripts/study.py summarize --label aes-baseline-first
 Keep the entire campaign when archiving results. The tables are automatically
 collected JSON/CSV files; no database setup or manual seed log is needed.
 
-## Compare configurations and add designs
+## Run DSE across configurations and PDKs
 
-For a density comparison, add `--configs Cminus C0 Cplus` to the preparation
+Select the flow parameters and candidate configurations before the main DSE
+campaign. The existing stage1 plan covers clock, utilisation, density, synthesis
+and hierarchy; CTS/routing plans support later expansion. A density-only
+comparison is one example. For that example, add `--configs Cminus C0 Cplus` to the preparation
 command that selects all three PDKs. That schedules **90 runs for AES**:
 three PDKs × three configurations × ten seeds. Prepare the candidates together
 so their execution order is shuffled within one campaign.

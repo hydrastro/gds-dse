@@ -1,10 +1,13 @@
 # GDS-DSE
 
-**How much can a routing seed change an RTL-to-GDSII result?**
+**How reliable is flow-parameter design space exploration across open PDKs?**
 
-GDS-DSE runs controlled implementation experiments with LibreLane. It keeps the
-RTL, constraints and tool versions fixed, changes selected flow settings, and
-records every attempt—including failures.
+GDS-DSE explores flow parameters with LibreLane and evaluates how reliably
+configurations improve implementation quality. Each configuration is repeated
+with different routing seeds, then compared across PDKs using baseline-relative
+metrics and configuration rankings. RTL and tool revisions stay fixed; the
+selected flow settings, including constraints when chosen as knobs, define
+the design space. Every attempt is recorded, including failures.
 
 The project compares unchanged cryptographic cores across **SKY130, GF180MCU
 and IHP SG13G2**. AES is the first design; SHA-256, ChaCha and PRINCE form the
@@ -16,22 +19,24 @@ planned wider suite. All three PDKs are part of the study's scope.
 
 ## What is being measured?
 
-There are two questions:
+The study asks whether the advantages of a flow configuration persist across
+routing seeds, and whether its relative performance and ranking transfer to
+another PDK. The design space includes clock target, core utilisation, placement
+density, synthesis strategy, hierarchy, and selected CTS and routing settings.
+We start with a small parameter set and expand it as the study develops.
 
-1. **Seed sensitivity:** how much do timing, area, wirelength and feasibility
-   change when only the initial global-routing seed changes?
-2. **Configuration transfer:** when several flow settings are compared, does
-   the preferred setting stay preferred on another PDK?
-
-The baseline uses ten seeds on each of the three PDKs: thirty runs for AES.
-Comparing several configurations across those PDKs addresses the second
-question. The seed intervention changes initial global-routing net order;
-it does not randomize placement, synthesis or the entire flow.
+Repeated seeds measure variability within each configuration. The implemented
+seed intervention changes initial global-routing net order; it does not
+randomize every stage of the flow.
 
 All four benchmarks use unchanged upstream RTL and its existing top-level
 interface. This repository adds experiment definitions and measurement tools.
 
-## Start with the three-PDK baseline
+## Baseline check before DSE
+
+The C0-only commands below check the baseline across three PDKs. They are a
+preliminary diagnostic, not the full DSE experiment. DSE repeats this process
+for a selected set of flow configurations, including C0.
 
 Complete [setup](docs/setup.md), then enter the pinned environment from the
 repository root:

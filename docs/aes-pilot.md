@@ -3,8 +3,9 @@
 AES uses the same flow settings and runner as the other designs. Its source
 submodule stays unchanged.
 
-Start with [the three-PDK baseline](running-study.md): ten seeds per PDK,
-thirty attempts for AES. The
+The [three-PDK baseline](running-study.md) is a diagnostic subset: ten seeds
+per PDK, thirty attempts for AES. The DSE study repeats selected flow
+configurations and compares their relative QoR and rankings across PDKs. The
 [study plan](study-plan.md#what-were-the-extra-aes-settings) explains the optional
 2 × 2 preset and its overlap with existing variants. It is not required for the
 first dataset.

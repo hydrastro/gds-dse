@@ -1,21 +1,31 @@
 # Study plan
 
-The research question is whether an implementation choice remains convincing
-when a flow is repeated with different seeds, and whether that choice transfers
-between **SKY130, GF180MCU and IHP SG13G2**.
+The study explores flow parameters and asks how reliable the resulting
+configuration comparisons are under seed variation and across **SKY130,
+GF180MCU and IHP SG13G2**. It compares baseline-relative metrics and
+configuration rankings rather than absolute QoR values between technologies.
+
+The knobs include clock target, core utilisation, placement density, synthesis
+strategy, hierarchy, and selected CTS and routing options. Begin with a small
+selection and expand it later. Seeds provide repeated observations of each
+configuration.
 
 All three PDKs are part of the project. Bringing up SKY130 first is an execution
 order, not a reduction of the scientific scope. AES is the first benchmark;
 SHA-256, ChaCha and PRINCE are the planned wider suite.
 
-## The first dataset
+## Preliminary baseline check
 
-Use AES, all three PDKs, `C0` and routing seeds 1–10:
+The C0-only example below is a diagnostic subset of the study. The DSE
+experiment uses several selected configurations, including C0.
+
+For the baseline alone, use AES, all three PDKs, `C0` and routing seeds 1–10:
 **one design × three PDKs × one configuration × ten seeds = 30 runs**.
 
-For each PDK, keep its selected library, clock and electrical assumptions fixed
-through the seed/configuration comparison. Keep the RTL revision, top, flow
-revision and resource policy fixed too. The PDK is the intentional platform
+For each design/PDK/configuration, keep its clock and other settings fixed
+across seeds. Across configurations, vary the declared knobs, including the
+clock target when it is selected. Keep the RTL revision, top, flow revision
+and resource policy fixed. The PDK is the intentional platform
 factor; its library and physical rules cannot be identical across platforms.
 
 Bring up the platforms one at a time if useful. The documented campaign starts
@@ -63,7 +73,7 @@ Use spread, failures, effect sizes and runtime to decide whether more seeds or
 candidate settings resolve a useful uncertainty. All three PDKs remain in scope.
 Keep conclusions specific to the tested candidates, designs and operating targets.
 
-## Why three densities?
+## A density-only example
 
 The existing settings are:
 
@@ -73,7 +83,8 @@ The existing settings are:
 | `C0` | 60% | 50% | `AREA 0` |
 | `Cplus` | 65% | 50% | `AREA 0` |
 
-This is a local sensitivity experiment around the baseline. It can show whether
+This is one possible local sensitivity experiment within the broader DSE. It
+does not define the full parameter set. It can show whether
 a modest density change has an effect larger than the observed seed spread.
 It cannot locate a global optimum or describe every interaction.
 
@@ -105,8 +116,8 @@ after changing defaults. Do not run the duplicate names as different candidates.
 The fourth cell exists to answer a particular question: does changing synthesis
 strategy alter the effect of density? It is useful for that interaction study.
 It is unnecessary for the initial baseline or a density-only experiment.
-The 2 × 2 preset is an alternative later study, not another mandatory layer on
-top of the existing knob catalogue.
+The 2 × 2 preset is an example of a focused interaction study within the broader
+DSE. It is not an additional mandatory campaign.
 
 ## Keep the design fixed
 
@@ -115,9 +126,9 @@ modules, including the register interface already present in each repository.
 The manifests list their existing source files. `project_sources` is empty for
 these four designs.
 
-A clock, source list and SDC are necessary implementation inputs. Record and
-freeze them; they are not experimental factors unless the question explicitly
-calls for varying them. A new wrapper, different internal top or RTL optimisation
+A source list, clock and SDC define the implementation inputs. Freeze them
+within each configuration; clock target and other declared constraint knobs
+may vary deliberately between configurations. A new wrapper, different internal top or RTL optimisation
 would define another benchmark and needs a separate rationale.
 
 Study each design's configuration effects separately. Comparing AES area with
@@ -149,7 +160,7 @@ detect every experimental confound.
 ## Choosing a clock is not a required clock sweep
 
 The supplied 25 ns fallback has no measured validation attached. Bring up the
-design, inspect timing and select a defensible fixed target. An application
+design, inspect timing and select a defensible baseline reference target. An application
 requirement or a documented feasible engineering target can serve that purpose.
 A per-PDK target belongs in `configs/designs/<design>/pdks/<pdk>.json`.
 

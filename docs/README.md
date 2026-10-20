@@ -1,7 +1,8 @@
 # Documentation
 
-Start with setup and ten seeds on each of the three PDKs. The reference pages are
-there when a configuration or result needs a closer look.
+The project studies flow-parameter DSE across three PDKs, with repeated seeds
+to assess variability and ranking stability. The baseline walkthrough is a
+preliminary check. These pages cover setup, configuration and analysis.
 
 | Guide | What it answers |
 | --- | --- |
