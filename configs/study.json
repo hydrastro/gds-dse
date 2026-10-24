@@ -15,9 +15,9 @@
     }
   },
   "execution": {
-    "threads": 4,
+    "threads": 1,
     "//parallel_jobs": "Flows run at once. 1 = sequential (comparable runtimes). >1 multiplies throughput; keep parallel_jobs x threads <= physical cores and record it in the protocol.",
-    "parallel_jobs": 6,
+    "parallel_jobs": 60,
     "timeout_s": 0,
     "kill_grace_s": 10,
     "pdk_cache_dir": "pdks",

@@ -1,6 +1,29 @@
 #!/usr/bin/env bash
-# Re-enter the pinned tool environment; forward arguments such as --run.
+# Enter the pinned tool environment from an ordinary host shell.
 set -euo pipefail
+
+if [[ -n "${IN_NIX_SHELL:-}" ]]; then
+  printf 'Already inside a Nix shell. Open a fresh SSH login to launch a batch.\n' >&2
+  printf 'For interactive work here, run the study commands directly.\n' >&2
+  exit 2
+fi
+
+# IN_NIX_SHELL alone is insufficient: a portable runtime can trace this
+# process even when that environment variable is missing.
+env_tracer_pid=0
+if [[ -r /proc/self/status ]]; then
+  while read -r env_status_key env_status_value env_status_rest; do
+    if [[ "$env_status_key" == 'TracerPid:' ]]; then
+      env_tracer_pid="$env_status_value"
+      break
+    fi
+  done < /proc/self/status
+fi
+if [[ "$env_tracer_pid" != 0 ]]; then
+  printf 'This shell is already traced by PID %s. Refusing to nest the tool environment.\n' "$env_tracer_pid" >&2
+  printf 'Open a fresh SSH login outside Nix/PRoot and run this script there.\n' >&2
+  exit 2
+fi
 
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 cd -- "$repo_root"
