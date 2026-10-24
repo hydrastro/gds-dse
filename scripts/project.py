@@ -287,8 +287,8 @@ def prepare_campaign(root, flow_root, flow_commit, experiment_file, campaign_lab
     experiment = load(experiment_file)
     source_experiment = dict(experiment)
     selections = selections or {}
-    if set(selections) - {'designs', 'pdks', 'configs', 'seeds'}:
-        raise ValueError('Only designs, pdks, configs and seeds may be selected at prepare.')
+    if set(selections) - {'designs', 'pdks', 'configs', 'seeds', 'threads', 'repeat'}:
+        raise ValueError('Only designs, pdks, configs, seeds, threads and repeat may be selected at prepare.')
     experiment = {**experiment, **selections}
     defaults = load('configs/defaults.json')
     platforms = load('configs/platforms.json')
@@ -297,7 +297,9 @@ def prepare_campaign(root, flow_root, flow_commit, experiment_file, campaign_lab
     phase = experiment.get('phase', 'pilot')
     repeat = experiment.get('repeat', 1)
     stop_after = experiment.get('stop_after')
-    threads = execution['threads']
+    # Per-campaign thread count (experiment "threads" or prepare --threads) overrides study.json, so
+    # thread-count comparisons are separate, fully recorded campaigns.
+    threads = experiment.get('threads', execution['threads'])
     if 'threads' in defaults:
         raise ValueError('configs/defaults.json: "threads" moved to configs/study.json execution.threads.')
     if phase not in {'pilot', 'study'} or type(repeat) is not int or repeat < 1 or type(threads) is not int or threads < 1:

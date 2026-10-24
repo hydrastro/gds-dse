@@ -1,0 +1,17 @@
+{
+  "//": [
+    "Recipe diagnostic: which threads-per-flow / parallel-flows / runtime setting gives builds that",
+    "(1) never fail for infrastructure or tool reasons, (2) are deterministic (same seed twice = identical result)",
+    "and (3) maximise throughput. Same 48 jobs for every setting: 4 designs x 3 PDKs x C0 x seeds 1-2 x repeat 2.",
+    "Run with scripts/recipe-night.sh, which prepares one campaign per threads setting (prepare --threads T)",
+    "and runs it with run --parallel-jobs P. Compare with scripts/recipe_report.py. See docs/recipe.md."
+  ],
+  "phase": "pilot",
+  "designs": ["aes", "sha256", "chacha", "prince"],
+  "pdks": ["sky130A", "gf180mcuD", "ihp-sg13g2"],
+  "configs": ["C0"],
+  "seeds": [1, 2],
+  "repeat": 2,
+  "stop_after": null,
+  "order_seed": 20261024
+}

@@ -45,7 +45,8 @@
       "GPL_CELL_PADDING": 0,
       "DPL_CELL_PADDING": 0,
       "SETUP_VIOLATION_CORNERS": ["nom_ss_125C_4v50"],
-      "HOLD_VIOLATION_CORNERS": ["nom_ff_n40C_5v50"]
+      "HOLD_VIOLATION_CORNERS": ["nom_ff_n40C_5v50"],
+      "RUN_KLAYOUT_DRC": false
     },
     "timing_corners": {"setup": ["nom_ss_125C_4v50"], "hold": ["nom_ff_n40C_5v50"]},
     "reference": {
@@ -53,7 +54,8 @@
       "rt_layers": "Metal2-Metal5", "pdn_layers": "Metal4/Metal5",
       "sta_corners": "nom/min/max RC x tt_025C_5v00, ss_125C_4v50, ff_n40C_5v50",
       "adder_maps": "none (LibreLane removes them for gf180mcu): SYNTH_ADDER_TYPE FA/RCA/CSA has no effect",
-      "max_transition_ns": 3, "max_capacitance_pf": 0.2, "driving_cell": "gf180mcu_fd_sc_mcu7t5v0__inv_1/ZN"
+      "max_transition_ns": 3, "max_capacitance_pf": 0.2, "driving_cell": "gf180mcu_fd_sc_mcu7t5v0__inv_1/ZN",
+      "layout_drc": "Magic DRC only: the pinned gf180mcu config has no KLAYOUT_DRC_RUNSET, so LibreLane skips KLayout DRC; RUN_KLAYOUT_DRC=false makes that explicit."
     }
   },
   "ihp-sg13g2": {

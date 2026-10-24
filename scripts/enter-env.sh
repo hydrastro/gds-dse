@@ -44,7 +44,18 @@ fi
 export GDS_DSE_RUNTIME="${GDS_DSE_RUNTIME:-$HOME/.local/share/gds-dse}"
 export NP_LOCATION="$GDS_DSE_RUNTIME"
 export NP_GIT="${NP_GIT:-$(command -v git)}"
-export NP_RUNTIME="${NP_RUNTIME:-proot}"
+# nix-portable runtime: bwrap (Linux user namespaces, no syscall tracing) is preferred; proot traces
+# every system call with ptrace and has shown spurious file errors under heavy parallel load.
+# An explicit NP_RUNTIME always wins.
+if [[ -z "${NP_RUNTIME:-}" ]]; then
+  if command -v unshare >/dev/null 2>&1 && unshare --user --map-root-user true >/dev/null 2>&1; then
+    export NP_RUNTIME=bwrap
+  else
+    export NP_RUNTIME=proot
+    printf 'Note: unprivileged user namespaces are unavailable; using the slower proot runtime.\n' >&2
+  fi
+fi
+printf 'nix-portable runtime: %s\n' "$NP_RUNTIME" >&2
 portable="$GDS_DSE_RUNTIME/bin/nix-portable-v012"
 if [[ ! -x "$portable" ]]; then
   printf 'Cannot find nix-shell or %s. Restore the installed Nix environment first.\n' "$portable" >&2

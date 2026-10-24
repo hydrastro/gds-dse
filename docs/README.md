@@ -19,3 +19,5 @@ preliminary check. These pages cover setup, configuration and analysis.
 Experiment files are templates, not a list of jobs that must all be run.
 See [the experiment index](../experiments/README.md) before selecting a larger
 campaign.
+- [failures.md](failures.md): what each kind of failed run means (congestion, timing, tool crash, infrastructure), which runs count for which statistics, and when to re-run.
+- [recipe.md](recipe.md): clean start (stop runs, delete results), environment check, and the overnight diagnostic that chooses threads, parallel flows and runtime.

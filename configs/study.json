@@ -91,6 +91,22 @@
       "max_fanout",
       "antenna",
       "power_grid"
+    ],
+    "//layout_valid": "Complete, clean layout whatever its timing (GDS, routing DRC, layout DRC, LVS): the default population for area/wirelength/power and slack, since a run that misses timing still has a valid, measurable layout.",
+    "layout_valid": ["seed_applied", "full_flow", "gds", "post_route_sta", "route_drc", "layout_drc", "lvs"]
+  },
+  "//failure_classes": "Why a run failed (docs/failures.md). status_rules first; then, for non-zero exits, log_rules in order (first match wins; design rules first so a real error code beats incidental log noise); then timing (layout valid, setup/hold failed); then the first failing required check. kind: design = outcome of the configuration; tool = EDA tool crash (flow reliability); infra = machine/environment failure (excluded from analysis; re-run with `study.py run --retry-infra`).",
+  "failure_classes": {
+    "status_rules": {
+      "launcher_error": {"class": "launcher", "kind": "infra"},
+      "timeout": {"class": "timeout", "kind": "tool"}
+    },
+    "log_rules": [
+      {"class": "congestion", "kind": "design", "patterns": ["GRT-0116"]},
+      {"class": "placement", "kind": "design", "patterns": ["\\[ERROR (GPL|DPL)-\\d+\\]", "(GPL|DPL)-\\d+\\].*(diverge|failed|cannot)"]},
+      {"class": "detailed_routing", "kind": "design", "patterns": ["\\[ERROR DRT-\\d+\\]"]},
+      {"class": "tool_crash", "kind": "tool", "patterns": ["heap underflow", "Segmentation fault", "SIGSEGV", "core dumped", "terminate called", "\\bAborted\\b"]},
+      {"class": "infra", "kind": "infra", "patterns": ["Cannot open LEF file", "No space left on device", "Cannot allocate memory", "std::bad_alloc", "MemoryError", "Read-only file system", "Too many open files"]}
     ]
   },
   "//metrics": "Columns exported to runs.csv. source: post_route_sta (last OpenROAD.STAPostPNR state) or final (final/metrics.json). corners: how '<key>__corner:*' values are combined (min/max/sum), or 'none' for the plain key. corner_set: restrict to the PDK's 'setup' or 'hold' corners from configs/platforms.json timing_corners (matched across PDKs: nominal RC, slow PVT for setup, fast PVT for hold).",
@@ -302,9 +318,10 @@
       "power_total_w"
     ]
   },
-  "//analysis": "Read by scripts/analyze.py. direction: which way is better. effect: 'relative' (% of baseline median) or 'absolute' (units). population: 'passing' (study_checks_pass) or 'attempted' (any run with a value).",
+  "//analysis": "Read by scripts/analyze.py. direction: which way is better. effect: 'relative' (% of baseline median) or 'absolute' (units). population: 'layout_valid' (complete clean layout, timing may fail; the default), 'passing' (study_checks_pass) or 'attempted' (any run with a value). exclude_failure_kinds: runs dropped from every statistic (listed in failures.csv).",
   "analysis": {
     "baseline_config": "C0",
+    "exclude_failure_kinds": ["infra"],
     "bootstrap_iterations": 2000,
     "permutation_iterations": 2000,
     "rng_seed": 20261017,
@@ -327,37 +344,37 @@
         "column": "instance_area_um2",
         "direction": "min",
         "effect": "relative",
-        "population": "passing"
+        "population": "layout_valid"
       },
       {
         "column": "wirelength_um",
         "direction": "min",
         "effect": "relative",
-        "population": "passing"
+        "population": "layout_valid"
       },
       {
         "column": "setup_slack_frac",
         "direction": "max",
         "effect": "absolute",
-        "population": "attempted"
+        "population": "layout_valid"
       },
       {
         "column": "setup_ws_ns",
         "direction": "max",
         "effect": "absolute",
-        "population": "attempted"
+        "population": "layout_valid"
       },
       {
         "column": "hold_ws_ns",
         "direction": "max",
         "effect": "absolute",
-        "population": "attempted"
+        "population": "layout_valid"
       },
       {
         "column": "wall_time_s",
         "direction": "min",
         "effect": "relative",
-        "population": "attempted"
+        "population": "layout_valid"
       }
     ],
     "//ties": "Exact ties split bootstrap credit; optionally predeclare tie_tolerance_abs and tie_tolerance_rel per metric. Relative tolerance is a fraction."

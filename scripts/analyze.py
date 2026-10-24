@@ -217,11 +217,53 @@ def passing(row):
     return row.get("study_checks_pass") == "True"
 
 
-def values_of(group, metric):
+def layout_valid(row):
+    """Complete, clean layout whatever its timing. Older runs.csv files without the column fall back to passing."""
+    if "layout_valid" not in row or row.get("layout_valid") in ("", None):
+        return passing(row)
+    return row.get("layout_valid") == "True"
+
+
+POPULATIONS = {"passing": passing, "layout_valid": layout_valid, "attempted": lambda row: True}
+
+
+def in_population(row, metric):
     pop = metric.get("population", "passing")
+    if pop not in POPULATIONS:
+        raise SystemExit(f"Unknown population {pop!r}; use one of {sorted(POPULATIONS)}.")
+    return POPULATIONS[pop](row)
+
+
+def split_excluded(rows, kinds):
+    """Drop runs whose failure_kind is excluded (e.g. infrastructure failures): they are not outcomes."""
+    kept, dropped = [], []
+    for row in rows:
+        (dropped if row.get("failure_kind") in kinds else kept).append(row)
+    return kept, dropped
+
+
+def failure_table(rows, dropped):
+    """Counts per design x PDK x configuration x failure class (excluded runs included, flagged)."""
+    counts = defaultdict(int)
+    totals = defaultdict(int)
+    for row in rows + dropped:
+        key = (row["design"], row["pdk"], row["configuration"])
+        totals[key] += 1
+        if row.get("study_checks_pass") != "True":
+            counts[key + (row.get("failure_class") or row.get("failure_reason") or "unknown",
+                          row.get("failure_kind") or "unknown")] += 1
+    out = []
+    for (d, p, c, cls, kind), n in sorted(counts.items()):
+        out.append({"design": d, "pdk": p, "configuration": c, "failure_class": cls, "failure_kind": kind,
+                    "runs": n, "attempted": totals[(d, p, c)], "fraction": n / totals[(d, p, c)],
+                    "excluded_from_analysis": any(r.get("failure_kind") == kind for r in dropped)})
+    return out
+
+
+def values_of(group, metric):
     out = []
     for row in group:
-        if pop == "passing" and not passing(row):
+        if not in_population(row, metric):
             continue
         value = num(row.get(metric["column"]))
         if value is not None:
@@ -597,7 +639,7 @@ class Study:
                         knob = col[len("knob__"):]
                         if all(v is not None for v in numeric) and len(levels) > 6:
                             pairs = [(num(r[col]), normalize(num(r.get(m["column"])), bm, m)) for r in rows
-                                     if num(r.get(m["column"])) is not None and (m["population"] != "passing" or passing(r))]
+                                     if num(r.get(m["column"])) is not None and in_population(r, m)]
                             pairs = [(x, y) for x, y in pairs if y is not None]
                             if len(pairs) < 5:
                                 continue
@@ -843,13 +885,45 @@ def report(study, floors, effects, variance, importance, transfer, reliability, 
     (out / 'report.md').write_text('\n'.join(lines) + '\n')
 
 
+def append_failure_section(path, rows, dropped):
+    """Per design x PDK x configuration: passes, valid layouts and the cause of every failure."""
+    cells = defaultdict(lambda: {"n": 0, "pass": 0, "layout": 0, "causes": defaultdict(int)})
+    for row in rows + dropped:
+        cell = cells[(row["design"], row["pdk"], row["configuration"])]
+        cell["n"] += 1
+        cell["pass"] += row.get("study_checks_pass") == "True"
+        cell["layout"] += layout_valid(row)
+        if row.get("study_checks_pass") != "True":
+            cls = row.get("failure_class") or row.get("failure_reason") or "unknown"
+            cell["causes"][f"{cls} ({row.get('failure_kind') or '?'})"] += 1
+    lines = ["", "## Outcomes and failure causes", "",
+             "Pass = every required check including timing at the matched corner. Layout valid = complete, clean layout "
+             "(GDS, routing DRC, layout DRC, LVS) whatever its timing; area/wirelength use these runs. "
+             "Kinds: design = outcome of the configuration; tool = EDA tool crash; infra = environment failure "
+             "(excluded from all statistics).", "",
+             "| design | pdk | configuration | runs | pass | layout valid | failure causes |",
+             "| --- | --- | --- | --- | --- | --- | --- |"]
+    for (d, p, c), cell in sorted(cells.items()):
+        causes = ", ".join(f"{k}: {v}" for k, v in sorted(cell["causes"].items(), key=lambda kv: -kv[1])) or "-"
+        lines.append(f"| {d} | {p} | {c} | {cell['n']} | {cell['pass']} | {cell['layout']} | {causes} |")
+    with path.open("a") as stream:
+        stream.write("\n".join(lines) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--label", action="append", required=True, help="Campaign label (repeatable).")
     parser.add_argument("--out", help="Output directory (default: results/<first label>/analysis).")
     parser.add_argument("--fast", action="store_true", help="Use 200 resamples (for quick looks; not for reporting).")
+    parser.add_argument("--population", choices=sorted(POPULATIONS),
+                        help="Use this population for every metric (e.g. layout_valid for campaigns frozen before it "
+                             "became the default). Recorded in analysis_settings.json.")
     args = parser.parse_args()
     cfg = dict(analysis_settings(args.label))
+    cfg.setdefault("exclude_failure_kinds", ["infra"])
+    if args.population:
+        cfg["metrics"] = [dict(m, population=args.population) for m in cfg["metrics"]]
+        cfg["population_override"] = args.population
     if args.fast:
         cfg.update(bootstrap_iterations=200, permutation_iterations=200, single_run_trials=200)
     unsafe = {'achieved_period_ns', 'fmax_est_mhz', 'area_delay_um2ns'}
@@ -858,12 +932,17 @@ def main():
     cfg['metrics'] = [m for m in cfg['metrics'] if m['column'] not in unsafe]
     cfg['disabled_legacy_metrics'] = removed
     rows = load_rows(args.label)
+    rows, dropped = split_excluded(rows, set(cfg.get("exclude_failure_kinds", ["infra"])))
     if not rows:
         raise SystemExit("No attempted runs to analyse.")
     add_derived(rows, cfg.get("derived", {}))
     out = Path(args.out) if args.out else campaign_dir(args.label[0]) / "analysis"
     out.mkdir(parents=True, exist_ok=True)
     study = Study(rows, cfg)
+    if dropped:
+        study.warnings.append(f"{len(dropped)} run(s) excluded as {sorted({r.get('failure_kind') for r in dropped})} "
+                              "failures (not outcomes of the configuration); see failures.csv. "
+                              "Re-run them with `study.py run --label ... --retry-infra`.")
     if removed:
         study.warnings.append('Disabled unsupported legacy slack-derived metrics: ' + ', '.join(removed))
     if any(not row.get('machine_id') or not row.get('threads') for row in rows):
@@ -875,13 +954,14 @@ def main():
     ranking = study.rankings()
     transfer = study.transfer()
     reliability = study.dse_reliability()
-    for name, table in [("cells", study.cells_table()), ("noise", noise_rows), ("noise_floor", floors),
+    for name, table in [("failures", failure_table(rows, dropped)), ("cells", study.cells_table()), ("noise", noise_rows), ("noise_floor", floors),
                         ("effects", effects), ("variance", variance), ("knob_effects", knob_rows),
                         ("knob_importance", importance), ("ranking", ranking), ("transfer", transfer),
                         ("dse_reliability", reliability)]:
         write_table(out / f"{name}.csv", table, None if table else ["design"])
     (out / "analysis_settings.json").write_text(json.dumps({"labels": args.label, **cfg}, indent=2) + "\n")
     report(study, floors, effects, variance, importance, transfer, reliability, args.label, out)
+    append_failure_section(out / "report.md", rows, dropped)
     for w in study.warnings:
         print(f"WARNING: {w}", file=sys.stderr)
     print(f"Wrote analysis for {len(rows)} attempted runs to {out} (start with report.md).")

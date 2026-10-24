@@ -15,7 +15,7 @@ planned wider suite. All three PDKs are part of the study's scope.
 
 [Setup](docs/setup.md) · [Study plan](docs/study-plan.md) ·
 [Run guide](docs/running-study.md) · [Configuration](docs/configuration.md) ·
-[Analysis](docs/analysis-guide.md)
+[Analysis](docs/analysis-guide.md) · [Failed runs](docs/failures.md) · [Clean start & recipe](docs/recipe.md)
 
 ## What is being measured?
 
@@ -38,7 +38,10 @@ The C0-only commands below check the baseline across three PDKs. They are a
 preliminary diagnostic, not the full DSE experiment. DSE repeats this process
 for a selected set of flow configurations, including C0.
 
-Complete [setup](docs/setup.md), then enter the pinned environment from the
+Complete [setup](docs/setup.md) (on a server without root or Nix, follow its
+[nix-portable section](docs/setup.md#server-without-root-or-nix-nix-portable)), check it with
+`bash scripts/enter-env.sh --run 'bash scripts/check-env.sh'`, and choose the execution recipe
+([clean start & recipe](docs/recipe.md)). Then enter the pinned environment from the
 repository root:
 
 ```bash

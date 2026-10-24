@@ -80,6 +80,63 @@ An optional `librelane --smoke-test` diagnoses the tool installation. It runs
 LibreLane's own test design, not this study's AES benchmark; it is not an
 additional required experiment.
 
+## Server without root or Nix (nix-portable)
+
+On a Linux server where you cannot install Nix (no root, not NixOS),
+[nix-portable](https://github.com/DavHau/nix-portable) provides the same pinned
+environment in your home directory. This is the setup used on the study server.
+
+```bash
+cd ~/gds-dse
+git submodule update --init
+git -C tools/librelane rev-parse HEAD        # must print 01ddb25e4424f6f5aaf6b951b14a2b6fdcf737c0
+
+# 1. Download nix-portable (pinned release v012) into a private runtime directory.
+export GDS_DSE_RUNTIME="$HOME/.local/share/gds-dse"
+mkdir -p "$GDS_DSE_RUNTIME/bin"
+curl --fail --location --retry 3 \
+  https://github.com/DavHau/nix-portable/releases/download/v012/nix-portable-x86_64 \
+  --output "$GDS_DSE_RUNTIME/bin/nix-portable-v012"
+chmod +x "$GDS_DSE_RUNTIME/bin/nix-portable-v012"
+
+# 2. Choose the runtime. bwrap (Linux user namespaces) is faster and more robust than proot;
+#    it works if this prints "ok":
+unshare --user --map-root-user true && echo ok
+export NP_LOCATION="$GDS_DSE_RUNTIME"
+export NP_GIT=/usr/bin/git
+export NP_RUNTIME=bwrap          # or proot if the line above failed
+
+# 3. First entry builds/downloads the pinned tools from the FOSSi binary cache (takes a while once).
+"$GDS_DSE_RUNTIME/bin/nix-portable-v012" nix-shell tools/librelane/shell.nix \
+  --cores 4 --max-jobs 2 \
+  --option extra-substituters https://nix-cache.fossi-foundation.org \
+  --option extra-trusted-public-keys \
+    'nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=' \
+  --run 'bash scripts/check-env.sh'
+```
+
+After this first time, always enter the environment with the wrapper, which sets these
+variables, picks bwrap when available (proot otherwise), refuses to nest itself, and
+passes the same cache options:
+
+```bash
+bash scripts/enter-env.sh                                  # interactive shell
+bash scripts/enter-env.sh --run 'bash scripts/check-env.sh'  # one command
+```
+
+`scripts/check-env.sh` prints the LibreLane commit, the runtime, CPUs and free memory,
+the location of `yosys`, `openroad`, `klayout`, `magic`, `netgen`, `iverilog` and
+`verilator`, and their versions. It fails if anything is missing.
+
+Launch long batches from an ordinary login shell (not from inside the environment), so
+they survive logout:
+
+```bash
+nohup setsid bash scripts/recipe-night.sh > results/recipe-night.log 2>&1 < /dev/null &
+```
+
+See [recipe.md](recipe.md) for the clean-start procedure and the execution recipe.
+
 ## Validate the selected RTL
 
 Use the upstream tests for each design before measuring its implementation.

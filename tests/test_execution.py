@@ -27,6 +27,10 @@ class ExecutionTests(unittest.TestCase):
         self.stack.enter_context(mock.patch.object(study, "capture", return_value={"returncode": 0, "stdout": "fixture"}))
         self.stack.enter_context(mock.patch.object(study.shutil, "which", return_value=None))
         shutil.copytree(Path(__file__).resolve().parents[1] / "configs", self.root / "configs")
+        settings_path = self.root / "configs/study.json"
+        settings = json.loads(settings_path.read_text())
+        settings["execution"]["parallel_jobs"] = 1  # these tests exercise the sequential path
+        settings_path.write_text(json.dumps(settings))
         (self.root / "scripts").mkdir()
         (self.root / "scripts/flow_entry.py").write_text(
             'import json, sys\nfrom pathlib import Path\n'

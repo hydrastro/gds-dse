@@ -107,7 +107,7 @@ def verify_inputs(manifest):
 
 def prepare(args):
     commit = verify_flow()
-    selections = {key: getattr(args, key) for key in ('designs', 'pdks', 'configs', 'seeds')
+    selections = {key: getattr(args, key) for key in ('designs', 'pdks', 'configs', 'seeds', 'threads', 'repeat')
                   if getattr(args, key, None) is not None}
     print(prepare_campaign(ROOT, FLOW_ROOT, commit, resolve(args.experiment), args.label, selections))
 
@@ -195,7 +195,22 @@ def machine_snapshot(dest, machine_id=None):
             "host_ram_bytes": host_ram_bytes, "os": os_name,
             "platform": platform.platform(),
             "disk_free_bytes_at_invocation": shutil.disk_usage(dest).free,
-            "resource_scope": "Host-visible resources; not guaranteed scheduler/container limits."}
+            "resource_scope": "Host-visible resources; not guaranteed scheduler/container limits.",
+            "memory_available_bytes_at_invocation": meminfo("MemAvailable"),
+            "load_average_at_invocation": os.getloadavg() if hasattr(os, "getloadavg") else None,
+            # How the tools were provided: real Nix, or nix-portable with the proot/bwrap runtime.
+            "tool_runtime": {key: os.environ.get(key) for key in
+                             ("IN_NIX_SHELL", "NP_RUNTIME", "NP_LOCATION", "GDS_DSE_RUNTIME")}}
+
+
+def meminfo(field):
+    try:
+        for line in Path("/proc/meminfo").read_text().splitlines():
+            if line.startswith(field + ":"):
+                return int(line.split()[1]) * 1024
+    except (OSError, ValueError, IndexError):
+        pass
+    return None
 
 
 INCOMPLETE = {"running", "interrupted"}  # never finished: not an outcome of the configuration
@@ -275,7 +290,7 @@ def _execute_jobs(args):
         raise ValueError("LibreLane Python environment is unavailable. Enter the pinned Nix shell before running.")
     jobs = {job["id"]: job for job in manifest["jobs"]}
     grace = execution.get("kill_grace_s", 10)
-    parallel = execution.get("parallel_jobs", 1)
+    parallel = execution.get("parallel_jobs", 1) if getattr(args, "parallel_jobs", None) is None else args.parallel_jobs
     if type(parallel) is not int or parallel < 1:
         raise ValueError("execution.parallel_jobs must be a positive integer.")
     live = {}            # pid -> Popen, for Ctrl-C cleanup in parallel mode
@@ -339,7 +354,9 @@ def _execute_jobs(args):
                 proc = subprocess.Popen(cmd, cwd=job_dir, stdout=log, stderr=subprocess.STDOUT,
                                         env=env, start_new_session=True)
                 live[proc.pid] = proc
-                record["returncode"] = proc.wait(timeout=timeout or None)
+                record["returncode"], usage = wait_with_usage(proc, timeout)
+                if usage:
+                    record.update(usage)
                 if stopping.is_set():
                     record["status"] = "interrupted"
                 else:
@@ -361,13 +378,26 @@ def _execute_jobs(args):
 
     pending = []
     retry = getattr(args, "retry_incomplete", True)
+    retry_infra = getattr(args, "retry_infra", False)
+    classes = settings.get("failure_classes", {})
     for schedule_index, job_id in enumerate(ordered_ids, 1):
         job_dir = dest / "jobs" / job_id
         if (job_dir / "attempt.json").exists():
-            status = read_json(job_dir / "attempt.json").get("status")
-            if not (retry and status in INCOMPLETE):
+            attempt = read_json(job_dir / "attempt.json")
+            status = attempt.get("status")
+            infra = None
+            if retry_infra and status not in INCOMPLETE and status != "completed":
+                rule = classes.get("status_rules", {}).get(status)
+                if rule and rule["kind"] == "infra":
+                    infra = f"status={status}"
+                elif attempt.get("returncode") not in (0, None):
+                    found = match_log_rule(log_text(job_dir), classes.get("log_rules", []))
+                    infra = found[2] if found and found[1] == "infra" else None
+            if not ((retry and status in INCOMPLETE) or infra):
                 print(f"SKIP existing attempt ({status}): {job_id}")
                 continue
+            if infra:
+                print(f"RETRY infrastructure failure ({infra}): {job_id}")
             # We hold the campaign lock, so a 'running' record is left over from a dead runner.
             archived = archive_incomplete(job_dir)
             previous[job_id] = previous.get(job_id, []) + [archived]
@@ -402,6 +432,26 @@ def _execute_jobs(args):
                 kill(proc)
             concurrent.futures.wait(active)
             raise
+
+
+def wait_with_usage(proc, timeout):
+    """Wait like Popen.wait(timeout) but also return the flow's resource usage via wait4:
+    peak resident memory of the largest process in the flow and total CPU time of the flow."""
+    if not isinstance(getattr(proc, "pid", None), int):
+        return proc.wait(timeout=timeout or None), None  # test doubles
+    deadline = time.monotonic() + timeout if timeout else None
+    while True:
+        try:
+            pid, status, usage = os.wait4(proc.pid, os.WNOHANG)
+        except ChildProcessError:
+            return proc.wait(timeout=timeout or None), None
+        if pid:
+            proc.returncode = os.waitstatus_to_exitcode(status)
+            return proc.returncode, {"peak_rss_mb": round(usage.ru_maxrss / 1024, 1),
+                                     "cpu_user_s": round(usage.ru_utime, 1), "cpu_system_s": round(usage.ru_stime, 1)}
+        if deadline is not None and time.monotonic() > deadline:
+            raise subprocess.TimeoutExpired(proc.args, timeout)
+        time.sleep(0.5)
 
 
 def refresh_tables(args):
@@ -462,9 +512,13 @@ def zero(value):
 
 
 def _drc(ctx):
-    required = [metric(ctx["final"], key) for flag, key in
-                [("RUN_MAGIC_DRC", "magic__drc_error__count"), ("RUN_KLAYOUT_DRC", "klayout__drc_error__count")]
-                if ctx["resolved"].get(flag, True)]
+    """Layout DRC from every DRC tool that actually ran. KLayout DRC counts only when the resolved config has
+    a rule deck: without KLAYOUT_DRC_RUNSET (e.g. gf180mcuD at the pinned PDK) LibreLane skips the step."""
+    resolved = ctx["resolved"]
+    tools = [("RUN_MAGIC_DRC", "magic__drc_error__count", True),
+             ("RUN_KLAYOUT_DRC", "klayout__drc_error__count",
+              "KLAYOUT_DRC_RUNSET" not in resolved or resolved.get("KLAYOUT_DRC_RUNSET") not in (None, "", []))]
+    required = [metric(ctx["final"], key) for flag, key, available in tools if resolved.get(flag, True) and available]
     return None if not required or any(v is None for v in required) else all(v == 0 for v in required)
 
 
@@ -493,6 +547,61 @@ CHECKS = {
     "antenna": lambda c: zero(metric(c["final"], "antenna__violating__nets")),
     "power_grid": lambda c: zero(metric(c["final"], "design__power_grid_violation__count")),
 }
+
+
+DEFAULT_LAYOUT_VALID = ["seed_applied", "full_flow", "gds", "post_route_sta", "route_drc", "layout_drc", "lvs"]
+
+
+def log_text(job_dir, limit=4_000_000):
+    """The tail of a job's console log (bounded so huge logs stay cheap)."""
+    path = Path(job_dir) / "console.log"
+    if not path.is_file():
+        return ""
+    with path.open("rb") as stream:
+        size = stream.seek(0, 2)
+        stream.seek(max(0, size - limit))
+        return stream.read().decode(errors="replace")
+
+
+def match_log_rule(text, rules, kinds=None):
+    """First rule (in file order) whose pattern occurs in the log: (class, kind, matched pattern)."""
+    for rule in rules:
+        if kinds and rule["kind"] not in kinds:
+            continue
+        for pattern in rule["patterns"]:
+            if re.search(pattern, text):
+                return rule["class"], rule["kind"], pattern
+    return None
+
+
+def classify_failure(attempt, checks, layout_valid, required, text, settings):
+    """Why a finished attempt did not pass: (failure_class, failure_kind, evidence).
+
+    kind is 'design' (an outcome of the configuration: congestion, timing, DRC...),
+    'tool' (the EDA tool crashed: a property of the flow) or 'infra' (the machine or
+    environment failed: not an outcome; excluded from analysis, retryable with --retry-infra).
+    """
+    spec = settings.get("failure_classes", {})
+    status = attempt.get("status")
+    if status in spec.get("status_rules", {}):
+        rule = spec["status_rules"][status]
+        return rule["class"], rule["kind"], f"status={status}"
+    if attempt.get("returncode") not in (0, None):
+        found = match_log_rule(text, spec.get("log_rules", []))
+        if found:
+            return found[0], found[1], found[2]
+    if layout_valid:
+        timing = [name for name in ("setup_timing", "hold_timing") if checks.get(name) is False]
+        if timing:
+            return "timing", "design", "+".join(timing)
+    # The exit code is a symptom; name the check that explains it when there is one.
+    failing = [name for name in required if name != "exit_ok" and checks.get(name) is not True]
+    if failing:
+        name = failing[0]
+        return name, "design" if checks.get(name) is False else "unknown", f"{name}={checks.get(name)}"
+    if attempt.get("returncode") not in (0, None):
+        return "nonzero_exit", "unknown", "non-zero exit with every check passing and no matching log rule"
+    return "unknown", "unknown", "no failing check identified"
 
 
 def write_csv(path, rows, columns=None):
@@ -530,6 +639,11 @@ def collect(args):
     dest = campaign(args.label)
     manifest = read_json(dest / "manifest.json")
     settings = settings_for(dest)
+    current = load_settings(ROOT)
+    # Failure classification and the layout_valid definition are derived from logs and metrics, not flow
+    # inputs: campaigns frozen before they existed use the repository's current rules.
+    settings.setdefault("failure_classes", current.get("failure_classes", {}))
+    settings["checks"].setdefault("layout_valid", current["checks"].get("layout_valid", DEFAULT_LAYOUT_VALID))
     order = read_schedule(dest, manifest)
     positions = {run_id: index for index, run_id in enumerate(order or [], 1)}
     snapshot = frozen_or_current(dest, settings["flow"]["variables_snapshot"]) or {"variables": {}}
@@ -604,6 +718,13 @@ def collect(args):
         failed_step = None
         if attempt and attempt.get("returncode") not in (0, None):
             failed_step = next((p.name for p in steps if not (p / "state_out.json").is_file()), None)
+        layout_checks = settings["checks"].get("layout_valid", DEFAULT_LAYOUT_VALID)
+        layout_valid = bool(attempt) and all(CHECKS[name](ctx) is True for name in layout_checks)
+        failure_class = failure_kind = failure_evidence = None
+        if attempt and not eligible:
+            failure_class, failure_kind, failure_evidence = classify_failure(
+                attempt, {**checks, **{n: CHECKS[n](ctx) for n in layout_checks}}, layout_valid,
+                required, log_text(job_dir), settings)
         values = {}
         for spec in settings["metrics"]:
             source = post_metrics if spec["source"] == "post_route_sta" else final_metrics
@@ -620,7 +741,12 @@ def collect(args):
             "previous_unfinished_attempts": len(attempt.get("previous_attempts", [])),
             "started_utc": attempt.get("started_utc"), "finished_utc": attempt.get("finished_utc"),
             "timeout_s": attempt.get("timeout_s"),
-            "wall_time_s": attempt.get("wall_time_s"), "clock_period_ns": resolved.get("CLOCK_PERIOD"),
+            "wall_time_s": attempt.get("wall_time_s"),
+            "cpu_time_s": (attempt["cpu_user_s"] + attempt["cpu_system_s"]) if "cpu_user_s" in attempt else None,
+            "peak_rss_mb": attempt.get("peak_rss_mb"),
+            "tool_runtime": (machine.get("tool_runtime") or {}).get("NP_RUNTIME")
+            or ("nix" if (machine.get("tool_runtime") or {}).get("IN_NIX_SHELL") else None),
+            "clock_period_ns": resolved.get("CLOCK_PERIOD"),
             "synthesis_strategy": resolved.get("SYNTH_STRATEGY"),
             "density_pct": resolved.get("PL_TARGET_DENSITY_PCT"), "scl": resolved.get("STD_CELL_LIBRARY"),
             "resolved_pdk_root": resolved.get("PDK_ROOT"),
@@ -629,7 +755,9 @@ def collect(args):
             "timing_pass": timing_pass,
             "layout_drc_pass": _drc(ctx),
             **{f"check__{name}": value for name, value in checks.items()},
-            "study_checks_pass": eligible, "failure_reason": failure_reason, "failed_step": failed_step,
+            "study_checks_pass": eligible, "layout_valid": layout_valid,
+            "failure_reason": failure_reason, "failure_class": failure_class, "failure_kind": failure_kind,
+            "failure_evidence": failure_evidence, "failed_step": failed_step,
             **values,
             **knob_values,
             "sdc_sha256": job.get("sdc_sha256"),
@@ -722,9 +850,13 @@ def main():
     for name in ('designs', 'pdks', 'configs', 'seeds'):
         p.add_argument('--' + name, nargs='+', type=int if name == 'seeds' else str,
                        help='Override this selection; the effective experiment is frozen in manifest.json.')
+    p.add_argument('--threads', type=int, help='Threads per flow for this campaign (overrides study.json execution.threads).')
+    p.add_argument('--repeat', type=int, help='Runs per seed (same-seed repeats measure determinism; pilot phase only).')
     p.set_defaults(function=prepare)
     p = sub.add_parser("run")
     p.add_argument("--label", required=True)
+    p.add_argument("--parallel-jobs", type=int, default=None,
+                   help="Flows at once for this invocation (overrides study.json execution.parallel_jobs; recorded per attempt).")
     p.add_argument("--timeout", type=int, default=None,
                    help="Per-run wall-clock limit in seconds; 0 means no limit. Default: execution.timeout_s in study.json.")
     p.add_argument("--machine-id", type=safe_label,
@@ -733,6 +865,10 @@ def main():
                    help="Do not re-run jobs left 'running' (crash/power loss) or 'interrupted' (Ctrl-C). "
                         "By default they are archived under jobs/<id>/aborted/ and run again; finished "
                         "attempts (completed, flow_error, timeout, launcher_error) are never re-run.")
+    p.add_argument("--retry-infra", action="store_true",
+                   help="Also re-run finished attempts whose failure is classified as 'infra' (study.json "
+                        "failure_classes: e.g. a LEF file that could not be opened, out of memory, launcher error). "
+                        "Their files are archived like unfinished attempts. Design and tool failures are never re-run.")
     p.set_defaults(function=execute)
     for name, function in [("collect", collect), ("summarize", summarize)]:
         p = sub.add_parser(name)
