@@ -147,15 +147,60 @@ The night script also writes `results/recipe-<date>-report.md`. Choose the recip
 Then write the recipe into `configs/study.json` (`execution.threads`,
 `execution.parallel_jobs`) and commit it, so every later campaign uses it.
 
-## 6. Then calibrate the clocks, with the recipe
+## 6. A clean base case for every design × PDK
+
+The study only starts once **all 12 design × PDK cells** (4 designs × 3 PDKs) build
+cleanly at C0: complete flow, no DRC/LVS/antenna problems, and timing met. Timing at the
+25 ns placeholder clock is meaningless (AES: −5.7 ns on sky130, −12.8 ns on gf180, +8.3 ns
+on IHP), so every cell first needs its own clock. This takes three steps, for all designs
+at once.
+
+**6a. One smoke build per cell.** AES already has one (`recipe-smoke`). Build the others:
 
 ```bash
-python3 scripts/study.py prepare --experiment experiments/suite/calibrate.json --label cal-001
-bash scripts/enter-env.sh --run 'python3 scripts/study.py run --label cal-001 --machine-id olympus'
-python3 scripts/calibrate_clock.py --label cal-001 --write
+python3 scripts/study.py prepare --experiment experiments/recipe/recipe.json --label smoke-rest \
+  --designs sha256 chacha prince --seeds 1 --repeat 1 --threads 1
+bash scripts/enter-env.sh --run 'python3 scripts/study.py run --label smoke-rest --machine-id olympus'
+```
+
+**6b. Provisional clock = clock − worst setup slack.**
+
+```bash
+python3 scripts/estimate_clock.py --label recipe-smoke --label smoke-rest          # look first
+python3 scripts/estimate_clock.py --label recipe-smoke --label smoke-rest --write
+git add configs/designs && git commit -m "Provisional clocks from smoke builds"
+```
+
+It writes `CLOCK_PERIOD` into `configs/designs/<d>/pdks/<pdk>.json`, marked
+`"//clock_status": "provisional"`. Study campaigns refuse provisional clocks. A cell
+without post-route STA (its build failed earlier) is reported: fix that first.
+
+**6c. Relative sweep around the estimate, then the calibrated reference.**
+
+```bash
+python3 scripts/study.py prepare --experiment experiments/suite/calibrate-relative.json --label calrel-001
+bash scripts/enter-env.sh --run 'python3 scripts/study.py run --label calrel-001 --machine-id olympus'
+python3 scripts/calibrate_clock.py --label calrel-001            # look first
+python3 scripts/calibrate_clock.py --label calrel-001 --write
 git add configs/designs && git commit -m "Calibrated reference clocks"
 ```
 
-After that, a baseline (`experiments/suite/baseline.json`) at the calibrated clocks
-should be clean: every build complete, and timing met on all but the occasional seed at
-the edge. That is the clean starting point for the study.
+The sweep runs ×0.8 … ×1.7 the provisional clock (C0 is ×1.0), 3 seeds, stopped after
+post-route STA: 4 × 3 × 8 × 3 = 288 short runs. The same plan works for every design,
+because the periods are relative. `calibrate_clock.py` takes the fastest period met by
+**every** seed and divides by 0.85 (15 % margin), then marks the file `calibrated`. A
+period where a seed fails for a *design* reason (e.g. congestion) counts as "not met";
+tool or infra failures still stop the calibration (`study.py run --retry-infra`). Use
+`--designs`/`--pdks` at prepare to redo only some cells.
+
+**6d. Base check.** Full builds of every cell at the calibrated clocks:
+
+```bash
+python3 scripts/study.py prepare --experiment experiments/recipe/recipe.json --label base-check \
+  --seeds 1 2 3 --repeat 1
+bash scripts/enter-env.sh --run 'python3 scripts/study.py run --label base-check --machine-id olympus'
+python3 scripts/analyze.py --label base-check --population attempted
+```
+
+All 36 runs should pass every study check. Anything else (congestion, a crash, a DRC
+error) is fixed at C0 for that cell before the study starts.

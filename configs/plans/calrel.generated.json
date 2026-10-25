@@ -1,0 +1,50 @@
+{
+  "notes": [],
+  "plan": "configs/plans/calibrate-relative.json",
+  "strategy": "list",
+  "knobs": [],
+  "baseline": "C0",
+  "variants": {
+    "calrel__x0p8": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.8
+      }
+    },
+    "calrel__x0p9": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.9
+      }
+    },
+    "calrel__x1p1": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.1
+      }
+    },
+    "calrel__x1p2": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.2
+      }
+    },
+    "calrel__x1p35": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.35
+      }
+    },
+    "calrel__x1p5": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.5
+      }
+    },
+    "calrel__x1p7": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.7
+      }
+    }
+  },
+  "skipped": [
+    {
+      "variant": "calrel__x1p0",
+      "reason": "identical to baseline C0 on every target"
+    }
+  ]
+}

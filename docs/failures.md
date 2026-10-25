@@ -48,8 +48,9 @@ C0 should pass on most seeds. If it does not, the clock target or the floorplan 
 for that design × PDK, and every comparison is then made at the edge of feasibility:
 
 * **Setup failures at C0** (sky130A and gf180mcuD at the 25 ns placeholder): set the
-  real per-PDK clock. Run the calibration campaign (`experiments/suite/calibrate.json`,
-  then `scripts/calibrate_clock.py --label … --write`); it picks 85% of the fastest
+  real per-PDK clock. Follow [recipe.md step 6](recipe.md#6-a-clean-base-case-for-every-design--pdk):
+  provisional clock from a smoke build, a relative sweep, then
+  `scripts/calibrate_clock.py --write`; it picks 85% of the fastest
   reliably met frequency for each design × PDK. Until then, every PDK runs at the same
   25 ns placeholder: too tight for gf180mcuD's 5 V cells at the slow corner, very loose
   for IHP.

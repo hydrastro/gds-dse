@@ -110,6 +110,11 @@ Document the evidence yourself.
 
 ### Optional calibration helper
 
+For all designs at once, use the two-step procedure in
+[recipe.md step 6](recipe.md#6-a-clean-base-case-for-every-design--pdk)
+(`estimate_clock.py`, then `experiments/suite/calibrate-relative.json`). The absolute sweep
+below is for a single design × PDK.
+
 Use this only if a clock sweep is needed. The selection below costs **24
 partial-flow runs**: eight periods × three seeds, through post-route STA.
 

@@ -1,0 +1,75 @@
+{
+  "//": [
+    "Clock calibration step 2: 8 periods relative to each design x PDK's provisional estimate",
+    "(written by scripts/estimate_clock.py into configs/designs/<d>/pdks/<pdk>.json), 3 seeds,",
+    "flow stopped after post-route STA. One campaign covers every design: select with prepare --designs.",
+    "Then scripts/calibrate_clock.py --label <label> --write (fastest period met by every seed / 0.85).",
+    "x1.0 is C0 itself (include_baseline): the provisional estimate."
+  ],
+  "name": "calrel",
+  "strategy": "list",
+  "include_baseline": true,
+  "variants": {
+    "x0p8": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.8
+      }
+    },
+    "x0p9": {
+      "CLOCK_PERIOD": {
+        "$scale": 0.9
+      }
+    },
+    "x1p0": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.0
+      }
+    },
+    "x1p1": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.1
+      }
+    },
+    "x1p2": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.2
+      }
+    },
+    "x1p35": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.35
+      }
+    },
+    "x1p5": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.5
+      }
+    },
+    "x1p7": {
+      "CLOCK_PERIOD": {
+        "$scale": 1.7
+      }
+    }
+  },
+  "experiment_path": "experiments/suite/calibrate-relative.json",
+  "experiment": {
+    "phase": "pilot",
+    "designs": [
+      "aes",
+      "sha256",
+      "chacha",
+      "prince"
+    ],
+    "pdks": [
+      "sky130A",
+      "gf180mcuD",
+      "ihp-sg13g2"
+    ],
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "stop_after": "OpenROAD.STAPostPNR"
+  }
+}

@@ -74,8 +74,16 @@ def calibrate(rows, fraction, expected_jobs):
                            and true(row.get('seed_applied')) and true(row.get('post_route_sta_available'))
                            and num(row.get('clock_period_ns')) == period and ws is not None
                            and str(row.get('check__setup_timing')) in ('True', 'False'))
+            if not evidence_ok and row.get('failure_kind') == 'design' and true(row.get('seed_applied')) \
+                    and num(row.get('clock_period_ns')) == period:
+                # A design failure (e.g. routing congestion at an aggressive clock) is evidence that this
+                # period does not work, not missing data. Tool crashes and infrastructure failures still
+                # invalidate the sweep: re-run those (study.py run --retry-infra) before calibrating.
+                by_period[period].append((float('-inf'), False))
+                continue
             if not evidence_ok:
-                errors.append(f"{job['id']}: incomplete, failed, or missing/mismatched STA/seed evidence")
+                errors.append(f"{job['id']}: incomplete, failed, or missing/mismatched STA/seed evidence"
+                              f" ({row.get('failure_class') or row.get('status')})")
                 continue
             by_period[period].append((ws, true(row['check__setup_timing'])))
         periods = sorted(planned_counts)
@@ -130,6 +138,8 @@ def write_reference(design, pdk, result, label):
     path = ROOT / 'configs/designs' / design / 'pdks' / f'{pdk}.json'
     data = json.loads(path.read_text()) if path.is_file() else {}
     data['CLOCK_PERIOD'] = result['reference_period_ns']
+    data['//clock_status'] = 'calibrated'
+    data.pop('//provisional_estimate', None)
     data['//calibration'] = {'campaign': label,
                             'written_utc': datetime.now(timezone.utc).isoformat(timespec='seconds'), **result}
     path.parent.mkdir(parents=True, exist_ok=True)

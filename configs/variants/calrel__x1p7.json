@@ -1,0 +1,9 @@
+{
+  "//generated_by": "calrel",
+  "//factor:CLOCK_PERIOD": {
+    "$scale": 1.7
+  },
+  "CLOCK_PERIOD": {
+    "$scale": 1.7
+  }
+}

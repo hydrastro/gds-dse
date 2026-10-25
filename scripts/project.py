@@ -391,7 +391,8 @@ def prepare_campaign(root, flow_root, flow_commit, experiment_file, campaign_lab
                 if override_path.exists():
                     files[override_path] = json.loads(override_path.read_text())
                 if (phase == 'study' and settings['inputs'].get('require_calibrated_clock_for_study')
-                        and 'CLOCK_PERIOD' not in strip_comments(files.get(override_path, {}))):
+                        and ('CLOCK_PERIOD' not in strip_comments(files.get(override_path, {}))
+                             or files.get(override_path, {}).get('//clock_status') == 'provisional')):
                     raise ValueError(f'{name}/{pdk}: no calibrated CLOCK_PERIOD in {override_path.relative_to(root)}. '
                                      'Run the clock calibration (scripts/calibrate_clock.py --write) before study campaigns.')
                 merged, origins = merge_layers(layers, pdk, variables, aliases)

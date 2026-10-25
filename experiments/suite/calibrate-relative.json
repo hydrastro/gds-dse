@@ -1,0 +1,32 @@
+{
+  "phase": "pilot",
+  "designs": [
+    "aes",
+    "sha256",
+    "chacha",
+    "prince"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "stop_after": "OpenROAD.STAPostPNR",
+  "repeat": 1,
+  "order_seed": 20261015,
+  "configs": [
+    "C0",
+    "calrel__x0p8",
+    "calrel__x0p9",
+    "calrel__x1p1",
+    "calrel__x1p2",
+    "calrel__x1p35",
+    "calrel__x1p5",
+    "calrel__x1p7"
+  ]
+}
