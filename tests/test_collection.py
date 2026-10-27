@@ -90,6 +90,52 @@ class CollectionTests(unittest.TestCase):
         self.assertEqual(float(row["hold_ws_ns"]), .05)
         self.assertIn("stapostpnr", row["post_route_metrics_source"])
 
+    def test_resolved_json_overrides_submitted_and_legacy_config(self):
+        self.job()
+        directory = self.dest / "jobs" / self.manifest["jobs"][0]["id"]
+        config = study.read_json(directory / "config.json")
+        study.save_json(directory / "runs/run/config.json", dict(config, CLOCK_PERIOD=30))
+        resolved = directory / "runs/run/resolved.json"
+        study.save_json(resolved, dict(config, CLOCK_PERIOD=75, SYNTH_STRATEGY="DELAY 1"))
+        row = self.collect()[0]
+        self.assertEqual(float(row["clock_period_ns"]), 75)
+        self.assertEqual(row["synthesis_strategy"], "DELAY 1")
+        self.assertEqual(row["resolved_config_source"], str(resolved))
+
+    def test_legacy_run_config_remains_supported(self):
+        self.job()
+        directory = self.dest / "jobs" / self.manifest["jobs"][0]["id"]
+        config = study.read_json(directory / "config.json")
+        study.save_json(directory / "runs/run/config.json", dict(config, CLOCK_PERIOD=60))
+        self.assertEqual(float(self.collect()[0]["clock_period_ns"]), 60)
+
+    def test_baseline_report_keeps_timing_failure_and_rejects_partial_success(self):
+        import baseline_report
+        self.job(negative_slack=True, exit_code=2)
+        job = self.manifest["jobs"][0]
+        directory = self.dest / "jobs" / job["id"]
+        config = study.read_json(directory / "config.json")
+        study.save_json(directory / "runs/run/resolved.json",
+                        dict(config, FP_CORE_UTIL=50, SYNTH_STRATEGY="AREA 0"))
+        clock_report = directory / "runs/run/58-openroad-stapostpnr/nom_ss_100C_1v60/clock.rpt"
+        clock_report.parent.mkdir()
+        clock_report.write_text("Clock: clk\nPeriod: 50.000000\n")
+        settings = study.load_settings(study.ROOT)
+        platforms = study.read_json(study.ROOT / "configs/platforms.json")
+        row = baseline_report.inspect_job(self.dest, self.manifest, job, settings, platforms)
+        self.assertEqual(row["setup_ws_ns"], -.05)
+        self.assertFalse(row["study_checks_pass"])
+        self.assertIn("setup_timing", row["failed_or_missing_checks"])
+        self.assertTrue(row["check__gds"])
+        self.assertTrue(row["clock_period_matches_sta"])
+
+        self.job(seed=2)
+        partial = self.manifest["jobs"][-1]
+        partial["stop_after"] = "OpenROAD.STAPostPNR"
+        row = baseline_report.inspect_job(self.dest, self.manifest, partial, settings, platforms)
+        self.assertFalse(row["study_checks_pass"])
+        self.assertIn("full_flow", row["failed_or_missing_checks"])
+
     def test_pre_route_metrics_never_fill_final_timing(self):
         self.job(post=False)
         row = self.collect()[0]

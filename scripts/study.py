@@ -36,6 +36,16 @@ def read_json(path):
     return json.loads(Path(path).read_text())
 
 
+def read_run_config(job_dir):
+    """Prefer LibreLane's effective configuration over the submitted overrides."""
+    job_dir = Path(job_dir)
+    for path in (job_dir / "runs/run/resolved.json",
+                 job_dir / "runs/run/config.json", job_dir / "config.json"):
+        if path.is_file():
+            return read_json(path), path
+    return {}, None
+
+
 def save_json(path, data):
     path = Path(path)
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -697,8 +707,7 @@ def collect(args):
             long_rows.append({**context, "stage": "final", "source": str(final_metrics_file),
                               "metric": key, "value": scalar(value)})
         job_config = read_json(job_dir / "config.json") if (job_dir / "config.json").exists() else {}
-        resolved_path = run_dir / "config.json"
-        resolved = read_json(resolved_path) if resolved_path.exists() else job_config
+        resolved, resolved_path = read_run_config(job_dir)
         gds_paths = sorted(str(p) for p in (run_dir / "final").rglob("*.gds")) if (run_dir / "final").exists() else []
         capacity = job.get("grt_capacity_perturbation_pct", 0)
         marker = f"STUDY_SEED_APPLIED={job['seed']} STAGE=initial_global_routing CAPACITY_PERTURBATION_PCT={capacity}"
@@ -748,6 +757,7 @@ def collect(args):
             or ("nix" if (machine.get("tool_runtime") or {}).get("IN_NIX_SHELL") else None),
             "clock_period_ns": resolved.get("CLOCK_PERIOD"),
             "synthesis_strategy": resolved.get("SYNTH_STRATEGY"),
+            "resolved_config_source": str(resolved_path) if resolved_path else None,
             "density_pct": resolved.get("PL_TARGET_DENSITY_PCT"), "scl": resolved.get("STD_CELL_LIBRARY"),
             "resolved_pdk_root": resolved.get("PDK_ROOT"),
             "seed_applied": seed_applied, "post_route_sta_available": bool(post),
