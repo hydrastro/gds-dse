@@ -1,3 +1,9 @@
 {
-  "//": "Baseline: no changes on top of defaults, platform, design and design/PDK layers."
+  "//": "Reference: common utilization, density and synthesis policy. Clock comes from the design/PDK file.",
+  "FP_SIZING": "relative",
+  "DIE_AREA": null,
+  "CORE_AREA": null,
+  "FP_CORE_UTIL": 50,
+  "PL_TARGET_DENSITY_PCT": 60,
+  "SYNTH_STRATEGY": "AREA 0"
 }

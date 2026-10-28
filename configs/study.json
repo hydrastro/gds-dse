@@ -105,7 +105,7 @@
       {"class": "congestion", "kind": "design", "patterns": ["GRT-0116"]},
       {"class": "placement", "kind": "design", "patterns": ["\\[ERROR (GPL|DPL)-\\d+\\]", "(GPL|DPL)-\\d+\\].*(diverge|failed|cannot)"]},
       {"class": "detailed_routing", "kind": "design", "patterns": ["\\[ERROR DRT-\\d+\\]"]},
-      {"class": "tool_crash", "kind": "tool", "patterns": ["heap underflow", "Segmentation fault", "SIGSEGV", "core dumped", "terminate called", "\\bAborted\\b"]},
+      {"class": "tool_crash", "kind": "tool", "patterns": ["heap underflow", "Segmentation fault", "SIGSEGV", "Signal\\s+11\\s+received", "core dumped", "terminate called", "\\bAborted\\b"]},
       {"class": "infra", "kind": "infra", "patterns": ["Cannot open LEF file", "No space left on device", "Cannot allocate memory", "std::bad_alloc", "MemoryError", "Read-only file system", "Too many open files"]}
     ]
   },

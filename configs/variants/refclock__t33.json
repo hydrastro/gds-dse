@@ -1,0 +1,10 @@
+{
+  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
+  "FP_SIZING": "relative",
+  "DIE_AREA": null,
+  "CORE_AREA": null,
+  "FP_CORE_UTIL": 50,
+  "PL_TARGET_DENSITY_PCT": 60,
+  "SYNTH_STRATEGY": "AREA 0",
+  "CLOCK_PERIOD": 33
+}

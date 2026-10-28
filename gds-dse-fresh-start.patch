@@ -1,0 +1,545 @@
+diff --git a/configs/study.json b/configs/study.json
+index 89aa541..ad6b35e 100644
+--- a/configs/study.json
++++ b/configs/study.json
+@@ -105,7 +105,7 @@
+       {"class": "congestion", "kind": "design", "patterns": ["GRT-0116"]},
+       {"class": "placement", "kind": "design", "patterns": ["\\[ERROR (GPL|DPL)-\\d+\\]", "(GPL|DPL)-\\d+\\].*(diverge|failed|cannot)"]},
+       {"class": "detailed_routing", "kind": "design", "patterns": ["\\[ERROR DRT-\\d+\\]"]},
+-      {"class": "tool_crash", "kind": "tool", "patterns": ["heap underflow", "Segmentation fault", "SIGSEGV", "core dumped", "terminate called", "\\bAborted\\b"]},
++      {"class": "tool_crash", "kind": "tool", "patterns": ["heap underflow", "Segmentation fault", "SIGSEGV", "Signal\\s+11\\s+received", "core dumped", "terminate called", "\\bAborted\\b"]},
+       {"class": "infra", "kind": "infra", "patterns": ["Cannot open LEF file", "No space left on device", "Cannot allocate memory", "std::bad_alloc", "MemoryError", "Read-only file system", "Too many open files"]}
+     ]
+   },
+diff --git a/configs/variants/C0.json b/configs/variants/C0.json
+index 8de633a..9a736d8 100644
+--- a/configs/variants/C0.json
++++ b/configs/variants/C0.json
+@@ -1,3 +1,9 @@
+ {
+-  "//": "Baseline: no changes on top of defaults, platform, design and design/PDK layers."
++  "//": "Reference: common utilization, density and synthesis policy. Clock comes from the design/PDK file.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0"
+ }
+diff --git a/configs/variants/refclock__t10.json b/configs/variants/refclock__t10.json
+new file mode 100644
+index 0000000..2590564
+--- /dev/null
++++ b/configs/variants/refclock__t10.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 10
++}
+diff --git a/configs/variants/refclock__t110.json b/configs/variants/refclock__t110.json
+new file mode 100644
+index 0000000..c519490
+--- /dev/null
++++ b/configs/variants/refclock__t110.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 110
++}
+diff --git a/configs/variants/refclock__t15.json b/configs/variants/refclock__t15.json
+new file mode 100644
+index 0000000..c8693cc
+--- /dev/null
++++ b/configs/variants/refclock__t15.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 15
++}
+diff --git a/configs/variants/refclock__t165.json b/configs/variants/refclock__t165.json
+new file mode 100644
+index 0000000..7b909dc
+--- /dev/null
++++ b/configs/variants/refclock__t165.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 165
++}
+diff --git a/configs/variants/refclock__t22.json b/configs/variants/refclock__t22.json
+new file mode 100644
+index 0000000..5bab7a5
+--- /dev/null
++++ b/configs/variants/refclock__t22.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 22
++}
+diff --git a/configs/variants/refclock__t33.json b/configs/variants/refclock__t33.json
+new file mode 100644
+index 0000000..df0ad10
+--- /dev/null
++++ b/configs/variants/refclock__t33.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 33
++}
+diff --git a/configs/variants/refclock__t50.json b/configs/variants/refclock__t50.json
+new file mode 100644
+index 0000000..2981a4d
+--- /dev/null
++++ b/configs/variants/refclock__t50.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 50
++}
+diff --git a/configs/variants/refclock__t75.json b/configs/variants/refclock__t75.json
+new file mode 100644
+index 0000000..7c344ff
+--- /dev/null
++++ b/configs/variants/refclock__t75.json
+@@ -0,0 +1,10 @@
++{
++  "//": "Fresh reference-clock screen. Fixed floorplan and synthesis policy; only CLOCK_PERIOD varies.",
++  "FP_SIZING": "relative",
++  "DIE_AREA": null,
++  "CORE_AREA": null,
++  "FP_CORE_UTIL": 50,
++  "PL_TARGET_DENSITY_PCT": 60,
++  "SYNTH_STRATEGY": "AREA 0",
++  "CLOCK_PERIOD": 75
++}
+diff --git a/docs/fresh-study.md b/docs/fresh-study.md
+new file mode 100644
+index 0000000..0bdca75
+--- /dev/null
++++ b/docs/fresh-study.md
+@@ -0,0 +1,86 @@
++# Fresh study
++
++Question: how stable are configuration rankings across routing seeds and PDKs?
++Old campaigns are setup evidence only. Keep their files, but do not combine their
++observations with the fresh study.
++
++## Reference policy
++
++Use the same baseline recipe for every core/PDK pair:
++
++| Setting | Value |
++| --- | --- |
++| Floorplan sizing | Relative, with no fixed die/core rectangle |
++| Core utilization | 50% |
++| Placement target density | 60% |
++| Synthesis | AREA 0 |
++| Clock period | Selected separately for each core/PDK pair |
++
++Relative sizing derives the floorplan from mapped cell area and utilization.
++It does not impose equal physical areas across PDKs. Keep the RTL and the
++existing interface constraints fixed. Changing the clock also scales the
++existing percentage-based I/O delays; document that constraint policy.
++
++## 1. Screen reference clocks
++
++`experiments/suite/clock-screen.json` schedules 96 jobs: four cores, three PDKs,
++eight periods (10, 15, 22, 33, 50, 75, 110 and 165 ns), seed 101. Each job starts
++from RTL and stops after post-route STA. This includes placement and routing;
++it is not a short synthesis test or a completed signoff run.
++
++Start with one thread per flow and six simultaneous flows. This is an initial
++execution setting, not a measured throughput optimum. Use one guarded environment
++launched from an ordinary SSH shell. Do not nest Nix/PRoot environments.
++
++Collect the campaign, then inspect candidates with:
++
++```bash
++python3 scripts/calibrate_clock.py --label fresh-clock-screen-v1 \
++  --fraction 1 --min-setup-margin 0.10
++```
++
++The helper selects the fastest qualifying period in the contiguous qualifying
++tail ending at the slowest tested period. Qualifying requires observed setup
++slack / period >= 0.10. `--fraction 1` keeps the tested period unchanged.
++This is a reproducible reference-selection rule, not an Fmax measurement or a
++claim that every PDK has exactly the same timing difficulty.
++
++Incomplete jobs, missing evidence and unresolved tool/infrastructure failures
++block selection. Classified design failures count as unsuccessful settings.
++If no candidate qualifies, inspect the failure before extending the clock
++range. Congestion, hold violations and crashes are not automatically fixed by
++a slower clock. The helper writes no pair files unless all planned pairs have
++candidates; read `calibration.json` for individual outcomes.
++
++## 2. Validate the references
++
++After reviewing the screen, the same calibration command with `--write` stores
++candidate clocks in `configs/designs/<core>/pdks/<pdk>.json`.
++Do not change source files while a campaign is running.
++
++`experiments/suite/reference-validation.json` then schedules 36 full flows:
++one C0 per pair, seeds 201, 202 and 203. Each must pass the study's required
++checks and have setup slack / period >= 0.10. Inspect all reported electrical
++and antenna checks too; the repository's pass flag is not fabrication signoff.
++This three-seed check qualifies a reference for the next stage, not its true
++success probability. If validation fails, investigate it and document any
++reference change before validating again. Do not silently remove a failing seed.
++
++## 3. Freeze and run the DSE
++
++Freeze the validated references, tool/PDK/RTL versions, constraints, execution
++settings, failure policy and analysis choices in Git before formal runs.
++Check at least one same-seed repeat per pair for residual execution variability.
++Repeated runs of a seed are not additional independent seeds.
++
++The initial DSE is the full 2 x 2 x 2 grid: utilization 40/50%, density 60/70%,
++and synthesis AREA 0/DELAY 1. Check the merged configurations contain all eight
++distinct combinations. Hold each pair's reference clock fixed throughout this
++grid; clock is not a fourth DSE factor in this stage.
++
++Use seeds 1001 through 1020: 480 full flows per core, 1,920 for the four-core
++suite. Treat 20 as the initial sample size, not a guarantee of precise rankings.
++Report success rates and uncertainty alongside area/timing distributions and
++cross-PDK rankings. Normalize against C0 within each core/PDK, retain failures,
++and distinguish design outcomes, tool failures and infrastructure failures.
++Use separate seeds for any later confirmation of selected winners.
+diff --git a/experiments/suite/clock-screen.json b/experiments/suite/clock-screen.json
+new file mode 100644
+index 0000000..5991f77
+--- /dev/null
++++ b/experiments/suite/clock-screen.json
+@@ -0,0 +1,32 @@
++{
++  "//": "96 setup jobs, one seed, through post-route STA. These are not full-flow or study results.",
++  "phase": "pilot",
++  "designs": [
++    "aes",
++    "sha256",
++    "chacha",
++    "prince"
++  ],
++  "pdks": [
++    "sky130A",
++    "gf180mcuD",
++    "ihp-sg13g2"
++  ],
++  "repeat": 1,
++  "threads": 1,
++  "configs": [
++    "refclock__t10",
++    "refclock__t15",
++    "refclock__t22",
++    "refclock__t33",
++    "refclock__t50",
++    "refclock__t75",
++    "refclock__t110",
++    "refclock__t165"
++  ],
++  "seeds": [
++    101
++  ],
++  "stop_after": "OpenROAD.STAPostPNR",
++  "order_seed": 2026102701
++}
+diff --git a/experiments/suite/reference-validation.json b/experiments/suite/reference-validation.json
+new file mode 100644
+index 0000000..56d3603
+--- /dev/null
++++ b/experiments/suite/reference-validation.json
+@@ -0,0 +1,27 @@
++{
++  "//": "36 full-flow reference checks after selecting explicit per-pair clocks. Separate from the study seeds.",
++  "phase": "pilot",
++  "designs": [
++    "aes",
++    "sha256",
++    "chacha",
++    "prince"
++  ],
++  "pdks": [
++    "sky130A",
++    "gf180mcuD",
++    "ihp-sg13g2"
++  ],
++  "repeat": 1,
++  "threads": 1,
++  "configs": [
++    "C0"
++  ],
++  "seeds": [
++    201,
++    202,
++    203
++  ],
++  "stop_after": null,
++  "order_seed": 2026102702
++}
+diff --git a/scripts/baseline_report.py b/scripts/baseline_report.py
+index 14a5cd2..b001de7 100644
+--- a/scripts/baseline_report.py
++++ b/scripts/baseline_report.py
+@@ -11,6 +11,7 @@ full-flow successes. No existing runs.csv files are read or overwritten.
+ """
+ import argparse
+ import fcntl
++import math
+ from pathlib import Path
+ 
+ import study
+@@ -68,7 +69,11 @@ def inspect_job(dest, manifest, job, settings, platforms):
+             "finished_utc": attempt.get("finished_utc"), "returncode": attempt.get("returncode"),
+             "clock_period_ns": period,
+             "analyzed_clock_periods_ns": ";".join(str(p) for p in sorted(analyzed_periods)),
+-            "clock_period_matches_sta": analyzed_periods == {period} if analyzed_periods else None,
++            # OpenSTA's decimal report may print 30.799999 for a 30.8 ns clock.
++            "clock_period_matches_sta": (
++                period is not None and all(math.isclose(p, period, rel_tol=1e-6, abs_tol=1e-5)
++                                           for p in analyzed_periods)
++                if analyzed_periods else None),
+             "core_util_pct": baseline_values[0],
+             "placement_density_pct": baseline_values[1], "synthesis_strategy": baseline_values[2],
+             "setup_ws_ns": setup, "hold_ws_ns": hold,
+diff --git a/scripts/calibrate_clock.py b/scripts/calibrate_clock.py
+index 940f5f6..3758884 100644
+--- a/scripts/calibrate_clock.py
++++ b/scripts/calibrate_clock.py
+@@ -1,10 +1,12 @@
+ #!/usr/bin/env python3
+ """Choose a pilot reference clock from a complete, audited clock sweep.
+ 
+-All planned jobs must complete through post-route STA with an applied seed and
+-finite setup evidence. Negative setup slack is a valid measurement, not a missing
+-run. The chosen observed passing period is divided by --fraction (default .85)
+-as a headroom policy. This is NOT a measured Fmax or a guaranteed timing margin.
++All planned jobs need valid post-route timing evidence with an applied seed, or
++a recognized design failure. Negative setup slack is a valid measurement.
++The chosen observed passing period is divided by --fraction (default .85)
++as a headroom policy. --min-setup-margin also requires measured slack / period
++to meet that threshold; --fraction 1 keeps the tested period unchanged.
++This is NOT a measured Fmax or a guaranteed timing margin.
+ Validate the resulting reference with full flows before confirmation experiments.
+ """
+ import argparse
+@@ -31,10 +33,12 @@ def true(value):
+     return value is True or value == 'True'
+ 
+ 
+-def calibrate(rows, fraction, expected_jobs):
++def calibrate(rows, fraction, expected_jobs, min_setup_margin=0.0):
+     """Require the frozen planned jobs, each with clock_period_ns from its config."""
+     if not 0 < fraction <= 1:
+         raise ValueError('fraction must be in (0, 1].')
++    if not math.isfinite(min_setup_margin) or not 0 <= min_setup_margin < 1:
++        raise ValueError('min_setup_margin must be in [0, 1).')
+     if not expected_jobs:
+         raise ValueError('A nonempty frozen manifest is required for calibration.')
+     planned = {job['id']: job for job in expected_jobs}
+@@ -74,11 +78,16 @@ def calibrate(rows, fraction, expected_jobs):
+                            and true(row.get('seed_applied')) and true(row.get('post_route_sta_available'))
+                            and num(row.get('clock_period_ns')) == period and ws is not None
+                            and str(row.get('check__setup_timing')) in ('True', 'False'))
+-            if not evidence_ok and row.get('failure_kind') == 'design' and true(row.get('seed_applied')) \
+-                    and num(row.get('clock_period_ns')) == period:
+-                # A design failure (e.g. routing congestion at an aggressive clock) is evidence that this
+-                # period does not work, not missing data. Tool crashes and infrastructure failures still
+-                # invalidate the sweep: re-run those (study.py run --retry-infra) before calibrating.
++            design_failure = (row.get('status') == 'flow_error'
++                              and num(row.get('returncode')) not in (None, 0)
++                              and row.get('failure_kind') == 'design'
++                              and row.get('failure_class') in {
++                                  'congestion', 'placement', 'detailed_routing', 'timing',
++                                  'setup_timing', 'hold_timing', 'layout_drc', 'lvs', 'route_drc'})
++            if not evidence_ok and design_failure and num(row.get('clock_period_ns')) == period:
++                # A recognized design failure can precede the seeded routing step (e.g. placement).
++                # Missing seed/STA/full-flow checks alone do not establish a design failure.
++                # Tool crashes, infrastructure failures and unexplained exits block selection.
+                 by_period[period].append((float('-inf'), False))
+                 continue
+             if not evidence_ok:
+@@ -88,13 +97,21 @@ def calibrate(rows, fraction, expected_jobs):
+             by_period[period].append((ws, true(row['check__setup_timing'])))
+         periods = sorted(planned_counts)
+         meets = {p: len(by_period[p]) == planned_counts[p]
+-                 and all(ws >= 0 and check for ws, check in by_period[p]) for p in periods}
++                 and all(ws >= min_setup_margin * p and check for ws, check in by_period[p])
++                 for p in periods}
+         result = {'swept_periods_ns': periods,
+-                  'meets_timing': {str(p): meets[p] for p in periods},
++                  'meets_timing': {str(p): len(by_period[p]) == planned_counts[p]
++                                   and all(ws >= 0 and check for ws, check in by_period[p]) for p in periods},
++                  'meets_reference_criterion': {str(p): meets[p] for p in periods},
+                   'planned_runs_per_period': {str(p): planned_counts[p] for p in periods},
+                   'runs_per_period': {str(p): len(by_period[p]) for p in periods},
+-                  'worst_setup_slack_ns': {str(p): min((v[0] for v in by_period[p]), default=None) for p in periods},
++                  'worst_setup_slack_ns': {str(p): num(min((v[0] for v in by_period[p]), default=float('nan')))
++                                           for p in periods},
++                  'design_failure_runs_per_period': {str(p): sum(not math.isfinite(ws) for ws, _ in by_period[p])
++                                                     for p in periods},
+                   'reference_frequency_fraction': fraction, 'errors': errors,
++                  'minimum_setup_slack_fraction': min_setup_margin,
++                  'selection_rule': 'Fastest qualifying period in the contiguous passing tail ending at the slowest tested period.',
+                   'interpretation': 'Observed setup-passing reference plus chosen headroom; not Fmax or signoff.'}
+         results[key] = result
+         if errors:
+@@ -106,7 +123,7 @@ def calibrate(rows, fraction, expected_jobs):
+                 break
+             selected = p
+         if selected is None:
+-            result['status'] = 'no_period_meets_timing'
++            result['status'] = 'no_period_meets_margin' if min_setup_margin else 'no_period_meets_timing'
+         else:
+             result.update(status='fastest_swept_period_met' if selected == periods[0] else 'ok',
+                           fastest_observed_passing_period_ns=selected,
+@@ -151,6 +168,9 @@ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--label', required=True)
+     parser.add_argument('--fraction', type=float, default=.85, help='Headroom policy relative to observed passing frequency.')
++    parser.add_argument('--min-setup-margin', type=float, default=0.0,
++                        help='Minimum observed setup slack / clock period (e.g. 0.10). '
++                             'Use --fraction 1 to retain the measured candidate period unchanged.')
+     parser.add_argument('--write', action='store_true')
+     args = parser.parse_args()
+     from study import campaign
+@@ -158,7 +178,7 @@ def main():
+     with (dest / 'runs.csv').open() as stream:
+         rows = list(csv.DictReader(stream))
+     manifest = json.loads((dest / 'manifest.json').read_text())
+-    results = calibrate(rows, args.fraction, planned_jobs(dest, manifest))
++    results = calibrate(rows, args.fraction, planned_jobs(dest, manifest), args.min_setup_margin)
+     provenance = {name + '_sha256': hashlib.sha256((dest / name).read_bytes()).hexdigest()
+                   for name in ['manifest.json', 'runs.csv']}
+     for key, result in results.items():
+diff --git a/tests/test_collection.py b/tests/test_collection.py
+index e914354..c78e499 100644
+--- a/tests/test_collection.py
++++ b/tests/test_collection.py
+@@ -136,6 +136,26 @@ class CollectionTests(unittest.TestCase):
+         self.assertFalse(row["study_checks_pass"])
+         self.assertIn("full_flow", row["failed_or_missing_checks"])
+ 
++    def test_baseline_clock_comparison_tolerates_reporting_roundoff_only(self):
++        import baseline_report
++        self.job()
++        job = self.manifest['jobs'][0]
++        directory = self.dest / 'jobs' / job['id']
++        config = study.read_json(directory / 'config.json')
++        study.save_json(directory / 'runs/run/resolved.json', dict(config, CLOCK_PERIOD=30.8))
++        clock = directory / 'runs/run/58-openroad-stapostpnr/nom_ss_100C_1v60/clock.rpt'
++        clock.parent.mkdir()
++        settings = study.load_settings(study.ROOT)
++        platforms = study.read_json(study.ROOT / 'configs/platforms.json')
++        for reported, expected in [('30.799999', True), ('25', False), ('nan', False)]:
++            with self.subTest(reported=reported):
++                clock.write_text(f'Period: {reported}\n')
++                row = baseline_report.inspect_job(self.dest, self.manifest, job, settings, platforms)
++                if reported == 'nan':
++                    self.assertIsNone(row['clock_period_matches_sta'])
++                else:
++                    self.assertIs(row['clock_period_matches_sta'], expected)
++
+     def test_pre_route_metrics_never_fill_final_timing(self):
+         self.job(post=False)
+         row = self.collect()[0]
+diff --git a/tests/test_failures.py b/tests/test_failures.py
+index d8ec37a..1c66c86 100644
+--- a/tests/test_failures.py
++++ b/tests/test_failures.py
+@@ -117,6 +117,11 @@ class FailureTests(unittest.TestCase):
+         self.assertEqual(got[5], ("", ""))
+         self.assertEqual(rows[2]["failed_step"], "44-openroad-repairantennas")
+ 
++    def test_openroad_signal_11_is_a_tool_failure(self):
++        self.job(1, exit_code=1, log='Signal 11 received\nStack trace:\n', complete=False)
++        row = self.collect()[1]
++        self.assertEqual((row['failure_class'], row['failure_kind']), ('tool_crash', 'tool'))
++
+     def test_timing_failure_keeps_a_valid_layout_but_routing_drc_does_not(self):
+         self.job(1, exit_code=2, log=SETUP, setup_slack=-0.4)
+         self.job(2, exit_code=2, log="", route_drc=5)
+diff --git a/tests/test_review_fixes.py b/tests/test_review_fixes.py
+index b4384f5..14e90d3 100644
+--- a/tests/test_review_fixes.py
++++ b/tests/test_review_fixes.py
+@@ -46,6 +46,39 @@ class CalibrationEvidenceTests(unittest.TestCase):
+         self.rows[0].update(setup_ws_ns='-1', check__setup_timing='False')
+         self.assertEqual(self.result()['status'], 'no_period_meets_timing')
+ 
++    def test_requested_margin_is_measured_and_does_not_rescale_clock(self):
++        result = calibrate_clock.calibrate(self.rows, 1.0, self.jobs, .10)[('aes', 'sky130A')]
++        self.assertEqual(result['status'], 'no_period_meets_margin')
++        for row in self.rows:
++            row['setup_ws_ns'] = '2.5'
++        result = calibrate_clock.calibrate(self.rows, 1.0, self.jobs, .10)[('aes', 'sky130A')]
++        self.assertEqual(result['reference_period_ns'], 25)
++        self.assertEqual(result['minimum_setup_slack_fraction'], .10)
++        for invalid in [-.1, 1, float('nan')]:
++            with self.assertRaises(ValueError):
++                calibrate_clock.calibrate(self.rows, 1.0, self.jobs, invalid)
++
++    def test_design_failure_does_not_write_infinity_to_calibration_json(self):
++        self.rows[0].update(status='flow_error', returncode='1', failure_kind='design',
++                            failure_class='congestion', setup_ws_ns='')
++        result = self.result()
++        self.assertIsNone(result['worst_setup_slack_ns']['25.0'])
++        self.assertEqual(result['design_failure_runs_per_period']['25.0'], 1)
++        json.dumps(result, allow_nan=False)
++
++    def test_recognized_design_failure_before_seed_is_unsuccessful_period(self):
++        self.rows[0].update(status='flow_error', returncode='1', failure_kind='design',
++                            failure_class='placement', seed_applied='False', setup_ws_ns='')
++        self.assertEqual(self.result()['status'], 'no_period_meets_timing')
++
++    def test_missing_checks_and_crashes_are_not_clock_infeasibility(self):
++        for kind, failure in [('design', 'full_flow'), ('design', 'seed_applied'),
++                              ('tool', 'tool_crash'), ('infra', 'infra')]:
++            with self.subTest(failure=failure):
++                rows = [{**self.rows[0], 'status': 'flow_error', 'returncode': '1',
++                         'failure_kind': kind, 'failure_class': failure}, self.rows[1]]
++                self.assertEqual(self.result(rows)['status'], 'incomplete_or_failed_sweep')
++
+     def test_duplicate_and_unplanned_rows_rejected(self):
+         for rows in (self.rows + self.rows[:1], self.rows + [{**self.rows[0], 'run_id': 'unplanned'}]):
+             with self.assertRaises(ValueError):

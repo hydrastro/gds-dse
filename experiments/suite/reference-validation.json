@@ -1,0 +1,27 @@
+{
+  "//": "36 full-flow reference checks after selecting explicit per-pair clocks. Separate from the study seeds.",
+  "phase": "pilot",
+  "designs": [
+    "aes",
+    "sha256",
+    "chacha",
+    "prince"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "repeat": 1,
+  "threads": 1,
+  "configs": [
+    "C0"
+  ],
+  "seeds": [
+    201,
+    202,
+    203
+  ],
+  "stop_after": null,
+  "order_seed": 2026102702
+}

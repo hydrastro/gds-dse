@@ -46,6 +46,39 @@ class CalibrationEvidenceTests(unittest.TestCase):
         self.rows[0].update(setup_ws_ns='-1', check__setup_timing='False')
         self.assertEqual(self.result()['status'], 'no_period_meets_timing')
 
+    def test_requested_margin_is_measured_and_does_not_rescale_clock(self):
+        result = calibrate_clock.calibrate(self.rows, 1.0, self.jobs, .10)[('aes', 'sky130A')]
+        self.assertEqual(result['status'], 'no_period_meets_margin')
+        for row in self.rows:
+            row['setup_ws_ns'] = '2.5'
+        result = calibrate_clock.calibrate(self.rows, 1.0, self.jobs, .10)[('aes', 'sky130A')]
+        self.assertEqual(result['reference_period_ns'], 25)
+        self.assertEqual(result['minimum_setup_slack_fraction'], .10)
+        for invalid in [-.1, 1, float('nan')]:
+            with self.assertRaises(ValueError):
+                calibrate_clock.calibrate(self.rows, 1.0, self.jobs, invalid)
+
+    def test_design_failure_does_not_write_infinity_to_calibration_json(self):
+        self.rows[0].update(status='flow_error', returncode='1', failure_kind='design',
+                            failure_class='congestion', setup_ws_ns='')
+        result = self.result()
+        self.assertIsNone(result['worst_setup_slack_ns']['25.0'])
+        self.assertEqual(result['design_failure_runs_per_period']['25.0'], 1)
+        json.dumps(result, allow_nan=False)
+
+    def test_recognized_design_failure_before_seed_is_unsuccessful_period(self):
+        self.rows[0].update(status='flow_error', returncode='1', failure_kind='design',
+                            failure_class='placement', seed_applied='False', setup_ws_ns='')
+        self.assertEqual(self.result()['status'], 'no_period_meets_timing')
+
+    def test_missing_checks_and_crashes_are_not_clock_infeasibility(self):
+        for kind, failure in [('design', 'full_flow'), ('design', 'seed_applied'),
+                              ('tool', 'tool_crash'), ('infra', 'infra')]:
+            with self.subTest(failure=failure):
+                rows = [{**self.rows[0], 'status': 'flow_error', 'returncode': '1',
+                         'failure_kind': kind, 'failure_class': failure}, self.rows[1]]
+                self.assertEqual(self.result(rows)['status'], 'incomplete_or_failed_sweep')
+
     def test_duplicate_and_unplanned_rows_rejected(self):
         for rows in (self.rows + self.rows[:1], self.rows + [{**self.rows[0], 'run_id': 'unplanned'}]):
             with self.assertRaises(ValueError):

@@ -11,6 +11,7 @@ full-flow successes. No existing runs.csv files are read or overwritten.
 """
 import argparse
 import fcntl
+import math
 from pathlib import Path
 
 import study
@@ -68,7 +69,11 @@ def inspect_job(dest, manifest, job, settings, platforms):
             "finished_utc": attempt.get("finished_utc"), "returncode": attempt.get("returncode"),
             "clock_period_ns": period,
             "analyzed_clock_periods_ns": ";".join(str(p) for p in sorted(analyzed_periods)),
-            "clock_period_matches_sta": analyzed_periods == {period} if analyzed_periods else None,
+            # OpenSTA's decimal report may print 30.799999 for a 30.8 ns clock.
+            "clock_period_matches_sta": (
+                period is not None and all(math.isclose(p, period, rel_tol=1e-6, abs_tol=1e-5)
+                                           for p in analyzed_periods)
+                if analyzed_periods else None),
             "core_util_pct": baseline_values[0],
             "placement_density_pct": baseline_values[1], "synthesis_strategy": baseline_values[2],
             "setup_ws_ns": setup, "hold_ws_ns": hold,

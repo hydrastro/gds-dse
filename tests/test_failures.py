@@ -117,6 +117,11 @@ class FailureTests(unittest.TestCase):
         self.assertEqual(got[5], ("", ""))
         self.assertEqual(rows[2]["failed_step"], "44-openroad-repairantennas")
 
+    def test_openroad_signal_11_is_a_tool_failure(self):
+        self.job(1, exit_code=1, log='Signal 11 received\nStack trace:\n', complete=False)
+        row = self.collect()[1]
+        self.assertEqual((row['failure_class'], row['failure_kind']), ('tool_crash', 'tool'))
+
     def test_timing_failure_keeps_a_valid_layout_but_routing_drc_does_not(self):
         self.job(1, exit_code=2, log=SETUP, setup_slack=-0.4)
         self.job(2, exit_code=2, log="", route_drc=5)

@@ -136,6 +136,26 @@ class CollectionTests(unittest.TestCase):
         self.assertFalse(row["study_checks_pass"])
         self.assertIn("full_flow", row["failed_or_missing_checks"])
 
+    def test_baseline_clock_comparison_tolerates_reporting_roundoff_only(self):
+        import baseline_report
+        self.job()
+        job = self.manifest['jobs'][0]
+        directory = self.dest / 'jobs' / job['id']
+        config = study.read_json(directory / 'config.json')
+        study.save_json(directory / 'runs/run/resolved.json', dict(config, CLOCK_PERIOD=30.8))
+        clock = directory / 'runs/run/58-openroad-stapostpnr/nom_ss_100C_1v60/clock.rpt'
+        clock.parent.mkdir()
+        settings = study.load_settings(study.ROOT)
+        platforms = study.read_json(study.ROOT / 'configs/platforms.json')
+        for reported, expected in [('30.799999', True), ('25', False), ('nan', False)]:
+            with self.subTest(reported=reported):
+                clock.write_text(f'Period: {reported}\n')
+                row = baseline_report.inspect_job(self.dest, self.manifest, job, settings, platforms)
+                if reported == 'nan':
+                    self.assertIsNone(row['clock_period_matches_sta'])
+                else:
+                    self.assertIs(row['clock_period_matches_sta'], expected)
+
     def test_pre_route_metrics_never_fill_final_timing(self):
         self.job(post=False)
         row = self.collect()[0]
