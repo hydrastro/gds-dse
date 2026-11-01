@@ -1,0 +1,9 @@
+{
+  "//": "DSE grid: utilisation 35, density 60, DELAY 1; clock from the pair's calibrated reference.",
+  "FP_SIZING": "relative",
+  "DIE_AREA": null,
+  "CORE_AREA": null,
+  "FP_CORE_UTIL": 35,
+  "PL_TARGET_DENSITY_PCT": 60,
+  "SYNTH_STRATEGY": "DELAY 1"
+}
