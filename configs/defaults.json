@@ -7,7 +7,7 @@
     "Clock target: choose and document it per design x PDK in configs/designs/<design>/pdks/<pdk>.json. The calibration helper is optional."
   ],
   "flow_overrides": {
-    "FP_CORE_UTIL": 50,
-    "PL_TARGET_DENSITY_PCT": 60
+    "FP_CORE_UTIL": 40,
+    "PL_TARGET_DENSITY_PCT": 50
   }
 }

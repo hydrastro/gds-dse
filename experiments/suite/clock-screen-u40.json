@@ -1,0 +1,34 @@
+{
+  "//": "Reference-clock screen at utilisation 40 / density 50 (needed for chacha on sky130). One seed, through post-route STA.",
+  "phase": "pilot",
+  "designs": [
+    "aes",
+    "sha256",
+    "chacha",
+    "prince"
+  ],
+  "pdks": [
+    "sky130A",
+    "gf180mcuD",
+    "ihp-sg13g2"
+  ],
+  "repeat": 1,
+  "threads": 1,
+  "configs": [
+    "refclock__t7",
+    "refclock__t10",
+    "refclock__t15",
+    "refclock__t22",
+    "refclock__t33",
+    "refclock__t50",
+    "refclock__t75",
+    "refclock__t110",
+    "refclock__t165",
+    "refclock__t250"
+  ],
+  "seeds": [
+    101
+  ],
+  "stop_after": "OpenROAD.STAPostPNR",
+  "order_seed": 2026103101
+}

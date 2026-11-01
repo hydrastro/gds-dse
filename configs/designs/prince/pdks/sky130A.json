@@ -1,1 +1,109 @@
-{}
+{
+  "CLOCK_PERIOD": 33.0,
+  "//clock_status": "calibrated",
+  "//calibration": {
+    "campaign": "clock-screen-u40",
+    "written_utc": "2026-11-01T02:42:30+00:00",
+    "swept_periods_ns": [
+      7.0,
+      10.0,
+      15.0,
+      22.0,
+      33.0,
+      50.0,
+      75.0,
+      110.0,
+      165.0,
+      250.0
+    ],
+    "meets_timing": {
+      "7.0": false,
+      "10.0": false,
+      "15.0": false,
+      "22.0": true,
+      "33.0": true,
+      "50.0": true,
+      "75.0": true,
+      "110.0": true,
+      "165.0": true,
+      "250.0": true
+    },
+    "meets_reference_criterion": {
+      "7.0": false,
+      "10.0": false,
+      "15.0": false,
+      "22.0": true,
+      "33.0": true,
+      "50.0": true,
+      "75.0": true,
+      "110.0": true,
+      "165.0": true,
+      "250.0": true
+    },
+    "planned_runs_per_period": {
+      "7.0": 1,
+      "10.0": 1,
+      "15.0": 1,
+      "22.0": 1,
+      "33.0": 1,
+      "50.0": 1,
+      "75.0": 1,
+      "110.0": 1,
+      "165.0": 1,
+      "250.0": 1
+    },
+    "runs_per_period": {
+      "7.0": 1,
+      "10.0": 1,
+      "15.0": 1,
+      "22.0": 1,
+      "33.0": 1,
+      "50.0": 1,
+      "75.0": 1,
+      "110.0": 1,
+      "165.0": 1,
+      "250.0": 1
+    },
+    "worst_setup_slack_ns": {
+      "7.0": -4.37859094708577,
+      "10.0": -1.9057067574503461,
+      "15.0": -1.0565806306710888,
+      "22.0": 5.269567154006479,
+      "33.0": 11.892767995910827,
+      "50.0": 22.092762022910787,
+      "75.0": 37.09276901731604,
+      "110.0": 58.092764243356896,
+      "165.0": 91.09276790709298,
+      "250.0": 142.09277712194435
+    },
+    "design_failure_runs_per_period": {
+      "7.0": 0,
+      "10.0": 0,
+      "15.0": 0,
+      "22.0": 0,
+      "33.0": 0,
+      "50.0": 0,
+      "75.0": 0,
+      "110.0": 0,
+      "165.0": 0,
+      "250.0": 0
+    },
+    "reference_frequency_fraction": 1.0,
+    "errors": [],
+    "minimum_setup_slack_fraction": 0.1,
+    "selection_rule": "Fastest qualifying period in the contiguous passing tail ending at the slowest tested period.",
+    "interpretation": "Observed setup-passing reference plus chosen headroom; not Fmax or signoff.",
+    "status": "ok",
+    "fastest_observed_passing_period_ns": 22.0,
+    "reference_period_ns": 22.0,
+    "evidence": {
+      "manifest.json_sha256": "e641ab7598af7772e1647a5e82cb022e712eb2cf3e6ba992044164b1621f79b3",
+      "runs.csv_sha256": "60a04fd51e0b184f3fde47955eb8e1771f16a4dad5d1f749fa576198d0c0d215"
+    }
+  },
+  "//validation_adjustment": {
+    "from_ns": 33.0,
+    "to_ns": 33.0,
+    "reason": "reference-validation-u40: one of seeds 201-203 below 10% setup margin; next slower screen period"
+  }
+}

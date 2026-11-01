@@ -11,8 +11,8 @@ Use the same baseline recipe for every core/PDK pair:
 | Setting | Value |
 | --- | --- |
 | Floorplan sizing | Relative, with no fixed die/core rectangle |
-| Core utilization | 50% |
-| Placement target density | 60% |
+| Core utilization | 40% |
+| Placement target density | 50% |
 | Synthesis | AREA 0 |
 | Clock period | Selected separately for each core/PDK pair |
 

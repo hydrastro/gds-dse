@@ -1,0 +1,4 @@
+{
+  "//": "AES/GF180 clock calibration: C0 with a 50 ns period.",
+  "CLOCK_PERIOD": 50.0
+}
