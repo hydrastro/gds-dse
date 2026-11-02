@@ -37,6 +37,8 @@ class EstimateTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             shutil.copytree(SOURCE / "configs", root / "configs")
+            # The real repository now holds calibrated clocks; start this fixture from an uncalibrated one.
+            (root / "configs/designs/aes/pdks/sky130A.json").write_text("{}\n")
             (root / "results/smoke").mkdir(parents=True)
             import csv
             rows = [smoke_row("sky130A", -5.7), smoke_row("gf180mcuD", -12.8)]

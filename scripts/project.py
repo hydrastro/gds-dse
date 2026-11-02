@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,9 +25,17 @@ PROTECTED = {'DESIGN_NAME', 'PDK', 'STD_CELL_LIBRARY', 'VERILOG_FILES', 'VERILOG
              'STUDY_GRT_SEED', 'STUDY_GRT_CAPACITY_PCT', 'meta'}
 
 
+GIT_TIMEOUT_S = 120
+# A study runner re-checks the repository before every launch. Under heavy load (and under proot)
+# a single git call can fail or stall without the repository having changed, so a failed check is
+# repeated before it stops the campaign; a real change fails every attempt and still stops it.
+REPO_CHECK_ATTEMPTS = 4
+REPO_CHECK_WAIT_S = 20
+
+
 def git(root, *args):
     try:
-        p = subprocess.run(['git', *args], cwd=root, capture_output=True, text=True, timeout=30)
+        p = subprocess.run(['git', *args], cwd=root, capture_output=True, text=True, timeout=GIT_TIMEOUT_S)
         return {'returncode': p.returncode, 'stdout': p.stdout.strip(), 'stderr': p.stderr.strip()}
     except (OSError, subprocess.TimeoutExpired) as exc:
         return {'error': str(exc)}
@@ -244,23 +253,51 @@ def repo_snapshot(root):
             'submodules_recursive': git(root, 'submodule', 'status', '--recursive')}
 
 
+def describe_git(result):
+    """Short evidence for an error message: return code, timeout/OS error, first output lines."""
+    if 'error' in result:
+        return f"error: {result['error']}"
+    out = ' | '.join((result.get('stdout') or '').splitlines()[:5])
+    err = ' | '.join((result.get('stderr') or '').splitlines()[:3])
+    return f"rc={result.get('returncode')} stdout={out!r} stderr={err!r}"
+
+
 def require_clean_repository(root, snapshot):
     if snapshot['head'].get('returncode') != 0 or snapshot['toplevel'].get('stdout') != str(root.resolve()):
-        raise ValueError('Study campaigns require this project to be its own committed Git repository.')
+        raise ValueError('Study campaigns require this project to be its own committed Git repository. '
+                         f"[git rev-parse HEAD: {describe_git(snapshot['head'])}; "
+                         f"--show-toplevel: {describe_git(snapshot['toplevel'])}; expected {root.resolve()}]")
     if snapshot['status'].get('returncode') != 0 or snapshot['status'].get('stdout'):
-        raise ValueError('Commit the study files and submodule pointers before preparing/running a study campaign. Use phase pilot during bring-up.')
+        raise ValueError('Commit the study files and submodule pointers before preparing/running a study campaign. '
+                         f"Use phase pilot during bring-up. [git status: {describe_git(snapshot['status'])}]")
     result = snapshot['submodules']
     if result.get('returncode') != 0 or any(line.startswith(('-', '+', 'U')) for line in result.get('stdout', '').splitlines()):
-        raise ValueError('Initialize submodules recursively and check out their committed versions.')
+        raise ValueError('Initialize submodules recursively and check out their committed versions. '
+                         f"[git submodule status: {describe_git(result)}]")
+
+
+def check_repository(root, expected):
+    current = repo_snapshot(root)
+    require_clean_repository(root, current)
+    if current['head'].get('stdout') != expected['head'].get('stdout') or current['submodules'].get('stdout') != expected['submodules'].get('stdout'):
+        raise ValueError('The study repository/submodule revisions changed after prepare. Restore the recorded revision or prepare a new campaign.')
 
 
 def verify_repository(root, expected, strict):
     if not strict:
         return
-    current = repo_snapshot(root)
-    require_clean_repository(root, current)
-    if current['head'].get('stdout') != expected['head'].get('stdout') or current['submodules'].get('stdout') != expected['submodules'].get('stdout'):
-        raise ValueError('The study repository/submodule revisions changed after prepare. Restore the recorded revision or prepare a new campaign.')
+    for attempt in range(1, REPO_CHECK_ATTEMPTS + 1):
+        try:
+            check_repository(root, expected)
+            if attempt > 1:
+                print(f'WARNING: repository check passed on attempt {attempt}.', file=sys.stderr, flush=True)
+            return
+        except ValueError as exc:
+            if attempt == REPO_CHECK_ATTEMPTS:
+                raise ValueError(f'{exc} (failed {attempt} consecutive checks)') from None
+            print(f'WARNING: repository check failed (attempt {attempt}/{REPO_CHECK_ATTEMPTS}), '
+                  f'retrying in {REPO_CHECK_WAIT_S} s: {exc}', file=sys.stderr, flush=True)
+            time.sleep(REPO_CHECK_WAIT_S)
 
 
 def prepare_campaign(root, flow_root, flow_commit, experiment_file, campaign_label, selections=None):

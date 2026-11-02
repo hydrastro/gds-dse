@@ -1,4 +1,6 @@
 """Exercise real local Git submodules and config expansion; no EDA tools needed."""
+import contextlib
+import io
 import json
 import shutil
 import subprocess
@@ -6,9 +8,11 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 SOURCE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SOURCE / 'scripts'))
+import project  # noqa: E402
 from project import prepare_campaign, repo_snapshot, verify_repository
 from study import verify_inputs
 
@@ -107,8 +111,27 @@ class ProjectTests(unittest.TestCase):
         verify_repository(self.root, manifest['repository'], True)
         rtl = self.root / 'designs/ascon/core.sv'
         rtl.write_text(rtl.read_text() + '// changed\n')
-        with self.assertRaisesRegex(ValueError, 'Commit the study files'):
+        with mock.patch.object(project, 'REPO_CHECK_WAIT_S', 0), contextlib.redirect_stderr(io.StringIO()):
+            with self.assertRaisesRegex(ValueError, r'Commit the study files.*git status: rc=0.*failed 4 consecutive'):
+                verify_repository(self.root, manifest['repository'], True)
+
+    def test_transient_git_failure_is_retried_not_fatal(self):
+        self.spec['phase'] = 'study'
+        self.write(self.spec_path, self.spec)
+        self.commit(self.root)
+        manifest = self.prepare()
+        real = project.git
+        calls = {'n': 0}
+
+        def flaky(root, *args):
+            calls['n'] += 1
+            return {'error': 'timed out after 120 seconds'} if calls['n'] == 1 else real(root, *args)
+        log = io.StringIO()
+        with mock.patch.object(project, 'git', flaky), mock.patch.object(project, 'REPO_CHECK_WAIT_S', 0), \
+                contextlib.redirect_stderr(log):
             verify_repository(self.root, manifest['repository'], True)
+        self.assertIn('retrying', log.getvalue())
+        self.assertIn('timed out', log.getvalue())
 
     def test_changed_configuration_cannot_silently_change_a_prepared_campaign(self):
         manifest = self.prepare()
