@@ -165,7 +165,10 @@
           "double free or corruption",
           "free\\(\\): invalid",
           "malloc\\(\\): ",
-          "Signal\\s+6\\s+received"
+          "Signal\\s+6\\s+received",
+          "failed with an unexpected error",
+          "#\\s*gsignal in",
+          "#\\s*abort in"
         ]
       }
     ],

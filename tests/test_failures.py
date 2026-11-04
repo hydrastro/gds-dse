@@ -261,3 +261,24 @@ class LogPrecedenceAndRetryTests(unittest.TestCase):
             self.assertEqual(json.loads((jobs / "env/retried/1/reason.json").read_text())["failure_kind"], "infra")
             self.assertTrue((jobs / "crash/attempt.json").exists())      # tool crash untouched
             self.assertTrue((jobs / "ok/attempt.json").exists())
+
+
+class StepCrashBacktraceTests(unittest.TestCase):
+    """Real excerpt from PRINCE stage 1 (sky130A, C0, seed 1009): detailed routing aborted in free()."""
+    LOG = """[18:18:44] ERROR    The flow has encountered an unexpected       __main__.py:185
+                    error:
+                    OpenROAD.DetailedRouting failed with an
+                    unexpected error. Please check
+                    'runs/run/44-openroad-detailedrouting/openroad-detailedrouting.log'
+                    Last 10 lines:
+                             3# gsignal in
+                    /nix/store/x-glibc-2.40-66/lib/libc.so.6
+                             4# abort in
+                    /nix/store/x-glibc-2.40-66/lib/libc.so.6
+                             9# __libc_free in
+[18:18:44] ERROR    LibreLane will now quit.                     __main__.py:186
+"""
+
+    def test_backtrace_abort_is_a_tool_crash(self):
+        rules = study.load_settings(SOURCE)["failure_classes"]["log_rules"]
+        self.assertEqual(study.match_failure(self.LOG, rules)[:2], ("tool_crash", "tool"))
