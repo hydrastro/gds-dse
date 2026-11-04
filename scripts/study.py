@@ -401,7 +401,7 @@ def _execute_jobs(args):
                 if rule and rule["kind"] == "infra":
                     infra = f"status={status}"
                 elif attempt.get("returncode") not in (0, None):
-                    found = match_log_rule(log_text(job_dir), classes.get("log_rules", []))
+                    found = match_failure(log_text(job_dir), classes.get("log_rules", []))
                     infra = found[2] if found and found[1] == "infra" else None
             if not ((retry and status in INCOMPLETE) or infra):
                 print(f"SKIP existing attempt ({status}): {job_id}")
@@ -584,6 +584,13 @@ def match_log_rule(text, rules, kinds=None):
     return None
 
 
+def match_failure(text, rules, kinds=None, tail_lines=300):
+    """Classify from the end of the log first (where LibreLane prints the error that stopped the
+    flow), then from the whole log: harmless earlier messages must not decide the cause."""
+    tail = "\n".join(text.splitlines()[-tail_lines:])
+    return match_log_rule(tail, rules, kinds) or match_log_rule(text, rules, kinds)
+
+
 def classify_failure(attempt, checks, layout_valid, required, text, settings):
     """Why a finished attempt did not pass: (failure_class, failure_kind, evidence).
 
@@ -597,7 +604,7 @@ def classify_failure(attempt, checks, layout_valid, required, text, settings):
         rule = spec["status_rules"][status]
         return rule["class"], rule["kind"], f"status={status}"
     if attempt.get("returncode") not in (0, None):
-        found = match_log_rule(text, spec.get("log_rules", []))
+        found = match_failure(text, spec.get("log_rules", []))
         if found:
             return found[0], found[1], found[2]
     if layout_valid:

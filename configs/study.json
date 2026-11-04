@@ -117,6 +117,19 @@
     },
     "log_rules": [
       {
+        "class": "infra",
+        "kind": "infra",
+        "patterns": [
+          "Cannot open LEF file",
+          "No space left on device",
+          "Cannot allocate memory",
+          "std::bad_alloc",
+          "MemoryError",
+          "Read-only file system",
+          "Too many open files"
+        ]
+      },
+      {
         "class": "congestion",
         "kind": "design",
         "patterns": [
@@ -148,23 +161,15 @@
           "Signal\\s+11\\s+received",
           "core dumped",
           "terminate called",
-          "\\bAborted\\b"
-        ]
-      },
-      {
-        "class": "infra",
-        "kind": "infra",
-        "patterns": [
-          "Cannot open LEF file",
-          "No space left on device",
-          "Cannot allocate memory",
-          "std::bad_alloc",
-          "MemoryError",
-          "Read-only file system",
-          "Too many open files"
+          "\\bAborted\\b",
+          "double free or corruption",
+          "free\\(\\): invalid",
+          "malloc\\(\\): ",
+          "Signal\\s+6\\s+received"
         ]
       }
-    ]
+    ],
+    "//log_rules": "First match wins, searched in the last 300 log lines first, then the whole log. Environment (infra) rules come first: a file the tool cannot open or a full disk explains the stop even when a crash message follows it."
   },
   "//metrics": "Columns exported to runs.csv. source: post_route_sta (last OpenROAD.STAPostPNR state) or final (final/metrics.json). corners: how '<key>__corner:*' values are combined (min/max/sum), or 'none' for the plain key. corner_set: restrict to the PDK's 'setup' or 'hold' corners from configs/platforms.json timing_corners (matched across PDKs: nominal RC, slow PVT for setup, fast PVT for hold).",
   "metrics": [

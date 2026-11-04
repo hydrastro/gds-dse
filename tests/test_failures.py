@@ -220,3 +220,44 @@ class RetryInfraTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LogPrecedenceAndRetryTests(unittest.TestCase):
+    """Real pattern from PRINCE stage 1: 'Cannot open LEF file' under proot, after an unrelated 'Aborted'."""
+    LOG = "[INFO] an earlier sub-process reported: Aborted (handled)\n" + "x\n" * 500 + LEF + \
+          "[19:36:48] ERROR    The following error was encountered while running the flow:\n" \
+          "                    [ODB-0289] LEF data from ... is discarded due to errors\n"
+
+    def rules(self):
+        return study.load_settings(SOURCE)["failure_classes"]["log_rules"]
+
+    def test_environment_failure_wins_over_crash_words_elsewhere(self):
+        self.assertEqual(study.match_failure(self.LOG, self.rules())[:2], ("infra", "infra"))
+
+    def test_real_crash_is_still_a_tool_crash(self):
+        text = "[INFO DRT-0195] Start detailed routing.\ndouble free or corruption (out)\nSignal 6 received\n"
+        self.assertEqual(study.match_failure(text, self.rules())[:2], ("tool_crash", "tool"))
+        self.assertEqual(study.match_failure(CONGESTION, self.rules())[:2], ("congestion", "design"))
+
+    def test_retry_tool_sets_aside_only_environment_failures(self):
+        import retry_env_failures
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            shutil.copytree(SOURCE / "configs", root / "configs")
+            jobs = root / "results/c/jobs"
+            for name, log, status in (("env", self.LOG, "flow_error"), ("crash", HEAP, "flow_error"), ("ok", "", "completed")):
+                (jobs / name / "runs/run").mkdir(parents=True)
+                (jobs / name / "config.json").write_text("{}")
+                (jobs / name / "console.log").write_text(log)
+                (jobs / name / "attempt.json").write_text(json.dumps({"status": status, "returncode": 0 if status == "completed" else 2}))
+            argv = ["retry_env_failures.py", "--label", "c", "--apply"]
+            with mock.patch.object(study, "ROOT", root), mock.patch.object(retry_env_failures, "ROOT", root), \
+                    mock.patch.object(sys, "argv", argv), contextlib.redirect_stdout(io.StringIO()) as out:
+                retry_env_failures.main()
+            self.assertIn("1 environment (infra) failures", out.getvalue())
+            self.assertFalse((jobs / "env/attempt.json").exists())
+            self.assertTrue((jobs / "env/config.json").exists())
+            self.assertTrue((jobs / "env/retried/1/runs/run").is_dir())
+            self.assertEqual(json.loads((jobs / "env/retried/1/reason.json").read_text())["failure_kind"], "infra")
+            self.assertTrue((jobs / "crash/attempt.json").exists())      # tool crash untouched
+            self.assertTrue((jobs / "ok/attempt.json").exists())

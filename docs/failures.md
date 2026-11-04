@@ -86,3 +86,27 @@ seed, which would add noise the study does not control. Your one-thread re-runs 
 failed IHP detailed-routing step all succeeded, which fits this. Keep one thread, and
 confirm with the same-seed check (`experiments/suite/seed-check.json`) that repeats are
 identical.
+
+## Environment failures misread as crashes, and retrying them
+
+PRINCE stage 1 was run twice with identical seeds: every run that finished gave identical
+results, but 24 of 240 runs failed in one run and succeeded in the other. Almost all stopped in
+`Odb.CheckDesignAntennaProperties` with `Cannot open LEF file` (the file exists; proot), yet were
+labelled `tool_crash` because a crash word elsewhere in the log matched first. Since then:
+
+* rules are searched in the last 300 log lines first, then the whole log;
+* environment (`infra`) rules come first in `configs/study.json`;
+* `double free or corruption` / `Signal 6 received` count as tool crashes.
+
+Campaigns keep the rules they were prepared with. To rerun environment failures by the
+current rules, also in older campaigns:
+
+```bash
+python3 scripts/retry_env_failures.py --label <label>            # list, old vs current class
+python3 scripts/retry_env_failures.py --label <label> --apply    # set aside in jobs/<id>/retried/<n>/
+# then run the label again: only those jobs run, same configuration and seed
+```
+
+Policy: environment failures are rerun with the same seed until the run finishes or fails for
+a non-environment reason (at most 3 rounds); the number of reruns per PDK is reported.
+Design outcomes and tool crashes are never rerun: they are results.
