@@ -1,0 +1,17 @@
+{
+  "//": "DSE stage 2: DELAY 1, synthesis corner signoff, hierarchy flatten; floorplan and clock as C0.",
+  "FP_SIZING": "relative",
+  "DIE_AREA": null,
+  "CORE_AREA": null,
+  "FP_CORE_UTIL": 40,
+  "PL_TARGET_DENSITY_PCT": 50,
+  "SYNTH_STRATEGY": "DELAY 1",
+  "SYNTH_HIERARCHY_MODE": "flatten",
+  "SYNTH_CORNER": {
+    "$per_pdk": {
+      "sky130A": "nom_ss_100C_1v60",
+      "gf180mcuD": "nom_ss_125C_4v50",
+      "ihp-sg13g2": "nom_slow_1p08V_125C"
+    }
+  }
+}
