@@ -24,6 +24,7 @@ median, and ranking puts configurations below the feasibility threshold last.
 """
 import argparse
 import csv
+import hashlib
 import json
 import math
 import random
@@ -175,6 +176,46 @@ def analysis_settings(labels):
     frozen = campaign_dir(labels[0]) / "inputs/configs/study.json"
     settings = strip_comments(json.loads(frozen.read_text())) if frozen.is_file() else load_settings(ROOT)
     return settings["analysis"]
+
+
+def select_analysis(rows, cfg, args):
+    """Explicit post-processing choices; never modify campaign inputs or runs.csv."""
+    cfg = {**cfg, "metrics": [dict(m) for m in cfg["metrics"]]}
+    if args.area_metrics:
+        area = [dict(column=name, direction="min", effect="relative", population="layout_valid")
+                for name in ("stdcell_area_um2", "core_area_um2")]
+        cfg["metrics"] = area + [m for m in cfg["metrics"] if m["column"] not in
+                                 {"instance_area_um2", "stdcell_area_um2", "core_area_um2"}]
+        cfg["area_metrics_override"] = True
+    if args.configs:
+        if len(args.configs) != len(set(args.configs)):
+            raise SystemExit("--configs contains duplicates.")
+        missing = set(args.configs) - {r["configuration"] for r in rows}
+        if missing:
+            raise SystemExit("No attempted rows for configuration(s): " + ", ".join(sorted(missing)))
+        rows = [r for r in rows if r["configuration"] in args.configs]
+        cfg["configuration_filter"] = list(args.configs)
+    if args.baseline:
+        cfg["baseline_config"] = args.baseline
+    if args.configs or args.baseline:
+        groups = {(r["design"], r["pdk"]) for r in rows}
+        baseline_groups = {(r["design"], r["pdk"]) for r in rows
+                           if r["configuration"] == cfg["baseline_config"]}
+        if groups - baseline_groups:
+            raise SystemExit(f"Baseline {cfg['baseline_config']} is missing from selected group(s): "
+                             + str(sorted(groups - baseline_groups)))
+    periods = defaultdict(set)
+    for row in rows:
+        period = num(row.get("clock_period_ns"))
+        if period is not None:
+            periods[(row["design"], row["pdk"])].add(period)
+    mixed = {str(k): sorted(v) for k, v in periods.items() if len(v) > 1}
+    if args.require_fixed_clock and mixed:
+        raise SystemExit("Different clock targets within a design/PDK: " + str(mixed)
+                         + ". Select one clock stratum with --configs and its --baseline.")
+    cfg["require_fixed_clock"] = args.require_fixed_clock
+    cfg["mixed_clock_targets"] = mixed
+    return rows, cfg
 
 
 def load_rows(labels):
@@ -918,9 +959,22 @@ def main():
     parser.add_argument("--population", choices=sorted(POPULATIONS),
                         help="Use this population for every metric (e.g. layout_valid for campaigns frozen before it "
                              "became the default). Recorded in analysis_settings.json.")
+    parser.add_argument("--area-metrics", action="store_true",
+                        help="Report standard-cell and core area separately instead of total instance area.")
+    parser.add_argument("--configs", nargs="+", help="Analyze only these configuration names.")
+    parser.add_argument("--baseline", help="Reference configuration for the selected subset.")
+    parser.add_argument("--require-fixed-clock", action="store_true",
+                        help="Reject comparisons mixing clock periods within a design/PDK.")
     args = parser.parse_args()
+    if (args.area_metrics or args.configs or args.baseline) and not args.out:
+        parser.error("Use --out for an alternative analysis, preserving the original analysis directory.")
+    if args.out and (args.area_metrics or args.configs or args.baseline):
+        original = {(campaign_dir(label) / "analysis").resolve() for label in args.label}
+        if Path(args.out).resolve() in original:
+            parser.error("Choose an --out directory other than the original campaign analysis directory.")
     cfg = dict(analysis_settings(args.label))
     cfg.setdefault("exclude_failure_kinds", ["infra"])
+    rows, cfg = select_analysis(load_rows(args.label), cfg, args)
     if args.population:
         cfg["metrics"] = [dict(m, population=args.population) for m in cfg["metrics"]]
         cfg["population_override"] = args.population
@@ -931,7 +985,6 @@ def main():
     cfg['derived'] = {k: v for k, v in cfg.get('derived', {}).items() if k not in unsafe}
     cfg['metrics'] = [m for m in cfg['metrics'] if m['column'] not in unsafe]
     cfg['disabled_legacy_metrics'] = removed
-    rows = load_rows(args.label)
     rows, dropped = split_excluded(rows, set(cfg.get("exclude_failure_kinds", ["infra"])))
     if not rows:
         raise SystemExit("No attempted runs to analyse.")
@@ -939,6 +992,10 @@ def main():
     out = Path(args.out) if args.out else campaign_dir(args.label[0]) / "analysis"
     out.mkdir(parents=True, exist_ok=True)
     study = Study(rows, cfg)
+    if cfg["mixed_clock_targets"]:
+        study.warnings.append("Clock targets differ within a design/PDK. Slack and slack/period rankings "
+                              "also reflect the constraints; they do not rank achieved speed. "
+                              "Use --configs and --baseline for fixed-clock comparisons.")
     if dropped:
         study.warnings.append(f"{len(dropped)} run(s) excluded as {sorted({r.get('failure_kind') for r in dropped})} "
                               "failures (not outcomes of the configuration); see failures.csv. "
@@ -959,7 +1016,11 @@ def main():
                         ("knob_importance", importance), ("ranking", ranking), ("transfer", transfer),
                         ("dse_reliability", reliability)]:
         write_table(out / f"{name}.csv", table, None if table else ["design"])
-    (out / "analysis_settings.json").write_text(json.dumps({"labels": args.label, **cfg}, indent=2) + "\n")
+    provenance = {"analyzer_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                  "runs_csv_sha256": {label: hashlib.sha256((campaign_dir(label) / "runs.csv").read_bytes()).hexdigest()
+                                      for label in args.label}}
+    (out / "analysis_settings.json").write_text(json.dumps({"labels": args.label, **cfg,
+                                                           "provenance": provenance}, indent=2) + "\n")
     report(study, floors, effects, variance, importance, transfer, reliability, args.label, out)
     append_failure_section(out / "report.md", rows, dropped)
     for w in study.warnings:
